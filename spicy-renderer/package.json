@@ -1,0 +1,20 @@
+{
+  "name": "spicy-renderer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Port a TypeScript + DOM puro del renderizador de Spicy Lyrics (vía AMLL TTML Tool) para SaltyLyrics",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "tsc --noEmit && vite build && node scripts/stamp.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vitest": "^4.0.17"
+  }
+}

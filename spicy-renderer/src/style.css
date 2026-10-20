@@ -1,0 +1,350 @@
+/*
+ * Adapted from the Spicy Lyrics renderer (AGPL-3.0-or-later).
+ * Original project: https://github.com/Spikerko/Spicy-Lyrics
+ *
+ * Immediate origin: AMLL TTML Tool (NaeNae-AMLL-TTML-TOOL, AGPL-3.0),
+ * src/components/SpicyLyrics/index.module.css
+ * Changes: CSS Modules → plain CSS, every selector scoped under `.spicy-root`;
+ * background layers (.background, .backgroundCanvas, .colorBackground,
+ * .staticBackground, .staticFallback, .overlay, @keyframes
+ * spicyAmbientBackground) and .fpsCounter removed; hardcoded white
+ * rgba(255,255,255,X) → color-mix() over the app's lyrics colour (--text).
+ * Licensed AGPL-3.0-or-later (see LICENSE).
+ */
+@import "./fonts.css";
+
+@property --spicy-slm-gradient-position {
+	syntax: "<percentage>";
+	inherits: false;
+	initial-value: -50%;
+}
+
+.spicy-root {
+	/* Color de la letra de la app ("Letra" en Configuración). */
+	--spicy-fg: var(--text, #fff);
+	position: relative;
+	display: flex;
+	container-type: size;
+	min-height: 0;
+	height: 100%;
+	overflow: hidden;
+	/* Encierra el z-index del .viewport: nunca debe quedar por encima del footer de la app (slider de sincronía). */
+	isolation: isolate;
+	z-index: 0;
+	color: var(--spicy-fg);
+	background: transparent;
+	/* La app puede definir --spicy-font para usar su propia fuente; sin ella,
+	 * se usa la fuente "SpicyLyrics" (con alternativas del sistema). */
+	font-family:
+		var(
+			--spicy-font,
+			"SpicyLyrics",
+			"Noto Sans Georgian",
+			"VazirmatnRegular",
+			system-ui,
+			-apple-system,
+			"Segoe UI",
+			sans-serif
+		);
+}
+
+.spicy-root .viewport {
+	position: relative;
+	z-index: 1;
+	flex: 1;
+	overflow-y: auto;
+	padding: 25cqh 15cqw 45cqh;
+	scroll-behavior: smooth;
+	/* Sin barra de scroll visible (el scroll con rueda/tacto sigue funcionando). */
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	mask-image: linear-gradient(
+		to bottom,
+		transparent,
+		black 64px,
+		black calc(100% - 64px),
+		transparent
+	);
+	-webkit-mask-image: linear-gradient(
+		to bottom,
+		transparent,
+		black 64px,
+		black calc(100% - 64px),
+		transparent
+	);
+}
+
+.spicy-root .viewport::-webkit-scrollbar {
+	display: none;
+}
+
+.spicy-root .line {
+	--blur: 0px;
+	--line-size: clamp(1.85rem, 7cqw, 3.5rem);
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+	margin: 1cqw 0;
+	font-size: var(--line-size);
+	font-weight: 700;
+	line-height: 1.1818;
+	transform-origin: left center;
+	transition:
+		opacity 0.2s ease,
+		transform 0.2s ease;
+	text-shadow: 0 0 var(--blur)
+		color-mix(in srgb, var(--spicy-fg) 50%, transparent);
+	cursor: pointer;
+}
+
+.spicy-root .line[data-state="not-sung"] {
+	opacity: 0.51;
+}
+.spicy-root .line[data-state="sung"] {
+	opacity: 0.497;
+}
+.spicy-root .line[data-state="active"] {
+	opacity: 1;
+	--blur: 0px;
+}
+.spicy-root .lineSynced {
+	--line-gradient-position: -20%;
+	--line-shadow-blur: 4px;
+	--line-shadow-alpha: 0;
+	background: linear-gradient(
+		180deg,
+		color-mix(in srgb, var(--spicy-fg) 85%, transparent)
+			var(--line-gradient-position),
+		color-mix(in srgb, var(--spicy-fg) 35%, transparent)
+			calc(var(--line-gradient-position) + 20%)
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	text-shadow: 0 0 var(--line-shadow-blur)
+		color-mix(
+			in srgb,
+			var(--spicy-fg) calc(var(--line-shadow-alpha) * 100%),
+			transparent
+		);
+}
+.spicy-root .lineSynced[data-state="active"]:not(.dotLine) {
+	scale: 1.05;
+}
+.spicy-root.simple .lineSynced {
+	--line-gradient-position: 100%;
+	background-image: linear-gradient(
+		180deg,
+		var(--spicy-fg) var(--line-gradient-position),
+		color-mix(in srgb, var(--spicy-fg) 30%, transparent)
+			calc(var(--line-gradient-position) + 50%)
+	);
+	text-shadow: none;
+}
+.spicy-root.simple .line[data-state="not-sung"] {
+	opacity: 0.45;
+}
+.spicy-root.simple .line[data-state="sung"] {
+	opacity: 0.35;
+}
+.spicy-root .duet {
+	justify-content: flex-end;
+	text-align: end;
+	transform-origin: right center;
+}
+.spicy-root .rtl {
+	direction: rtl;
+	transform-origin: right center;
+}
+.spicy-root .rtl .word,
+.spicy-root .rtl .letter {
+	background-image: linear-gradient(
+		-90deg,
+		color-mix(in srgb, var(--spicy-fg) 85%, transparent)
+			var(--gradient-position),
+		color-mix(in srgb, var(--spicy-fg) 50%, transparent)
+			calc(var(--gradient-position) + 20%)
+	);
+}
+.spicy-root .hasDuetLines .line:not(.dotLine, .duet) {
+	padding-right: 15cqw;
+}
+.spicy-root .hasDuetLines .line.duet:not(.dotLine) {
+	padding-left: 15cqw;
+}
+.spicy-root .hasDuetLines .line.rtl:not(.dotLine, .duet) {
+	padding-right: 0;
+	padding-left: 15cqw;
+}
+.spicy-root .hasDuetLines .line.rtl.duet:not(.dotLine) {
+	padding-left: 0;
+	padding-right: 15cqw;
+}
+.spicy-root .backgroundLine {
+	margin-top: -1cqw;
+	margin-bottom: 1cqw;
+	font-size: calc(var(--line-size) * 0.75);
+	font-weight: 600;
+}
+.spicy-root .dotLine {
+	position: relative;
+	z-index: -1;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	line-height: 0;
+	opacity: 0;
+	font-size: calc(var(--line-size) * 1.3);
+	transition:
+		transform 0.14s,
+		opacity 0.14s;
+}
+.spicy-root .dotLine:not([data-state="active"]) {
+	/* A collapsed block still prevents the margins of its two lyric neighbours
+	 * from collapsing together. Cancel half of each neighbouring line margin so
+	 * a hidden interlude has exactly the same gap as two adjacent lyric lines. */
+	margin-block: -0.5cqw;
+}
+.spicy-root .dotLine[data-state="active"] {
+	z-index: 0;
+	height: auto;
+	overflow: visible;
+	line-height: 1.1818;
+	opacity: 1;
+}
+.spicy-root .dotGroup {
+	display: flex;
+	gap: clamp(0.005rem, 1.7cqw, 0.18rem);
+	transform-origin: center;
+	transform: scale(1);
+	transition: transform 0.3s;
+	will-change: transform;
+}
+.spicy-root .dotLine[data-prehidden="true"] .dotGroup,
+.spicy-root .dotLine:not([data-state="active"]) .dotGroup {
+	transform: scale(0);
+	transition: transform 0.4s
+		linear(
+			0,
+			-0.006 9.4%,
+			-0.029 18%,
+			-0.157 43.3%,
+			-0.185 51.4%,
+			-0.189 55.9%,
+			-0.182 60%,
+			-0.163 63.9%,
+			-0.133 67.6%,
+			-0.074 72.3%,
+			0.006 76.7%,
+			0.238 85%,
+			0.566 92.7%,
+			1
+		);
+}
+
+.spicy-root .word,
+.spicy-root .letter,
+.spicy-root .dot {
+	--gradient-position: -20%;
+	display: inline-block;
+	white-space: pre-wrap;
+	background: linear-gradient(
+		90deg,
+		color-mix(in srgb, var(--spicy-fg) 85%, transparent)
+			var(--gradient-position),
+		color-mix(in srgb, var(--spicy-fg) 50%, transparent)
+			calc(var(--gradient-position) + 20%)
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	text-shadow: 0 0 var(--shadow-blur, 4px)
+		color-mix(
+			in srgb,
+			var(--spicy-fg) calc(var(--shadow-alpha, 0) * 100%),
+			transparent
+		);
+	will-change: transform, background-position, text-shadow;
+}
+.spicy-root .word[dir="rtl"],
+.spicy-root .letter[dir="rtl"] {
+	background-image: linear-gradient(
+		-90deg,
+		color-mix(in srgb, var(--spicy-fg) 85%, transparent)
+			var(--gradient-position),
+		color-mix(in srgb, var(--spicy-fg) 50%, transparent)
+			calc(var(--gradient-position) + 20%)
+	);
+}
+.spicy-root .backgroundLine .word,
+.spicy-root .backgroundLine .letter {
+	background-image: linear-gradient(
+		90deg,
+		color-mix(in srgb, var(--spicy-fg) 60%, transparent)
+			var(--gradient-position),
+		color-mix(in srgb, var(--spicy-fg) 30%, transparent)
+			calc(var(--gradient-position) + 20%)
+	);
+}
+.spicy-root .letterGroup {
+	display: inline-block;
+	white-space: nowrap;
+}
+.spicy-root .breakableToken {
+	min-width: 0;
+	max-width: 100%;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+.spicy-root .breakableToken.letterGroup {
+	display: inline-flex;
+	flex-wrap: wrap;
+	white-space: normal;
+}
+.spicy-root .wordGroup {
+	display: inline-flex;
+	flex: 0 0 auto;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	white-space: nowrap;
+}
+.spicy-root .duet .wordGroup {
+	justify-content: flex-end;
+}
+.spicy-root .wordBoundary {
+	margin-right: 0.32ch;
+}
+.spicy-root .dot {
+	--gradient-position: 100%;
+	min-width: 0.5em;
+	text-align: center;
+	line-height: 0.65;
+}
+.spicy-root .translation {
+	flex-basis: 100%;
+	display: block;
+	margin-top: 0.28em;
+	font-size: 0.42em;
+	font-weight: 600;
+	opacity: 0.72;
+	color: var(--spicy-fg);
+	background: none;
+	text-shadow: none;
+}
+
+.spicy-root.simple .word,
+.spicy-root.simple .letter {
+	--spicy-slm-gradient-position: -50%;
+	--gradient-position: var(--spicy-slm-gradient-position) !important;
+	background-image: linear-gradient(
+		90deg,
+		var(--spicy-fg) var(--gradient-position),
+		color-mix(in srgb, var(--spicy-fg) 30%, transparent)
+			calc(var(--gradient-position) + 50%)
+	);
+}
+.spicy-root.simple .dot {
+	opacity: 0.27;
+	scale: 1;
+}

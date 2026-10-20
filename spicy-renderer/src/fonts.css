@@ -1,0 +1,38 @@
+/*
+ * Fuentes "SpicyLyrics" (400/500/600/700) — CONFIRMA QUE PUEDES REDISTRIBUIRLAS.
+ * Vienen de src/assets/fonts/spicy-lyrics/ del TTML Tool (aquí en public/assets/), sin archivo de
+ * licencia propio en el repo. Si no puedes publicarlas, deja este archivo vacío
+ * (y borra public/assets/*.woff2): el renderizador cae a la fuente del sistema
+ * (ver font-family en style.css).
+ */
+@font-face {
+	font-family: "SpicyLyrics";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/assets/LyricsRegular.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "SpicyLyrics";
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url("/assets/LyricsMedium.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "SpicyLyrics";
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url("/assets/LyricsSemibold.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "SpicyLyrics";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("/assets/LyricsBold.woff2") format("woff2");
+}

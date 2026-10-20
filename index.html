@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap" rel="stylesheet">
+<!-- Renderizador Spicy (opcional): con "Clásico" la app no depende de este archivo. El ?v= lo actualiza `npm run build`. -->
+<link rel="stylesheet" href="spicy-renderer/dist/spicy-renderer.css?v=ed33968f42">
 <style>
   :root{
     --bg-base: #0b0704;
@@ -511,15 +513,33 @@
   .lyrics-wrap{
     position:absolute; inset:0;
     overflow:hidden;
+  }
+
+  /* ======================================================================
+     RENDERIZADOR CLÁSICO (anterior). Todo lo que sigue hasta "letra sin
+     sincronía" solo aplica con #lyricsWrap[data-renderer="classic"].
+     Se usa :where() para no subir la especificidad: cada selector vale lo
+     mismo que antes (p. ej. `.line` = 0,1,0), así el CSS personalizado de
+     Configuración sigue pudiendo sobrescribirlo.
+     El renderizador Spicy (data-renderer="spicy") trae su propio CSS bajo
+     .spicy-root en spicy-renderer/dist/spicy-renderer.css y se encarga de su
+     propio desvanecido (.viewport), por eso aquí no lleva máscara.
+     ====================================================================== */
+  .lyrics-wrap:where([data-renderer="classic"]){
     -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
     mask-image:linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
   }
-  .lyrics-list{
+  /* Fuente de las letras con Spicy: por defecto la de la interfaz (--font-display).
+     Se revierte en Configuración → Letras (data-lyrics-font="spicy"). */
+  .lyrics-wrap[data-lyrics-font="ui"]{ --spicy-font:var(--font-display); }
+  /* con Spicy el scroll lo maneja su propio .viewport: #lyricsList no se usa */
+  .lyrics-wrap[data-renderer="spicy"] .lyrics-list{ display:none; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .lyrics-list{
     position:absolute; left:0; right:0; top:0;
     will-change:transform;
     transition:transform .5s cubic-bezier(.22,.9,.3,1);
   }
-  .line{
+  :where(.lyrics-wrap[data-renderer="classic"]) .line{
     min-height:84px;
     padding:8px 0;
     display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
@@ -529,15 +549,15 @@
     transition: opacity .5s ease, filter .5s ease, transform .5s ease, font-weight .3s ease;
     transform-origin:left center;
   }
-  .line.opposite{ align-items:flex-end; text-align:right; transform-origin:right center; }
-  .line.instrumental{ font-style:italic; }
-  .line.active{
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.opposite{ align-items:flex-end; text-align:right; transform-origin:right center; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.instrumental{ font-style:italic; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.active{
     font-weight:800;
     opacity:1 !important; filter:none !important;
     transform:scale(1.045);
   }
   /* líneas sin timing por palabra: barrido de gradiente en toda la línea */
-  .line.active:not(.word-mode) .lead-row{
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.active:not(.word-mode) .lead-row{
     background:linear-gradient(90deg, var(--text) 20%, var(--accent2) 60%, var(--accent) 100%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
     text-shadow:0 0 30px rgba(255,190,120,.35);
@@ -548,15 +568,15 @@
     50%{ filter:drop-shadow(0 0 16px rgba(255,180,110,.4)); }
   }
   /* líneas con timing por palabra */
-  .row{ display:flex; flex-wrap:wrap; column-gap:0.32em; max-width:100%; }
-  .line.opposite .row{ justify-content:flex-end; }
-  .wgroup{ display:inline-block; white-space:nowrap; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .row{ display:flex; flex-wrap:wrap; column-gap:0.32em; max-width:100%; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.opposite .row{ justify-content:flex-end; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .wgroup{ display:inline-block; white-space:nowrap; }
   /* coros / voces de fondo: fila aparte debajo de la línea principal */
-  .bg-row{ font-size:.6em; font-weight:600; margin-top:4px; line-height:1.25; }
-  .line.active .bg-row{ font-weight:700; }
-  .line.word-mode .word{ color:var(--text-dim); display:inline-block; transition:color .15s linear; }
-  .line.word-mode .word.played{ color:var(--text); }
-  .line.word-mode .word.current{
+  :where(.lyrics-wrap[data-renderer="classic"]) .bg-row{ font-size:.6em; font-weight:600; margin-top:4px; line-height:1.25; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.active .bg-row{ font-weight:700; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.word-mode .word{ color:var(--text-dim); display:inline-block; transition:color .15s linear; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.word-mode .word.played{ color:var(--text); }
+  :where(.lyrics-wrap[data-renderer="classic"]) .line.word-mode .word.current{
     background:linear-gradient(90deg, var(--accent2) var(--wp,0%), var(--text-dim) var(--wp,0%));
     -webkit-background-clip:text; background-clip:text; color:transparent;
     text-shadow:0 0 20px rgba(255,190,120,.55);
@@ -564,8 +584,8 @@
 
   /* letra sin sincronía (Type: Static): se lee entera, con scroll */
   .lyrics-wrap.is-static{ overflow-y:auto; }
-  .lyrics-wrap.is-static .lyrics-list{ position:relative; transform:none !important; padding:18vh 0; }
-  .lyrics-wrap.is-static .line{ min-height:0; color:var(--text); opacity:.85; font-weight:500; font-size:clamp(1.15rem, 2vw, 1.6rem); }
+  .lyrics-wrap.is-static:where([data-renderer="classic"]) .lyrics-list{ position:relative; transform:none !important; padding:18vh 0; }
+  .lyrics-wrap.is-static:where([data-renderer="classic"]) .line{ min-height:0; color:var(--text); opacity:.85; font-weight:500; font-size:clamp(1.15rem, 2vw, 1.6rem); }
 
   /* puntitos de espera durante silencios largos entre líneas */
   /* Indicador de carga: barra que rebota de lado a lado (ping-pong), arriba a la derecha */
@@ -611,7 +631,7 @@
   }
 
   .lyrics-footer{
-    position:absolute; left:0; right:0; bottom:6px;
+    position:absolute; left:0; right:0; bottom:6px; z-index:5;
     display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
     pointer-events:none;
   }
@@ -687,17 +707,17 @@
     .lyrics-col{ width:100%; flex:1 1 0; height:auto; min-height:0; }
     .lyrics-footer{ flex-direction:column-reverse; align-items:stretch; gap:2px; }
     .offset-box{ width:100%; }
-    .lyrics-wrap{ -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%); mask-image:linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%); }
-    .line{ font-size:1.3rem; min-height:64px; text-align:center; align-items:center; transform-origin:center center; }
-    .row, .line.opposite .row{ justify-content:center; }
+    .lyrics-wrap:where([data-renderer="classic"]){ -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%); mask-image:linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%); }
+    :where(.lyrics-wrap[data-renderer="classic"]) .line{ font-size:1.3rem; min-height:64px; text-align:center; align-items:center; transform-origin:center center; }
+    :where(.lyrics-wrap[data-renderer="classic"]) .row, :where(.lyrics-wrap[data-renderer="classic"]) .line.opposite .row{ justify-content:center; }
   }
 
   @media (prefers-reduced-motion: reduce){
     .bg .blob{ animation:none; }
     .loader-seg{ animation:none; width:100%; }
     .loader-seg i{ animation:ppPulse 1.4s ease-in-out infinite paused; transform:none; }
-    .line.active{ animation:none; }
-    .lyrics-list{ transition:none; }
+    :where(.lyrics-wrap[data-renderer="classic"]) .line.active{ animation:none; }
+    :where(.lyrics-wrap[data-renderer="classic"]) .lyrics-list{ transition:none; }
     .view.is-visible{ animation:none; }
   }
 </style>
@@ -840,6 +860,17 @@
       </div>
 
       <div class="panel">
+        <h3>Letras</h3>
+        <div class="field-label" id="renderer-label">Renderizador de letras</div>
+        <div class="field-row actions" role="group" aria-labelledby="renderer-label">
+          <button class="pill-btn solid" id="renderer-spicy-btn" type="button" aria-pressed="true">Spicy (nuevo)</button>
+          <button class="pill-btn" id="renderer-classic-btn" type="button" aria-pressed="false">Clásico (anterior)</button>
+        </div>
+        <label class="switch-row"><input type="checkbox" id="lyrics-font-toggle" checked><span class="switch"></span><span>Usar la fuente de la interfaz en las letras (Spicy)</span></label>
+        <p class="hint">Spicy es el renderizador nuevo, derivado del de Spicy Lyrics y del AMLL TTML Tool (AGPL-3.0). Clásico es el anterior. El cambio se aplica al instante y se guarda en este navegador.</p>
+      </div>
+
+      <div class="panel">
         <h3>TV y mando</h3>
         <label class="switch-row"><input type="checkbox" id="tv-toggle"><span class="switch"></span><span>Modo TV (interfaz grande para verla de lejos)</span></label>
         <label class="switch-row"><input type="checkbox" id="remote-toggle"><span class="switch"></span><span>Control remoto: reproducir en otro dispositivo de Spotify</span></label>
@@ -955,7 +986,7 @@
         </div>
 
         <div class="lyrics-col">
-          <div class="lyrics-wrap" id="lyricsWrap">
+          <div class="lyrics-wrap" id="lyricsWrap" data-renderer="classic">
             <div class="empty-state" id="emptyState">Busca y reproduce una canción para ver la letra.</div>
             <div class="lyrics-list" id="lyricsList"></div>
           </div>
@@ -1006,7 +1037,9 @@ const LS = {
   authState:"spicy_auth_state",
   scope:    "spicy_granted_scope",   // permisos que Spotify concedió a la sesión guardada
   tv:       "spicy_tv_mode",
-  remote:   "spicy_remote_mode"
+  remote:   "spicy_remote_mode",
+  lyricsFont:"spicy_lyrics_font",     // "ui" (fuente de la interfaz) | "spicy" (fuente propia de Spicy)
+  renderer: "spicy_lyrics_renderer"   // "spicy" (nuevo) | "classic" (anterior)
 };
 const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
@@ -1045,6 +1078,7 @@ let tvMode = lsGet(LS.tv) === null ? IS_TV_DEVICE : lsGet(LS.tv) === "1";
 function applyTvMode() { document.documentElement.classList.toggle("tv-mode", tvMode); }
 applyTvMode();
 </script>
+<script src="spicy-renderer/dist/spicy-renderer.js?v=ed33968f42" onerror="console.warn('SaltyLyrics: no se pudo cargar spicy-renderer/dist/spicy-renderer.js; se usa el renderizador clásico.')"></script>
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script>
 /* ======================================================================
@@ -1826,6 +1860,29 @@ let lyricsSyncType = null; // "Syllable" | "Line" | "Static" | null
 let activeIndex = -1;
 let currentLyricsTrackId = null;
 
+/* ---- Selector de renderizador ----
+   "spicy"   = renderizador nuevo (bundle spicy-renderer/dist/, window.SpicyRenderer)
+   "classic" = el renderizador anterior (el código de más abajo, sin cambios)
+   Interfaz común: render(body) · sync(t) · destroy(). */
+let lyricsRendererSetting = lsGet(LS.renderer) === "classic" ? "classic" : "spicy"; // por defecto: spicy
+let spicy = null;              // instancia activa de SpicyRenderer (o null)
+let spicyFailed = false;       // si falla una vez, no se reintenta hasta que el usuario lo vuelva a elegir
+let currentLyricsBody = null;  // última letra recibida: permite cambiar de renderizador sin volver a pedirla
+lyricsWrap.dataset.renderer = lyricsRendererSetting;
+lyricsWrap.dataset.lyricsFont = lsGet(LS.lyricsFont) === "spicy" ? "spicy" : "ui";   // por defecto: fuente de la interfaz
+
+const classicRenderer = {
+  render: body => renderLyricsClassic(body),
+  sync: t => syncLyricsClassic(t),
+  destroy() {
+    lyricsList.innerHTML = "";
+    lyricsList.style.transform = "";
+    lines = [];
+    activeIndex = -1;
+    lyricsWrap.classList.remove("is-static");
+  }
+};
+
 // Offset manual de sincronización (ms). Positivo = adelanta la letra.
 // Rango ±5s en pasos de 0.1s: barra (mouse o teclado) y flechas ◀ ▶.
 const DEFAULT_OFFSET_MS = 200;   // +0.2s por defecto; si lo cambias, se recuerda
@@ -1857,6 +1914,8 @@ applyLyricsOffset(lyricsOffsetMs, false);
 const toMs = s => Math.round((s || 0) * 1000);
 
 function showLyricsMessage(text) {
+  destroySpicy();
+  currentLyricsBody = null;
   lyricsList.innerHTML = "";
   lines = [];
   activeIndex = -1;
@@ -1950,7 +2009,7 @@ function fillRow(row, ws) {
   });
 }
 
-function renderLyrics(body) {
+function renderLyricsClassic(body) {
   lyricsSyncType = body.Type;
   activeIndex = -1;
   lines = [];
@@ -2118,7 +2177,7 @@ function findActiveIndex(t) {
   return idx;
 }
 
-function syncLyrics(t) {
+function syncLyricsClassic(t) {
   if (!lines.length || lyricsSyncType === "Static") return;
   const idx = findActiveIndex(t);
   if (idx !== activeIndex) {
@@ -2168,6 +2227,64 @@ function highlightLine(line, t) {
       el.style.removeProperty("--wp");
     }
   });
+}
+
+/* ---------------- Despacho entre renderizadores ---------------- */
+function destroySpicy() {
+  if (!spicy) return;
+  try { spicy.destroy(); } catch (err) { console.warn("SaltyLyrics: error al destruir el renderizador Spicy", err); }
+  spicy = null;
+}
+
+// Las mismas funciones de siempre (renderLyrics / syncLyrics): el resto del código no cambia.
+function renderLyrics(body) {
+  currentLyricsBody = body;
+  lyricsSyncType = body.Type;
+  // Letra sin sincronía (Static): siempre con el manejo clásico (.is-static), con cualquier ajuste.
+  if (lyricsRendererSetting === "spicy" && body.Type !== "Static" && !spicyFailed) {
+    try {
+      if (!window.SpicyRenderer || typeof window.SpicyRenderer.create !== "function")
+        throw new Error("el bundle spicy-renderer.js no está cargado");
+      classicRenderer.destroy();
+      if (!spicy) {
+        spicy = window.SpicyRenderer.create(lyricsWrap, {
+          getTimeMs: () => nowMs() + lyricsOffsetMs,
+          isPlaying: () => clock.playing,
+          // el tiempo de la línea es tiempo de LETRA (ya incluye el offset): se resta para obtener la posición del reproductor
+          onSeek: ms => seekTo(ms - lyricsOffsetMs)
+        });
+      }
+      lyricsWrap.dataset.renderer = "spicy";
+      renderAttribution(body);
+      if (!spicy.render(body)) { showLyricsMessage("No hay letra disponible para esta canción."); return; }
+      emptyState.style.display = "none";
+      loaderGap = false;   // los puntos de interludio ya los dibuja Spicy
+      refreshLoader();
+      return;
+    } catch (err) {
+      console.warn("SaltyLyrics: el renderizador Spicy falló; se usa el clásico.", err);
+      spicyFailed = true;
+      destroySpicy();
+    }
+  }
+  destroySpicy();
+  lyricsWrap.dataset.renderer = "classic";
+  classicRenderer.render(body);
+}
+
+function syncLyrics(t) {
+  if (spicy) spicy.sync(t);
+  else classicRenderer.sync(t);
+}
+
+// Cambio en caliente desde Configuración: sin volver a pedir la letra y sin tocar la reproducción.
+function setLyricsRenderer(value) {
+  lyricsRendererSetting = value === "classic" ? "classic" : "spicy";
+  lsSet(LS.renderer, lyricsRendererSetting);
+  if (lyricsRendererSetting === "spicy") spicyFailed = false;   // reintento explícito
+  syncRendererUI();
+  if (currentLyricsBody) renderLyrics(currentLyricsBody);
+  else lyricsWrap.dataset.renderer = lyricsRendererSetting;
 }
 
 window.addEventListener("resize", positionLines);
@@ -2483,6 +2600,27 @@ function syncAppearanceUI() {
   });
 }
 fxToggle.addEventListener("change", () => { theme.fx = fxToggle.checked; saveTheme(); applyTheme(); });
+
+// ---- Letras: renderizador ----
+const rendererSpicyBtn = $("renderer-spicy-btn");
+const rendererClassicBtn = $("renderer-classic-btn");
+function syncRendererUI() {
+  const spicyOn = lyricsRendererSetting === "spicy";
+  rendererSpicyBtn.classList.toggle("solid", spicyOn);
+  rendererSpicyBtn.setAttribute("aria-pressed", String(spicyOn));
+  rendererClassicBtn.classList.toggle("solid", !spicyOn);
+  rendererClassicBtn.setAttribute("aria-pressed", String(!spicyOn));
+}
+rendererSpicyBtn.addEventListener("click", () => setLyricsRenderer("spicy"));
+rendererClassicBtn.addEventListener("click", () => setLyricsRenderer("classic"));
+syncRendererUI();
+const lyricsFontToggle = $("lyrics-font-toggle");
+lyricsFontToggle.checked = lyricsWrap.dataset.lyricsFont === "ui";
+lyricsFontToggle.addEventListener("change", () => {
+  const v = lyricsFontToggle.checked ? "ui" : "spicy";
+  lyricsWrap.dataset.lyricsFont = v;
+  lsSet(LS.lyricsFont, v);
+});
 autoAccentToggle.addEventListener("change", () => {
   theme.autoAccent = autoAccentToggle.checked;
   saveTheme(); applyTheme(); syncAppearanceUI();
