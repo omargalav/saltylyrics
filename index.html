@@ -96,7 +96,7 @@
     overflow:hidden;
     transition: width .3s cubic-bezier(.22,.9,.3,1), border-radius .3s ease, padding .3s ease;
   }
-  .sidebar.is-collapsed{ width:78px; border-radius:39px; padding:24px 8px 10px; }
+  .sidebar.is-collapsed{ width:88px; border-radius:40px; padding:20px 8px 12px; }
 
   .sidebar-toggle,
   .sidebar-nav-item{
@@ -124,11 +124,15 @@
   .sidebar-nav-item:hover{ background:color-mix(in srgb, var(--fg) 10%, transparent); }
   .sidebar-toggle:active,
   .sidebar-nav-item:active{ transform:scale(.97); }
-  .sidebar-nav-item.is-active{ color:var(--accent2); background:color-mix(in srgb, var(--fg) 8%, transparent); }
+  .sidebar-nav-item.is-active{ color:var(--accent2); background:color-mix(in srgb, var(--accent2) 20%, transparent); }
 
   .sidebar.is-collapsed .sidebar-toggle,
   .sidebar.is-collapsed .sidebar-nav-item{ justify-content:center; padding:0; }
-  .sidebar.is-collapsed .nav-label{ display:none; }
+  /* riel: icono con la etiqueta debajo (look de la maqueta) */
+  .sidebar.is-collapsed .sidebar-nav-item{ flex-direction:column; gap:5px; height:auto; padding:10px 0 8px; border-radius:22px; }
+  .sidebar.is-collapsed .sidebar-nav-item svg{ width:24px; height:24px; }
+  .sidebar.is-collapsed .nav-label{ flex:none; font-size:.62rem; font-weight:500; line-height:1; }
+  .sidebar.is-collapsed .sidebar-nav{ gap:6px; }
 
   .sidebar-spacer{ flex:1; }
   .sidebar-powered{
@@ -152,7 +156,7 @@
   .sidebar-logo-mini{ display:none; width:100%; aspect-ratio:1/1; border-radius:50%; padding:6px; }
   .sidebar-logo-mini img{ max-width:calc(100% - 12px); max-height:calc(100% - 12px); }
   .sidebar.is-collapsed .sidebar-logo-full{ display:none; }
-  .sidebar.is-collapsed .sidebar-logo-mini{ display:flex; }
+  .sidebar.is-collapsed .sidebar-logo-mini{ display:flex; width:54px; align-self:center; }
 
   .main-content{
     flex:1; min-width:0; height:100%;
@@ -368,95 +372,210 @@
   .advanced-uri label{ display:block; margin-top:8px; font-size:.82rem; }
 
   /* ---------------------------------------------------------
-     VISTA REPRODUCTOR (look de index2)
+     VISTA REPRODUCTOR (maqueta): panel con portada · letras · barra inferior
   --------------------------------------------------------- */
-  #view-player.is-visible{ display:flex; }
+  #view-player.is-visible{ display:flex; flex-direction:column; gap:var(--gap); }
   .stage{
     flex:1; min-height:0;
     display:flex; align-items:stretch;
-    gap:clamp(24px, 5vw, 80px);
-    padding:0 clamp(16px, 4vw, 64px) 0 0;
+    gap:clamp(20px, 4vw, 64px);
+    padding:0 clamp(12px, 2.5vw, 40px) 0 0;
   }
+  /* "modo letra": oculta el panel de la portada para dar todo el ancho a la letra */
+  .stage.lyrics-only .player{ display:none; }
 
-  /* Tarjeta negra del reproductor */
+  /* Panel izquierdo: portada grande, título, artista • álbum y acciones */
   .player{
-    --card-w: clamp(240px, min(24vw, 46vh), 380px);
+    --card-w: clamp(250px, min(25vw, 46vh), 420px);
     flex:0 0 auto; width:var(--card-w); height:100%;
     display:flex; flex-direction:column; justify-content:center;
     padding:0 calc(var(--card-w) * .07);
     background:var(--panel-bg);
-    border-radius:calc(var(--card-w) * .28);
+    border-radius:calc(var(--card-w) * .12);
     overflow:hidden;
   }
   .cover{
     width:100%; aspect-ratio:1/1;
-    border-radius:26%;
+    border-radius:11%;
     background:#a6a6a6;
     overflow:hidden; position:relative;
     display:flex; align-items:center; justify-content:center;
     flex:0 0 auto;
+    box-shadow:0 18px 40px -16px rgba(0,0,0,.8);
   }
   .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
   .cover svg{ width:36%; height:36%; opacity:.55; }
 
-  .meta{ margin-top:calc(var(--card-w) * .045); text-align:center; }
+  .meta{ margin-top:calc(var(--card-w) * .07); text-align:center; }
   .meta .title{
-    font-size:calc(var(--card-w) * .09); font-weight:500; line-height:1.15;
+    font-size:calc(var(--card-w) * .095); font-weight:700; line-height:1.15;
     color:var(--fg); overflow-wrap:anywhere;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
   }
   .meta .artist{
-    margin-top:calc(var(--card-w) * .012);
-    font-size:calc(var(--card-w) * .055); font-weight:400; line-height:1.2;
-    color:var(--fg); overflow-wrap:anywhere;
-    display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;
+    margin-top:calc(var(--card-w) * .02);
+    font-size:calc(var(--card-w) * .05); font-weight:600; line-height:1.25;
+    color:var(--accent2); overflow-wrap:anywhere;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
   }
-
-  /* Barra de progreso: pista blanca, avance azul */
-  .seekrow{ margin-top:calc(var(--card-w) * .08); display:flex; align-items:center; }
-  .seekbar{
-    position:relative; flex:1; height:22px;
-    display:flex; align-items:center;
-    cursor:pointer; touch-action:none;
-  }
-  .seekbar-track{
-    width:100%; height:max(5px, calc(var(--card-w) * .022));
-    border-radius:99px; background:var(--fg); overflow:hidden;
-  }
-  .seekbar-fill{ height:100%; width:0%; background:var(--progress); }
-  .seek-thumb{ display:none; }
-  .sr-only{
-    position:absolute; width:1px; height:1px; overflow:hidden;
-    clip:rect(0 0 0 0); white-space:nowrap;
-  }
-
-  .controls{
+  .track-actions{
     margin-top:calc(var(--card-w) * .07);
     display:flex; align-items:center; justify-content:center;
-    gap:calc(var(--card-w) * .04);
+    gap:calc(var(--card-w) * .045);
   }
+  .circle-btn{
+    width:calc(var(--card-w) * .13); height:calc(var(--card-w) * .13); min-width:34px; min-height:34px;
+    display:flex; align-items:center; justify-content:center; padding:0;
+    border:1.5px solid color-mix(in srgb, var(--fg) 24%, transparent); border-radius:50%;
+    background:transparent; color:var(--fg); cursor:pointer;
+    transition:background .2s ease, transform .15s ease, color .2s ease, border-color .2s ease;
+  }
+  .circle-btn:hover{ background:color-mix(in srgb, var(--fg) 12%, transparent); }
+  .circle-btn:active{ transform:scale(.92); }
+  .circle-btn svg{ width:46%; height:46%; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  .circle-btn.is-on{ color:var(--accent2); border-color:var(--accent2); }
+  .circle-btn.is-on svg{ fill:currentColor; }
+
+  /* Barra inferior: canción · controles + progreso · extras */
+  .playbar{
+    flex:0 0 auto;
+    display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr);
+    align-items:center; gap:clamp(12px, 2vw, 28px);
+    padding:.7rem 1.6rem;
+    background:var(--panel-bg); color:var(--fg);
+    border-radius:2.2rem;
+  }
+  .pb-track{ display:flex; align-items:center; gap:.9rem; min-width:0; }
+  .pb-cover{ flex:0 0 auto; width:3.3rem; height:3.3rem; border-radius:.8rem; overflow:hidden; background:#a6a6a6; }
+  .pb-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .pb-text{ min-width:0; }
+  .pb-title{ font-size:.88rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pb-artist{ margin-top:2px; font-size:.74rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:color-mix(in srgb, var(--fg) 62%, transparent); }
+  .pb-center{ display:flex; flex-direction:column; align-items:center; gap:.15rem; min-width:0; }
+  .pb-right{ display:flex; align-items:center; justify-content:flex-end; gap:.25rem; min-width:0; }
+
+  .controls{ display:flex; align-items:center; justify-content:center; gap:.7rem; }
   .control-btn{
     background:transparent; border:none; color:var(--fg);
-    width:calc(var(--card-w) * .15); height:calc(var(--card-w) * .15);
+    width:2.4rem; height:2.4rem;
     border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
-    transition: background .2s ease, transform .15s ease, opacity .2s ease;
+    cursor:pointer; position:relative;
+    transition: background .2s ease, transform .15s ease, opacity .2s ease, color .2s ease;
   }
   .control-btn:hover{ background:color-mix(in srgb, var(--fg) 12%, transparent); }
   .control-btn:active{ transform:scale(.9); }
   .control-btn:disabled{ opacity:.35; cursor:not-allowed; }
   .control-btn svg{
-    width:74%; height:74%;
-    fill:none; stroke:currentColor; stroke-width:2.6;
+    width:58%; height:58%;
+    fill:none; stroke:currentColor; stroke-width:2.4;
     stroke-linecap:round; stroke-linejoin:round;
   }
-  .play-btn{
-    width:calc(var(--card-w) * .26); height:calc(var(--card-w) * .26);
-    background:var(--fg); color:var(--panel-bg);
+  .control-btn.small svg{ width:50%; height:50%; stroke-width:2; }
+  .control-btn.is-on{ color:var(--accent2); }
+  /* repetir una canción: pequeño "1" */
+  #repeat-btn[data-mode="2"]::after{
+    content:"1"; position:absolute; right:.35rem; top:.3rem;
+    font-size:.5rem; font-weight:700; line-height:1; color:var(--accent2);
   }
-  .play-btn:hover{ background:var(--fg); transform:scale(1.06); }
+  .play-btn{
+    width:3.1rem; height:3.1rem;
+    background:var(--accent2); color:var(--panel-bg);
+  }
+  .play-btn:hover{ background:var(--accent2); transform:scale(1.06); }
   .play-btn svg{ width:46%; height:46%; fill:none; stroke:none; }
+
+  /* Barra de progreso con los tiempos a los lados */
+  .seekrow{ display:flex; align-items:center; gap:.7rem; width:100%; max-width:36rem; }
+  .seekrow .time{ flex:0 0 auto; min-width:2.2rem; font-size:.68rem; font-variant-numeric:tabular-nums; color:color-mix(in srgb, var(--fg) 70%, transparent); }
+  .seekrow .time:last-child{ text-align:left; }
+  .seekbar{
+    position:relative; flex:1; height:18px;
+    display:flex; align-items:center;
+    cursor:pointer; touch-action:none;
+  }
+  .seekbar-track{
+    width:100%; height:4px;
+    border-radius:99px; background:color-mix(in srgb, var(--fg) 22%, transparent); overflow:hidden;
+  }
+  .seekbar-fill{ height:100%; width:0%; background:var(--progress); }
+  .seek-thumb{ display:none; }
+
+  .icon-btn{
+    width:2.2rem; height:2.2rem; padding:0;
+    display:flex; align-items:center; justify-content:center;
+    border:none; border-radius:50%; background:transparent; color:var(--fg); cursor:pointer;
+    transition:background .2s ease, transform .15s ease, color .2s ease;
+  }
+  .icon-btn:hover{ background:color-mix(in srgb, var(--fg) 12%, transparent); }
+  .icon-btn:active{ transform:scale(.9); }
+  .icon-btn svg{ width:56%; height:56%; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .icon-btn.is-on{ color:var(--accent2); }
+  .icon-btn .vol-x{ display:none; }
+  .icon-btn.is-muted .vol-x{ display:block; }
+  .icon-btn.is-muted .vol-waves{ display:none; }
+  .vol-slider{
+    --v:50%;
+    -webkit-appearance:none; appearance:none;
+    width:6.2rem; height:18px; margin:0 .3rem 0 .1rem; background:transparent; cursor:pointer;
+  }
+  .vol-slider::-webkit-slider-runnable-track{
+    height:4px; border-radius:99px;
+    background:linear-gradient(90deg, var(--progress) var(--v), color-mix(in srgb, var(--fg) 22%, transparent) var(--v));
+  }
+  .vol-slider::-webkit-slider-thumb{ -webkit-appearance:none; width:12px; height:12px; margin-top:-4px; border-radius:50%; background:var(--fg); border:none; }
+  .vol-slider::-moz-range-track{ height:4px; border-radius:99px; background:color-mix(in srgb, var(--fg) 22%, transparent); }
+  .vol-slider::-moz-range-progress{ height:4px; border-radius:99px; background:var(--progress); }
+  .vol-slider::-moz-range-thumb{ width:12px; height:12px; border-radius:50%; background:var(--fg); border:none; }
+  .vol-slider:focus-visible{ outline:2px solid var(--progress); outline-offset:3px; border-radius:99px; }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip:rect(0 0 0 0); white-space:nowrap;
+  }
+
+  /* Controles que aparecen solo al pasar el cursor por la barra del reproductor
+     (en pantallas táctiles, con el mando de TV o con el teclado quedan visibles) */
+  .controls{ opacity:0; transition:opacity .25s ease; }
+  .playbar:hover .controls, .playbar:focus-within .controls{ opacity:1; }
+  @media (hover:none){ .controls{ opacity:1; } }
+  html.tv-mode .controls{ opacity:1; }
+
+  /* ---------------------------------------------------------
+     PANTALLA COMPLETA (body.fs-mode): solo letra + mini reproductor abajo a la izquierda.
+     Usa el renderizador de letras y el fondo actuales.
+  --------------------------------------------------------- */
+  .fs-toolbar{ display:none; }
+  body.fs-mode .fs-toolbar{ display:flex; position:fixed; top:var(--gap); left:var(--gap); gap:.6rem; z-index:55; transition:opacity .3s ease; }
+  .fs-toolbar .circle-btn{
+    --card-w:300px; width:2.5rem; height:2.5rem; border:none;
+    background:color-mix(in srgb, var(--panel-bg) 55%, transparent);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  }
+  .fs-toolbar .circle-btn svg{ width:48%; height:48%; }
+  body.fs-mode .sidebar{ display:none; }
+  body.fs-mode .app-layout{ padding:0; gap:0; }
+  body.fs-mode #view-player.is-visible{ gap:0; }
+  body.fs-mode .stage{ gap:0; padding:0 clamp(16px, 3vw, 56px) 0 0; }
+  body.fs-mode .player{ display:none; }
+  body.fs-mode .lyrics-col{ flex:0 0 58%; margin-left:auto; }
+  body.fs-mode .playbar{
+    position:fixed; left:clamp(24px, 3vw, 56px); bottom:clamp(24px, 5vh, 56px); z-index:50;
+    width:clamp(22rem, 26vw, 32rem);
+    display:flex; flex-direction:column; align-items:stretch; gap:.5rem;
+    padding:0; background:transparent; border-radius:0;
+    transition:opacity .3s ease;
+  }
+  body.fs-mode .pb-cover{ display:none; }
+  body.fs-mode .pb-title{ font-size:1.05rem; }
+  body.fs-mode .pb-center{ flex-direction:column-reverse; align-items:stretch; gap:.4rem; }
+  body.fs-mode .controls{ justify-content:flex-start; }
+  body.fs-mode .seekrow{ max-width:none; }
+  body.fs-mode .pb-right{ position:absolute; right:0; bottom:.15rem; }
+  body.fs-mode .pb-right > :not(#volume-btn):not(#volume-slider){ display:none; }
+  /* "ocultar controles": todo se apaga hasta que muevas el ratón */
+  body.fs-clean:not(.fs-awake) .playbar, body.fs-clean:not(.fs-awake) .fs-toolbar{ opacity:0; pointer-events:none; }
+  body.fs-clean:not(.fs-awake){ cursor:none; }
 
   /* Control de sincronía: tarjeta negra, flechas blancas, barra blanca con avance azul */
   .lyrics-offset{ display:flex; align-items:center; gap:4px; }
@@ -674,6 +793,9 @@
   html.tv-mode .sidebar.is-collapsed{ width:106px; padding:30px 10px 12px; border-radius:53px; }
   html.tv-mode .sidebar-toggle, html.tv-mode .sidebar-nav-item{ height:68px; border-radius:34px; padding:0 16px 0 20px; }
   html.tv-mode .sidebar.is-collapsed .sidebar-toggle, html.tv-mode .sidebar.is-collapsed .sidebar-nav-item{ padding:0; }
+  html.tv-mode .sidebar.is-collapsed{ width:130px; }
+  html.tv-mode .sidebar.is-collapsed .sidebar-nav-item{ height:auto; padding:14px 0 10px; }
+  html.tv-mode .sidebar.is-collapsed .sidebar-logo-mini{ width:70px; }
   html.tv-mode .sidebar-toggle svg, html.tv-mode .sidebar-nav-item svg{ width:36px; height:36px; }
   html.tv-mode .sidebar-nav{ gap:10px; }
   html.tv-mode .player{ --card-w:clamp(300px, min(26vw, 52vh), 520px); }
@@ -704,6 +826,11 @@
     .stage{ flex-direction:column; justify-content:flex-start; padding:4px 4px 0; gap:8px; }
     .player{ --card-w:min(280px, 74vw); height:auto; align-self:center; padding:16px calc(var(--card-w) * .07); border-radius:34px; }
     .cover{ width:44%; align-self:center; }
+    .playbar{ grid-template-columns:1fr; padding:.6rem 1rem; border-radius:1.6rem; }
+    body.fs-mode .lyrics-col{ flex:1 1 0; }
+    body.fs-mode .playbar{ left:16px; right:16px; bottom:16px; width:auto; }
+    body.fs-mode .pb-track{ display:block; }
+    .pb-track, .pb-right{ display:none; }
     .lyrics-col{ width:100%; flex:1 1 0; height:auto; min-height:0; }
     .lyrics-footer{ flex-direction:column-reverse; align-items:stretch; gap:2px; }
     .offset-box{ width:100%; }
@@ -850,6 +977,16 @@
       </div>
 
       <div class="panel">
+        <h3>Acceso rápido</h3>
+        <div class="field-row actions">
+          <button class="pill-btn" id="access-export-btn" type="button">Guardar acceso en un archivo</button>
+          <button class="pill-btn" id="access-import-btn" type="button">Cargar acceso desde un archivo</button>
+          <input type="file" id="access-import-file" accept="application/json,.json" hidden>
+        </div>
+        <p class="hint">Guarda tu Client ID, tu Client Key y tu sesión de Spotify en un archivo para iniciar rápido en otro navegador o dominio (el navegador guarda estos datos por separado en cada uno). <b>El archivo equivale a una contraseña</b>: no lo compartas ni lo subas a ningún repositorio.</p>
+      </div>
+
+      <div class="panel">
         <h3>Apariencia</h3>
         <label class="switch-row"><input type="checkbox" id="fx-toggle" checked><span class="switch"></span><span>Fondo animado (portada difuminada y manchas en movimiento)</span></label>
         <label class="switch-row"><input type="checkbox" id="auto-accent-toggle" checked><span class="switch"></span><span>Colores del resaltado automáticos (según la portada)</span></label>
@@ -918,10 +1055,11 @@
       <div class="panel">
         <h3>Hecho con</h3>
         <ul class="credits-list">
-          <li><strong>Spotify</strong> — la música, las portadas y la reproducción vienen de la Web API y el Web Playback SDK de Spotify. <a href="https://www.spotify.com" target="_blank" rel="noopener">spotify.com</a></li>
-          <li><strong>Spicy Lyrics</strong> — las letras sincronizadas las suben y sincronizan personas de su comunidad. El crédito de cada canción aparece al pie de la letra. <a href="https://github.com/Spikerko/spicy-lyrics" target="_blank" rel="noopener">github.com/Spikerko/spicy-lyrics</a></li>
-          <li><strong>DynaPuff</strong> — la fuente de toda la app, vía Google Fonts. <a href="https://fonts.google.com/specimen/DynaPuff" target="_blank" rel="noopener">fonts.google.com</a></li>
-          <li><strong>Lucide</strong> — el ícono de Configuración (licencia ISC). <a href="https://lucide.dev" target="_blank" rel="noopener">lucide.dev</a></li>
+          <li><strong>Spotify</strong> - la música, las portadas y la reproducción vienen de la Web API y el Web Playback SDK de Spotify. <a href="https://www.spotify.com" target="_blank" rel="noopener">spotify.com</a></li>
+          <li><strong>Spicy Lyrics</strong> - las letras sincronizadas las suben y sincronizan personas de su comunidad. El crédito de cada canción aparece al pie de la letra. <a href="https://github.com/Spikerko/spicy-lyrics" target="_blank" rel="noopener">github.com/Spikerko/spicy-lyrics</a></li>
+          <li><strong>DynaPuff</strong> - la fuente de toda la app, vía Google Fonts. <a href="https://fonts.google.com/specimen/DynaPuff" target="_blank" rel="noopener">fonts.google.com</a></li>
+          <li><strong>Lucide</strong> - el ícono de Configuración (licencia ISC). <a href="https://lucide.dev" target="_blank" rel="noopener">lucide.dev</a></li>
+          <li><strong>7xeh</strong> - El crack que se encargó de los videoclips en el modo de pantalla completa. <a href="https://7xeh.dev/" target="_blank" rel="noopener">7xeh.dev</a></li>
         </ul>
       </div>
 
@@ -960,27 +1098,18 @@
 
           <div class="meta">
             <div class="title" id="track-title">Título</div>
-            <div class="artist" id="track-artist">Artista</div>
+            <div class="artist"><span id="track-artist">Artista</span><span id="track-album"></span></div>
           </div>
 
-          <div class="seekrow">
-            <span class="sr-only" id="time-current">0:00</span>
-            <div class="seekbar" id="seekbar" role="slider" aria-label="Progreso de la canción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
-              <div class="seekbar-track"><div class="seekbar-fill" id="seekbar-fill"></div></div>
-              <div class="seek-thumb" id="seek-thumb"></div>
-            </div>
-            <span class="sr-only" id="time-duration">0:00</span>
-          </div>
-
-          <div class="controls">
-            <button class="control-btn" id="prev-btn" disabled title="Anterior" aria-label="Anterior">
-              <svg viewBox="0 0 24 24"><path d="M4.5 5v14"/><path d="M19.5 5 9 12l10.5 7"/></svg>
+          <div class="track-actions">
+            <button class="circle-btn" id="fav-btn" type="button" title="Me gusta (se guarda solo en este navegador)" aria-label="Me gusta" aria-pressed="false">
+              <svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
             </button>
-            <button class="control-btn play-btn" id="toggle-play-btn" data-entry disabled title="Play/Pausa" aria-label="Reproducir o pausar">
-              <svg id="toggle-play-icon" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19.2 12 8 5.2Z" fill="currentColor" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
+            <button class="circle-btn" id="share-btn" type="button" title="Copiar enlace de la canción" aria-label="Copiar enlace de la canción">
+              <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
             </button>
-            <button class="control-btn" id="next-btn" disabled title="Siguiente" aria-label="Siguiente">
-              <svg viewBox="0 0 24 24"><path d="M19.5 5v14"/><path d="M4.5 5 15 12 4.5 19"/></svg>
+            <button class="circle-btn" id="more-btn" type="button" title="Abrir en Spotify" aria-label="Abrir la canción en Spotify">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="19" r="1.3" fill="currentColor"/></svg>
             </button>
           </div>
         </div>
@@ -1008,6 +1137,81 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- Barra inferior: canción · controles y progreso · extras -->
+      <div class="playbar" id="playbar">
+        <div class="pb-track">
+          <div class="pb-cover" id="pb-cover"></div>
+          <div class="pb-text">
+            <div class="pb-title" id="pb-title"></div>
+            <div class="pb-artist" id="pb-artist"></div>
+          </div>
+        </div>
+
+        <div class="pb-center">
+          <div class="controls">
+            <button class="control-btn small" id="shuffle-btn" type="button" title="Aleatorio" aria-label="Aleatorio" aria-pressed="false">
+              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg>
+            </button>
+            <button class="control-btn" id="prev-btn" disabled title="Anterior" aria-label="Anterior">
+              <svg viewBox="0 0 24 24"><path d="M4.5 5v14"/><path d="M19.5 5 9 12l10.5 7"/></svg>
+            </button>
+            <button class="control-btn play-btn" id="toggle-play-btn" data-entry disabled title="Play/Pausa" aria-label="Reproducir o pausar">
+              <svg id="toggle-play-icon" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19.2 12 8 5.2Z" fill="currentColor" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="control-btn" id="next-btn" disabled title="Siguiente" aria-label="Siguiente">
+              <svg viewBox="0 0 24 24"><path d="M19.5 5v14"/><path d="M4.5 5 15 12 4.5 19"/></svg>
+            </button>
+            <button class="control-btn small" id="repeat-btn" type="button" title="Repetir" aria-label="Repetir" data-mode="0" aria-pressed="false">
+              <svg viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+            </button>
+          </div>
+
+          <div class="seekrow">
+            <span class="time" id="time-current">0:00</span>
+            <div class="seekbar" id="seekbar" role="slider" aria-label="Progreso de la canción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+              <div class="seekbar-track"><div class="seekbar-fill" id="seekbar-fill"></div></div>
+              <div class="seek-thumb" id="seek-thumb"></div>
+            </div>
+            <span class="time" id="time-duration">0:00</span>
+          </div>
+        </div>
+
+        <div class="pb-right">
+          <button class="icon-btn" id="focus-btn" type="button" title="Modo letra (ocultar la portada)" aria-label="Modo letra" aria-pressed="false">
+            <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
+          </button>
+          <button class="icon-btn" id="queue-btn" type="button" title="Ir a Playlists" aria-label="Ir a Playlists">
+            <svg viewBox="0 0 24 24"><path d="M21 15V6"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>
+          </button>
+          <button class="icon-btn" id="volume-btn" type="button" title="Silenciar" aria-label="Silenciar o activar el sonido">
+            <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><g class="vol-waves"><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></g><path class="vol-x" d="m16 9 6 6M22 9l-6 6"/></svg>
+          </button>
+          <input type="range" class="vol-slider" id="volume-slider" min="0" max="100" step="1" value="50" aria-label="Volumen">
+          <button class="icon-btn" id="fullscreen-btn" type="button" title="Pantalla completa" aria-label="Pantalla completa">
+            <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pantalla completa: barra de herramientas (solo visible con body.fs-mode) -->
+      <div class="fs-toolbar" id="fs-toolbar">
+        <button class="circle-btn" id="fs-playlists-btn" type="button" title="Playlists" aria-label="Ir a Playlists">
+          <svg viewBox="0 0 24 24"><path d="M21 15V6"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>
+        </button>
+        <button class="circle-btn" id="fs-hide-btn" type="button" title="Ocultar controles (muévete para mostrarlos)" aria-label="Ocultar controles">
+          <svg viewBox="0 0 24 24"><path d="M9.9 4.2A10 10 0 0 1 12 4c6.5 0 10 8 10 8a17 17 0 0 1-2.2 3.2"/><path d="M6.6 6.6A16 16 0 0 0 2 12s3.5 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="m2 2 20 20"/></svg>
+        </button>
+        <button class="circle-btn" id="fs-expand-btn" type="button" title="Pantalla completa del navegador" aria-label="Alternar pantalla completa del navegador">
+          <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+        </button>
+        <button class="circle-btn" id="fs-settings-btn" type="button" title="Configuración" aria-label="Ir a Configuración">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        </button>
+        <button class="circle-btn" id="fs-close-btn" type="button" title="Salir de pantalla completa (Esc)" aria-label="Salir de pantalla completa">
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
       </div>
     </section>
 
@@ -1038,6 +1242,8 @@ const LS = {
   scope:    "spicy_granted_scope",   // permisos que Spotify concedió a la sesión guardada
   tv:       "spicy_tv_mode",
   remote:   "spicy_remote_mode",
+  favs:     "spicy_favorite_tracks",  // ids de canciones marcadas con ♥ (solo en este navegador)
+  volume:   "spicy_volume",           // 0..1
   lyricsFont:"spicy_lyrics_font",     // "ui" (fuente de la interfaz) | "spicy" (fuente propia de Spicy)
   renderer: "spicy_lyrics_renderer"   // "spicy" (nuevo) | "classic" (anterior)
 };
@@ -1121,6 +1327,10 @@ const coverBox = $("coverBox");
 const bgImg = $("bgImg");
 const trackTitleEl = $("track-title");
 const trackArtistEl = $("track-artist");
+const trackAlbumEl = $("track-album");
+const pbCoverEl = $("pb-cover");
+const pbTitleEl = $("pb-title");
+const pbArtistEl = $("pb-artist");
 const seekbarEl = $("seekbar");
 const seekbarFill = $("seekbar-fill");
 const seekThumb = $("seek-thumb");
@@ -1170,7 +1380,7 @@ function setSidebarCollapsed(collapsed) {
   sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
   try { localStorage.setItem("sidebarCollapsed", collapsed ? "1" : "0"); } catch {}
 }
-try { if (localStorage.getItem("sidebarCollapsed") === "1") setSidebarCollapsed(true); } catch {}
+try { if (localStorage.getItem("sidebarCollapsed") !== "0") setSidebarCollapsed(true); } catch {}   // por defecto: riel (icono + etiqueta debajo)
 sidebarToggle.addEventListener("click", () =>
   setSidebarCollapsed(!sidebarEl.classList.contains("is-collapsed")));
 
@@ -1381,6 +1591,8 @@ function applyPlayerState(state, at = performance.now()) {
   syncLyrics(nowMs() + lyricsOffsetMs);
 
   togglePlayIcon.innerHTML = state.paused ? ICON_PLAY : ICON_PAUSE;
+  if (typeof state.shuffle === "boolean") setShuffleUI(state.shuffle);
+  if (typeof state.repeat_mode === "number") setRepeatUI(state.repeat_mode);
 }
 
 /* ---- Modo control remoto (Spotify Connect vía Web API) ---- */
@@ -1416,6 +1628,7 @@ const remotePlayer = {
   async previousTrack() { const r = await remoteCall("POST", "/previous"); if (!r.ok) remoteError(r); else setTimeout(remoteTick, 500); },
   async nextTrack() { const r = await remoteCall("POST", "/next"); if (!r.ok) remoteError(r); else setTimeout(remoteTick, 500); },
   async seek(ms) { const r = await remoteCall("PUT", "/seek?position_ms=" + Math.round(ms)); if (!r.ok) remoteError(r); },
+  async setVolume(v) { await playerApi("PUT", "/volume?volume_percent=" + Math.round(v * 100)); },
   async getCurrentState() { return null; }, // el sondeo propio (remoteTick) se encarga
   disconnect() { stopRemote(); }
 };
@@ -1439,8 +1652,11 @@ async function remoteTick() {
       track_window: { current_track: d.item },
       paused: !d.is_playing,
       position: d.progress_ms || 0,
-      duration: d.item.duration_ms || 0
+      duration: d.item.duration_ms || 0,
+      shuffle: !!d.shuffle_state,
+      repeat_mode: { off: 0, context: 1, track: 2 }[d.repeat_state] ?? 0
     }, (t0 + t1) / 2);
+    if (typeof d.device?.volume_percent === "number" && !volDragging) setVolumeUI(d.device.volume_percent / 100);
     const msg = d.device?.name || "otro dispositivo";
     if (remoteLastMsg !== msg) { remoteLastMsg = msg; setStatus(`conectado en modo control remoto: suena en «${msg}».`); }
   } catch {} finally { remoteBusy = false; }
@@ -1482,7 +1698,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   player = new Spotify.Player({
     name: "SaltyLyrics",
     getOAuthToken: async cb => cb(await getValidToken()),
-    volume: 0.5
+    volume: savedVolume()
   });
 
   player.addListener("ready", ({ device_id }) => {
@@ -1510,7 +1726,13 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 let currentCoverUrl = null;
 function setTrackInfo(track) {
   trackTitleEl.textContent = track.name;
-  trackArtistEl.textContent = track.artists.map(a => a.name).join(", ");
+  const artistsText = track.artists.map(a => a.name).join(", ");
+  trackArtistEl.textContent = artistsText;
+  trackAlbumEl.textContent = track.album?.name ? " • " + track.album.name : "";
+  pbTitleEl.textContent = track.name;
+  pbArtistEl.textContent = artistsText;
+  currentTrack = { id: track.id || null, name: track.name };
+  refreshFavUI();
 
   const url = track.album.images[0]?.url || "";
   if (url === currentCoverUrl) return;
@@ -1521,6 +1743,11 @@ function setTrackInfo(track) {
     img.src = url;
     img.alt = track.name;
     coverBox.appendChild(img);
+    pbCoverEl.innerHTML = "";
+    const mini = document.createElement("img");
+    mini.src = track.album.images[track.album.images.length - 1]?.url || url;
+    mini.alt = "";
+    pbCoverEl.appendChild(mini);
     bgImg.src = url;
     bgImg.style.opacity = 1;
     extractPalette(url);
@@ -2795,6 +3022,7 @@ function focusSidebarActive() {
 // Atrás: cierra la playlist abierta → sale del campo de texto → vuelve al menú.
 // Si ya no hay nada que cerrar devuelve false y el navegador decide (p. ej. salir de la app en la TV).
 function handleBack() {
+  if (document.body.classList.contains("fs-mode")) { exitFs(); return true; }
   const ae = document.activeElement;
   if (isTextField(ae)) { ae.blur(); focusSidebarActive(); return true; }
   if ($("view-playlists").classList.contains("is-visible") && !plDetail.hidden) { $("pl-back-btn").click(); return true; }
@@ -2859,6 +3087,197 @@ tvToggle.addEventListener("change", () => {
 const remoteToggle = $("remote-toggle");
 remoteToggle.checked = remoteMode;
 remoteToggle.addEventListener("change", () => switchPlaybackMode(remoteToggle.checked));
+
+/* ======================================================================
+   BARRA DEL REPRODUCTOR — botones extra
+   aleatorio · repetir · volumen · pantalla completa · modo letra · me gusta · compartir
+   ====================================================================== */
+let currentTrack = null;       // { id, name } de la canción que suena
+let shuffleOn = false;
+let repeatMode = 0;            // 0 = no · 1 = lista/álbum · 2 = una canción
+let volDragging = false;
+const REPEAT_STATES = ["off", "context", "track"];
+const REPEAT_TITLES = ["Repetir: no", "Repetir lista", "Repetir canción"];
+const shuffleBtn = $("shuffle-btn"), repeatBtn = $("repeat-btn");
+const volumeBtn = $("volume-btn"), volumeSlider = $("volume-slider");
+const favBtn = $("fav-btn");
+
+// Llamada a la API del reproductor de Spotify (usa el dispositivo actual si lo conocemos)
+async function playerApi(method, path) {
+  if (!accessToken) { showToast("Conecta tu cuenta de Spotify en Configuración."); return null; }
+  const dev = deviceId ? (path.includes("?") ? "&" : "?") + "device_id=" + deviceId : "";
+  try {
+    const res = await fetch("https://api.spotify.com/v1/me/player" + path + dev, { method, headers: await authHeaders() });
+    if (!res.ok) { remoteError(res); return null; }
+    return res;
+  } catch { showToast("No se pudo conectar con Spotify."); return null; }
+}
+
+function setShuffleUI(on) {
+  shuffleOn = on;
+  shuffleBtn.classList.toggle("is-on", on);
+  shuffleBtn.setAttribute("aria-pressed", String(on));
+  shuffleBtn.title = on ? "Aleatorio: activado" : "Aleatorio";
+}
+function setRepeatUI(mode) {
+  repeatMode = mode;
+  repeatBtn.dataset.mode = String(mode);
+  repeatBtn.classList.toggle("is-on", mode > 0);
+  repeatBtn.setAttribute("aria-pressed", String(mode > 0));
+  repeatBtn.title = REPEAT_TITLES[mode] || "Repetir";
+}
+shuffleBtn.addEventListener("click", async () => {
+  const next = !shuffleOn;
+  if (await playerApi("PUT", "/shuffle?state=" + next)) setShuffleUI(next);
+});
+repeatBtn.addEventListener("click", async () => {
+  const next = (repeatMode + 1) % 3;
+  if (await playerApi("PUT", "/repeat?state=" + REPEAT_STATES[next])) setRepeatUI(next);
+});
+
+// Volumen (0..1): el SDK lo cambia directo; en modo remoto, por la API
+function savedVolume() {
+  const v = parseFloat(lsGet(LS.volume));
+  return Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0.5;
+}
+let volume = savedVolume(), lastVolume = volume || 0.5, volTimer;
+function setVolumeUI(v) {
+  volume = v;
+  volumeSlider.value = Math.round(v * 100);
+  volumeSlider.style.setProperty("--v", Math.round(v * 100) + "%");
+  volumeBtn.classList.toggle("is-muted", v === 0);
+}
+function applyVolume(v) {
+  setVolumeUI(v);
+  lsSet(LS.volume, String(v));
+  clearTimeout(volTimer);
+  volTimer = setTimeout(async () => { try { if (player && player.setVolume) await player.setVolume(v); } catch {} }, 80);
+}
+setVolumeUI(volume);
+volumeSlider.addEventListener("input", () => { volDragging = true; applyVolume(Number(volumeSlider.value) / 100); });
+volumeSlider.addEventListener("change", () => { setTimeout(() => { volDragging = false; }, 1500); });
+volumeBtn.addEventListener("click", () => {
+  if (volume > 0) { lastVolume = volume; applyVolume(0); }
+  else applyVolume(lastVolume || 0.5);
+});
+
+// Pantalla completa: solo letra + mini reproductor (con el renderizador y el fondo actuales)
+const fullscreenBtn = $("fullscreen-btn");
+function setFsMode(on) {
+  document.body.classList.toggle("fs-mode", on);
+  if (!on) document.body.classList.remove("fs-clean", "fs-awake");
+  requestAnimationFrame(positionLines);
+}
+function enterFs() {
+  showView("player");
+  setFsMode(true);
+  // si el navegador no permite la pantalla completa real (p. ej. iframe), queda el modo igualmente
+  if (document.fullscreenEnabled && !document.fullscreenElement)
+    document.documentElement.requestFullscreen().catch(() => {});
+}
+function exitFs() {
+  setFsMode(false);
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+}
+fullscreenBtn.addEventListener("click", () => document.body.classList.contains("fs-mode") ? exitFs() : enterFs());
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement && document.body.classList.contains("fs-mode")) setFsMode(false);
+});
+$("fs-close-btn").addEventListener("click", exitFs);
+$("fs-playlists-btn").addEventListener("click", () => { exitFs(); showView("playlists"); });
+$("fs-settings-btn").addEventListener("click", () => { exitFs(); showView("settings"); });
+$("fs-expand-btn").addEventListener("click", () => {
+  if (!document.fullscreenEnabled) return;
+  const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  if (p && p.catch) p.catch(() => {});
+});
+// ocultar controles: se muestran de nuevo al mover el ratón
+let fsWakeTimer;
+$("fs-hide-btn").addEventListener("click", () => document.body.classList.toggle("fs-clean"));
+document.addEventListener("mousemove", () => {
+  if (!document.body.classList.contains("fs-clean")) return;
+  document.body.classList.add("fs-awake");
+  clearTimeout(fsWakeTimer);
+  fsWakeTimer = setTimeout(() => document.body.classList.remove("fs-awake"), 2500);
+});
+
+// Modo letra: oculta el panel de la portada
+const focusBtn = $("focus-btn");
+focusBtn.addEventListener("click", () => {
+  const on = document.querySelector("#view-player .stage").classList.toggle("lyrics-only");
+  focusBtn.classList.toggle("is-on", on);
+  focusBtn.setAttribute("aria-pressed", String(on));
+  requestAnimationFrame(positionLines);
+});
+
+// Lista (ir a Playlists)
+$("queue-btn").addEventListener("click", () => showView("playlists"));
+
+// Me gusta (local) · compartir · abrir en Spotify
+let favs = new Set();
+try { favs = new Set(JSON.parse(lsGet(LS.favs) || "[]")); } catch {}
+function refreshFavUI() {
+  const on = !!(currentTrack && currentTrack.id && favs.has(currentTrack.id));
+  favBtn.classList.toggle("is-on", on);
+  favBtn.setAttribute("aria-pressed", String(on));
+}
+favBtn.addEventListener("click", () => {
+  if (!currentTrack || !currentTrack.id) return;
+  if (favs.has(currentTrack.id)) favs.delete(currentTrack.id); else favs.add(currentTrack.id);
+  lsSet(LS.favs, JSON.stringify([...favs]));
+  refreshFavUI();
+});
+const trackUrl = () => currentTrack && currentTrack.id ? "https://open.spotify.com/track/" + currentTrack.id : null;
+$("share-btn").addEventListener("click", async () => {
+  const url = trackUrl();
+  if (!url) { showToast("Todavía no hay una canción sonando."); return; }
+  try { await navigator.clipboard.writeText(url); }
+  catch { const t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+  showToast("Enlace de la canción copiado.");
+});
+$("more-btn").addEventListener("click", () => {
+  const url = trackUrl();
+  if (!url) { showToast("Todavía no hay una canción sonando."); return; }
+  window.open(url, "_blank", "noopener");
+});
+
+/* ---- Acceso rápido: exportar / importar credenciales y sesión ---- */
+const ACCESS_FIELDS = { clientId: LS.clientId, spicyKey: LS.spicyKey, refreshToken: LS.refresh, scope: LS.scope };
+$("access-export-btn").addEventListener("click", () => {
+  const data = { app: "SaltyLyrics", version: 1 };
+  for (const [name, key] of Object.entries(ACCESS_FIELDS)) { const v = lsGet(key); if (v) data[name] = v; }
+  if (!data.clientId && !data.spicyKey && !data.refreshToken) { showToast("Todavía no hay nada que guardar."); return; }
+  if (!confirm("El archivo contendrá tus llaves y tu sesión de Spotify. Quien lo tenga puede usarlas: guárdalo en un lugar privado y no lo compartas. ¿Continuar?")) return;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+  a.download = "saltylyrics-acceso.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast("Archivo de acceso guardado.");
+});
+$("access-import-btn").addEventListener("click", () => $("access-import-file").click());
+$("access-import-file").addEventListener("change", async e => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+  try {
+    if (file.size > 20000) throw new Error("grande");
+    const text = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = fail; fr.readAsText(file); });
+    const data = JSON.parse(text);
+    if (!data || data.app !== "SaltyLyrics") throw new Error("formato");
+    let n = 0;
+    for (const [name, key] of Object.entries(ACCESS_FIELDS)) {
+      if (typeof data[name] === "string" && data[name].trim()) { lsSet(key, data[name].trim()); n++; }
+    }
+    if (!n) throw new Error("vacío");
+    // el token de acceso se vuelve a pedir con el refresh token al recargar
+    lsDel(LS.access); lsDel(LS.expires);
+    showToast("Acceso cargado. Reiniciando…");
+    setTimeout(() => location.reload(), 600);
+  } catch {
+    showToast("Ese archivo no es un acceso válido de SaltyLyrics.");
+  }
+});
 
 init();
 if (tvMode) focusSidebarActive();
