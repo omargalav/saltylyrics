@@ -285,6 +285,15 @@
   .pl-head-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
   .pl-head-text{ flex:1 1 160px; min-width:0; }
   .pl-head-name{ font-size:1.25rem; font-weight:700; overflow-wrap:anywhere; }
+  /* ---- Cola de reproducción ---- */
+  #view-queue .qwrap{ max-width:760px; }
+  .queue-hint{ max-width:620px; margin:-4px 0 14px; font-size:.82rem; line-height:1.5; color:color-mix(in srgb, var(--fg) 65%, transparent); }
+  .queue-sub{ margin:16px 8px 6px; font-size:.78rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:color-mix(in srgb, var(--fg) 60%, transparent); }
+  .queue-sub[hidden]{ display:none; }
+  .pl-track.is-now{ cursor:default; }
+  .pl-track.is-now .t{ color:var(--accent2); font-weight:700; }
+  .pl-track.is-now:hover{ background:transparent; }
+  .queue-empty{ padding:14px 12px; font-size:.88rem; color:color-mix(in srgb, var(--fg) 65%, transparent); }
   .panel.pl-tracks{ max-width:760px; padding:12px 12px 8px; border-radius:32px; }
   .pl-track{
     display:flex; align-items:center; gap:14px; padding:8px 12px; border-radius:20px; cursor:pointer;
@@ -366,6 +375,23 @@
   .result-item img{ width:46px; height:46px; border-radius:8px; flex-shrink:0; object-fit:cover; }
   .result-name{ font-weight:600; }
   .result-artist{ color:var(--text-dim); font-size:.82rem; }
+
+  /* botón "agregar a la cola" de cada canción (búsqueda y playlists) */
+  .row-queue-btn{
+    flex:0 0 auto; width:36px; height:36px; margin-left:auto; padding:0;
+    display:flex; align-items:center; justify-content:center;
+    border:none; border-radius:50%; background:transparent; color:var(--fg); cursor:pointer;
+    opacity:0; transition:opacity .2s ease, background .2s ease, transform .15s ease;
+  }
+  .pl-track .d + .row-queue-btn{ margin-left:0; }
+  .result-item:hover .row-queue-btn, .result-item:focus-within .row-queue-btn,
+  .pl-track:hover .row-queue-btn, .pl-track:focus-within .row-queue-btn,
+  .row-queue-btn:focus-visible{ opacity:1; }
+  .row-queue-btn:hover{ background:color-mix(in srgb, var(--fg) 16%, transparent); }
+  .row-queue-btn:active{ transform:scale(.9); }
+  .row-queue-btn svg{ width:58%; height:58%; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  @media (hover:none){ .row-queue-btn{ opacity:1; } }
+  html.tv-mode .row-queue-btn{ opacity:1; width:48px; height:48px; }
 
   .advanced-uri{ margin-top:24px; max-width:520px; color:var(--text-mid); }
   .advanced-uri summary{ cursor:pointer; font-size:.85rem; padding:4px 0; }
@@ -1028,6 +1054,7 @@
     <section class="view page" id="view-playlists">
       <div class="page-head">
         <h2>Playlists</h2>
+        <button class="pill-btn" id="pl-queue-btn" type="button">Ver cola</button>
         <button class="pill-btn" id="pl-refresh-btn" type="button">Actualizar</button>
       </div>
       <div class="pl-msg" id="pl-msg" hidden></div>
@@ -1048,6 +1075,21 @@
       </div>
     </section>
 
+    <section class="view page" id="view-queue">
+      <div class="page-head">
+        <h2>Cola</h2>
+        <button class="pill-btn" id="queue-refresh-btn" type="button">Actualizar</button>
+      </div>
+      <div class="pl-msg" id="queue-msg" hidden></div>
+      <div class="qwrap" id="queue-wrap" hidden>
+        <p class="queue-hint">Spotify no permite quitar ni reordenar canciones de la cola desde otras apps. Puedes pulsar una canción para saltar hasta ella (las que están antes se omiten).</p>
+        <div class="queue-sub">Reproduciendo ahora</div>
+        <div class="panel pl-tracks" id="queue-now"></div>
+        <div class="queue-sub" id="queue-next-title">A continuación</div>
+        <div class="panel pl-tracks" id="queue-list"></div>
+      </div>
+    </section>
+
     <!-- CRÉDITOS -->
     <section class="view page" id="view-credits">
       <h2>Créditos</h2>
@@ -1055,11 +1097,10 @@
       <div class="panel">
         <h3>Hecho con</h3>
         <ul class="credits-list">
-          <li><strong>Spotify</strong> - la música, las portadas y la reproducción vienen de la Web API y el Web Playback SDK de Spotify. <a href="https://www.spotify.com" target="_blank" rel="noopener">spotify.com</a></li>
-          <li><strong>Spicy Lyrics</strong> - las letras sincronizadas las suben y sincronizan personas de su comunidad. El crédito de cada canción aparece al pie de la letra. <a href="https://github.com/Spikerko/spicy-lyrics" target="_blank" rel="noopener">github.com/Spikerko/spicy-lyrics</a></li>
-          <li><strong>DynaPuff</strong> - la fuente de toda la app, vía Google Fonts. <a href="https://fonts.google.com/specimen/DynaPuff" target="_blank" rel="noopener">fonts.google.com</a></li>
-          <li><strong>Lucide</strong> - el ícono de Configuración (licencia ISC). <a href="https://lucide.dev" target="_blank" rel="noopener">lucide.dev</a></li>
-          <li><strong>7xeh</strong> - El crack que se encargó de los videoclips en el modo de pantalla completa. <a href="https://7xeh.dev/" target="_blank" rel="noopener">7xeh.dev</a></li>
+          <li><strong>Spotify</strong> — la música, las portadas y la reproducción vienen de la Web API y el Web Playback SDK de Spotify. <a href="https://www.spotify.com" target="_blank" rel="noopener">spotify.com</a></li>
+          <li><strong>Spicy Lyrics</strong> — las letras sincronizadas las suben y sincronizan personas de su comunidad. El crédito de cada canción aparece al pie de la letra. <a href="https://github.com/Spikerko/spicy-lyrics" target="_blank" rel="noopener">github.com/Spikerko/spicy-lyrics</a></li>
+          <li><strong>DynaPuff</strong> — la fuente de toda la app, vía Google Fonts. <a href="https://fonts.google.com/specimen/DynaPuff" target="_blank" rel="noopener">fonts.google.com</a></li>
+          <li><strong>Lucide</strong> — el ícono de Configuración (licencia ISC). <a href="https://lucide.dev" target="_blank" rel="noopener">lucide.dev</a></li>
         </ul>
       </div>
 
@@ -1182,7 +1223,7 @@
           <button class="icon-btn" id="focus-btn" type="button" title="Modo letra (ocultar la portada)" aria-label="Modo letra" aria-pressed="false">
             <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
           </button>
-          <button class="icon-btn" id="queue-btn" type="button" title="Ir a Playlists" aria-label="Ir a Playlists">
+          <button class="icon-btn" id="queue-btn" type="button" title="Cola de reproducción" aria-label="Cola de reproducción">
             <svg viewBox="0 0 24 24"><path d="M21 15V6"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>
           </button>
           <button class="icon-btn" id="volume-btn" type="button" title="Silenciar" aria-label="Silenciar o activar el sonido">
@@ -1303,6 +1344,7 @@ const SCOPES = [
   "user-read-private",
   "user-modify-playback-state",
   "user-read-playback-state",
+  "user-read-currently-playing",
   "playlist-read-private",
   "playlist-read-collaborative"
 ].join(" ");
@@ -1366,6 +1408,7 @@ function showView(view) {
     b.classList.toggle("is-active", b.dataset.view === view));
   if (view === "player") requestAnimationFrame(positionLines);
   if (view === "playlists") onOpenPlaylists();
+  if (view === "queue") loadQueue();
   refreshLoader();
 }
 // Solo los botones con data-view navegan (Configuración no hace nada por ahora)
@@ -1733,6 +1776,7 @@ function setTrackInfo(track) {
   pbArtistEl.textContent = artistsText;
   currentTrack = { id: track.id || null, name: track.name };
   refreshFavUI();
+  scheduleQueueRefresh(track.id);
 
   const url = track.album.images[0]?.url || "";
   if (url === currentCoverUrl) return;
@@ -1862,6 +1906,7 @@ async function searchTracksInner() {
     artist.textContent = track.artists.map(a => a.name).join(", ");
     info.append(name, artist);
     item.appendChild(info);
+    item.appendChild(queueButton(track.uri, track.name));
 
     item.addEventListener("click", () => {
       trackUriInput.value = track.uri;
@@ -1888,6 +1933,23 @@ async function playTrackUri(uri) {
   if (remoteMode) { if (!res.ok) remoteError(res); else setTimeout(remoteTick, 700); }
 }
 function playTrack() { return playTrackUri(trackUriInput.value.trim()); }
+
+/* Agregar a la cola de reproducción (POST /me/player/queue; usa el permiso user-modify-playback-state) */
+async function addToQueue(uri, name) {
+  if (!uri) return;
+  const res = await playerApi("POST", "/queue?uri=" + encodeURIComponent(uri));
+  if (res) showToast(name ? `«${name}» se agregó a la cola.` : "Agregada a la cola.");
+}
+function queueButton(uri, name) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "row-queue-btn";
+  b.title = "Agregar a la cola";
+  b.setAttribute("aria-label", "Agregar a la cola" + (name ? ": " + name : ""));
+  b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>';
+  b.addEventListener("click", e => { e.stopPropagation(); addToQueue(uri, name); });
+  return b;
+}
 async function togglePlay() { if (player) await player.togglePlay(); }
 async function playPrevious() { if (player) await player.previousTrack(); }
 async function playNext() { if (player) await player.nextTrack(); }
@@ -2463,8 +2525,53 @@ function destroySpicy() {
   spicy = null;
 }
 
+/* Acepta las formas en que la API puede entregar letras sincronizadas por línea o sin sincronía
+   y las deja en la forma que entienden ambos renderizadores: Content[].Lead.Syllables.
+   - Línea con el texto y los tiempos directamente en la entrada: { Text, StartTime, EndTime }
+   - Lead con Text pero sin Syllables
+   - Línea sin EndTime: termina donde empieza la siguiente
+   - Static con "Lines": [{ Text }] en lugar de "Content"
+   Las letras por sílaba (Lead.Syllables) pasan intactas. Tiempos en segundos. */
+function normalizeLyricsBody(body) {
+  if (!body || typeof body !== "object") return body;
+  const isNum = v => typeof v === "number" && isFinite(v);
+  const textOf = o => (o && typeof o.Text === "string") ? o.Text : "";
+  const mkLead = (text, start, end) => ({
+    StartTime: start, EndTime: end,
+    Syllables: [{ Text: text, StartTime: start, EndTime: end, IsPartOfWord: false }]
+  });
+
+  let content = Array.isArray(body.Content) ? body.Content : null;
+  if (!content && Array.isArray(body.Lines))            // Static: [{ Text }]
+    content = body.Lines.map(l => ({ Text: textOf(l), StartTime: 0, EndTime: 0 }));
+  if (!content) return body;
+
+  const out = content.map((entry, i) => {
+    if (!entry || typeof entry !== "object") return entry;
+    if (entry.Lead) {
+      const lead = entry.Lead;
+      if ((!Array.isArray(lead.Syllables) || !lead.Syllables.length) && textOf(lead).trim())
+        return { ...entry, Lead: { ...lead, Syllables: mkLead(textOf(lead), lead.StartTime, lead.EndTime).Syllables } };
+      return entry;
+    }
+    const text = textOf(entry);
+    if (!text.trim() && !isNum(entry.StartTime)) return entry;
+    const start = isNum(entry.StartTime) ? entry.StartTime : 0;
+    let end = entry.EndTime;
+    if (!isNum(end)) {                                   // sin fin: hasta el inicio de la siguiente línea
+      const next = content[i + 1];
+      end = next && isNum(next.StartTime) ? next.StartTime : start + 4;
+    }
+    return { ...entry, Lead: mkLead(text, start, end) };
+  });
+  return { ...body, Content: out };
+}
+
 // Las mismas funciones de siempre (renderLyrics / syncLyrics): el resto del código no cambia.
 function renderLyrics(body) {
+  body = normalizeLyricsBody(body);
+  if (body && !(body.Content || []).some(e => e && e.Lead))
+    console.warn("SaltyLyrics: formato de letra no reconocido. Tipo:", body.Type, "· claves:", Object.keys(body), "· primera entrada:", (body.Content || body.Lines || [])[0]);
   currentLyricsBody = body;
   lyricsSyncType = body.Type;
   // Letra sin sincronía (Static): siempre con el manejo clásico (.is-static), con cualquier ajuste.
@@ -2714,6 +2821,7 @@ function renderTrackRow(t, n) {
   info.append(title, artist);
   const dur = document.createElement("div"); dur.className = "d"; dur.textContent = fmtDuration(t.duration_ms);
   row.append(num, thumb, info, dur);
+  if (!t.is_local && t.uri) row.appendChild(queueButton(t.uri, t.name));
   if (!t.is_local) row.addEventListener("click", () => playContext(plCurrent.uri, t.uri));
   else row.title = "Las canciones locales no se pueden reproducir desde aquí";
   return row;
@@ -3211,7 +3319,7 @@ focusBtn.addEventListener("click", () => {
 });
 
 // Lista (ir a Playlists)
-$("queue-btn").addEventListener("click", () => showView("playlists"));
+$("queue-btn").addEventListener("click", () => showView("queue"));
 
 // Me gusta (local) · compartir · abrir en Spotify
 let favs = new Set();
@@ -3240,6 +3348,108 @@ $("more-btn").addEventListener("click", () => {
   if (!url) { showToast("Todavía no hay una canción sonando."); return; }
   window.open(url, "_blank", "noopener");
 });
+
+/* ======================================================================
+   COLA DE REPRODUCCIÓN
+   Spotify permite LEER (GET /me/player/queue) y AGREGAR a la cola, pero no tiene
+   ninguna operación para quitar ni reordenar elementos. Por eso la pantalla muestra
+   lo que suena y lo que sigue, y permite saltar hasta una canción.
+   ====================================================================== */
+const queueView = $("view-queue"), queueMsgEl = $("queue-msg"), queueWrap = $("queue-wrap");
+const queueNowEl = $("queue-now"), queueListEl = $("queue-list"), queueNextTitle = $("queue-next-title");
+let queueLoadedFor = null, queueTimer = null, queueSkipping = false, queueLoadSeq = 0;
+
+function queueMessage(text, goSettings = false) {
+  queueMsgEl.textContent = text || "";
+  queueMsgEl.hidden = !text;
+  if (text && goSettings) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "pill-btn"; b.textContent = "Ir a Configuración";
+    b.addEventListener("click", () => showView("settings"));
+    queueMsgEl.appendChild(b);
+  }
+}
+
+function queueRow(t, n, isNow) {
+  const row = document.createElement("div");
+  row.className = "pl-track" + (isNow ? " is-now" : "");
+  const num = document.createElement("div"); num.className = "num"; num.textContent = isNow ? "▶" : n;
+  const imgs = t.album?.images || t.images || [];
+  const thumb = coverEl(imgs[imgs.length - 1]?.url, "thumb");
+  const info = document.createElement("div"); info.className = "info";
+  const title = document.createElement("div"); title.className = "t"; title.textContent = t.name || "Sin título";
+  const artist = document.createElement("div"); artist.className = "a";
+  artist.textContent = t.artists?.length ? t.artists.map(a => a.name).join(", ") : (t.show?.name || "");
+  info.append(title, artist);
+  const dur = document.createElement("div"); dur.className = "d"; dur.textContent = fmtDuration(t.duration_ms);
+  row.append(num, thumb, info, dur);
+  if (!isNow) {
+    row.tabIndex = 0; row.setAttribute("role", "button");
+    row.title = "Saltar hasta esta canción";
+    row.addEventListener("click", () => skipInQueue(n));
+  }
+  return row;
+}
+
+async function loadQueue() {
+  if (!accessToken && !lsGet(LS.refresh)) { queueWrap.hidden = true; queueMessage("Conecta tu cuenta de Spotify en Configuración para ver la cola.", true); return; }
+  const seq = ++queueLoadSeq;
+  if (queueWrap.hidden) queueMessage("Cargando la cola...");
+  try {
+    const res = await fetch("https://api.spotify.com/v1/me/player/queue", { headers: await authHeaders() });
+    if (seq !== queueLoadSeq) return;
+    if (res.status === 401 || res.status === 403) {
+      queueWrap.hidden = true;
+      queueMessage("Spotify no dejó leer la cola: hace falta un permiso nuevo (en Configuración pulsa Desconectar y vuelve a Conectar Spotify) o la cuenta no es Premium.", true);
+      return;
+    }
+    if (res.status === 404 || res.status === 204) { queueWrap.hidden = true; queueMessage("No hay ningún dispositivo de Spotify activo. Reproduce algo y vuelve a abrir la cola."); return; }
+    if (!res.ok) { queueWrap.hidden = true; queueMessage(`Spotify respondió ${res.status}. Prueba con Actualizar.`); return; }
+    const data = await res.json();
+    if (seq !== queueLoadSeq) return;
+    const now = data.currently_playing, next = data.queue || [];
+    queueNowEl.innerHTML = ""; queueListEl.innerHTML = "";
+    if (now) queueNowEl.appendChild(queueRow(now, 0, true));
+    else { const e = document.createElement("div"); e.className = "queue-empty"; e.textContent = "No suena nada ahora mismo."; queueNowEl.appendChild(e); }
+    if (next.length) next.forEach((t, i) => queueListEl.appendChild(queueRow(t, i + 1, false)));
+    else { const e = document.createElement("div"); e.className = "queue-empty"; e.textContent = "La cola está vacía. Agrega canciones con el botón de cada canción en Buscar y en tus playlists."; queueListEl.appendChild(e); }
+    queueNextTitle.textContent = next.length ? `A continuación · ${next.length}` : "A continuación";
+    queueLoadedFor = now ? now.id : null;
+    queueMessage("");
+    queueWrap.hidden = false;
+  } catch {
+    if (seq !== queueLoadSeq) return;
+    queueWrap.hidden = true;
+    queueMessage("No se pudo conectar con Spotify. Revisa tu conexión.");
+  }
+}
+
+// Si la cola está abierta y cambia la canción, se actualiza sola
+function scheduleQueueRefresh(trackId) {
+  if (!queueView.classList.contains("is-visible") || trackId === queueLoadedFor) return;
+  clearTimeout(queueTimer);
+  queueTimer = setTimeout(loadQueue, 700);
+}
+
+// Saltar hasta la canción n de la cola: se avanza n veces (Spotify no permite elegir un elemento)
+async function skipInQueue(n) {
+  if (queueSkipping || n < 1) return;
+  queueSkipping = true;
+  showToast(n === 1 ? "Saltando a la siguiente canción…" : `Saltando ${n} canciones…`);
+  try {
+    for (let i = 0; i < n; i++) {
+      if (player && !remoteMode) await player.nextTrack();
+      else if (!(await playerApi("POST", "/next"))) break;
+      await new Promise(r => setTimeout(r, 300));
+    }
+  } finally {
+    queueSkipping = false;
+    if (remoteMode) setTimeout(remoteTick, 700);
+    setTimeout(loadQueue, 900);
+  }
+}
+$("queue-refresh-btn").addEventListener("click", loadQueue);
+$("pl-queue-btn").addEventListener("click", () => showView("queue"));
 
 /* ---- Acceso rápido: exportar / importar credenciales y sesión ---- */
 const ACCESS_FIELDS = { clientId: LS.clientId, spicyKey: LS.spicyKey, refreshToken: LS.refresh, scope: LS.scope };
