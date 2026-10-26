@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SaltyLyrics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&display=swap" rel="stylesheet">
 <!-- Renderizador Spicy (opcional): con "Clásico" la app no depende de este archivo. El ?v= lo actualiza `npm run build`. -->
 <link rel="stylesheet" href="spicy-renderer/dist/spicy-renderer.css?v=ed33968f42">
 <style>
   :root{
-    --bg-base: #0b0704;
-    --accent: #ff7a30;
-    --accent2: #ffcf8c;
+    --bg-base: #1c1b17;
+    --accent: #e1c24b;
+    --accent2: #e1c24b;
     --text: #ffffff;
     --text-dim: color-mix(in srgb, var(--text) 30%, transparent);
     --text-mid: color-mix(in srgb, var(--text) 62%, transparent);
     --glass: rgba(0,0,0,.32);
     --stroke: rgba(255,255,255,.14);
-    --progress: #38b6ff;
-    --panel-bg: #000000;   /* tarjetas y menús */
-    --fg: #ffffff;         /* texto e íconos de las tarjetas */
+    --progress: #e1c24b;
+    --panel-bg: #27241a;   /* tarjetas y menús */
+    --fg: #e4e1d9;         /* texto e íconos de las tarjetas */
     --gap: 18px;
-    --font-display: "DynaPuff", system-ui, sans-serif;
+    --font-display: "DynaPuff", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
 
   *{ box-sizing:border-box; }
@@ -838,6 +838,110 @@
   html.tv-mode .offset-slider{ height:40px; }
 
   /* ---- responsive ---- */
+  /* =====================================================================
+     ESTILO MATERIAL YOU (tipo Lawnchair): superficies cálidas y oscuras, barra
+     superior tonal, etiquetas de sección en color de acento, tarjetas agrupadas,
+     interruptores y sliders de Material 3. Solo apariencia: no cambia funciones.
+     Todo sale de las variables del tema (--panel-bg, --fg, --accent2, --progress).
+     ===================================================================== */
+  :root{
+    --m3-bar: color-mix(in srgb, var(--panel-bg) 94%, var(--fg));
+    --m3-tonal: color-mix(in srgb, var(--panel-bg) 86%, var(--fg));
+    --m3-outline: color-mix(in srgb, var(--fg) 50%, transparent);
+    --m3-divider: color-mix(in srgb, var(--fg) 12%, transparent);
+    --m3-selected: color-mix(in srgb, var(--accent2) 26%, var(--panel-bg));
+    --m3-track: color-mix(in srgb, var(--progress) 26%, var(--panel-bg));
+  }
+
+  /* barra superior de cada pantalla */
+  .page{ --page-pad:clamp(16px, 3vw, 40px); padding:0 var(--page-pad) var(--page-pad); }
+  .page > h2, .page-head{
+    position:sticky; top:0; z-index:6;
+    display:flex; align-items:center; gap:12px; flex-wrap:nowrap;
+    min-height:64px; margin:0 0 18px; padding:0 22px;
+    background:var(--m3-bar); border-radius:28px;
+    font-size:1.375rem; font-weight:500; color:var(--fg);
+  }
+  .page-head h2{ flex:1 1 auto; margin:0; font-size:inherit; font-weight:inherit; }
+  .page > h2 + *, .page-head + *{ margin-top:0; }
+
+  /* secciones: etiqueta de color arriba y tarjeta agrupada debajo */
+  .panel{ background:transparent; border-radius:0; padding:0; margin-bottom:22px; }
+  .panel > h3{ margin:0 0 8px 20px; font-size:.875rem; font-weight:500; letter-spacing:.01em; color:var(--accent2); }
+  .m3-card{ background:var(--panel-bg); border-radius:28px; padding:20px 22px; }
+  .panel.pl-tracks{ background:var(--panel-bg); border-radius:28px; padding:8px; }
+  .field-label{ font-size:.875rem; font-weight:500; }
+  .panel .hint{ font-size:.8125rem; line-height:1.55; }
+  .panel .hint code{ border-radius:8px; }
+  .panel-status{ border-radius:16px; background:var(--m3-tonal); }
+
+  /* campos y botones */
+  .pill-input{ height:52px; padding:0 16px; border-radius:16px; border:1px solid var(--m3-outline); }
+  .pill-input:focus{ border-color:var(--accent2); box-shadow:inset 0 0 0 1px var(--accent2); }
+  .link-area, .css-editor{ border:1px solid var(--m3-outline); border-radius:16px; }
+  .link-area:focus, .css-editor:focus{ border-color:var(--accent2); box-shadow:inset 0 0 0 1px var(--accent2); }
+  .pill-btn{ height:40px; padding:0 22px; border:1px solid var(--m3-outline); font-size:.875rem; font-weight:500; letter-spacing:.01em; }
+  .pill-btn:hover{ background:color-mix(in srgb, var(--accent2) 12%, transparent); }
+  .pill-btn.solid{ background:var(--accent2); color:var(--panel-bg); border-color:transparent; }
+  .pill-btn.solid:hover{ background:color-mix(in srgb, var(--accent2) 86%, var(--fg)); transform:none; }
+  .pill-btn[aria-pressed="true"]{ background:var(--m3-selected); color:var(--fg); border-color:transparent; }
+  .pill-btn[aria-pressed="true"]:hover{ background:var(--m3-selected); transform:none; }
+
+  /* interruptores Material 3 (texto a la izquierda, interruptor a la derecha) */
+  .switch-row{ justify-content:space-between; gap:16px; margin:0; padding:14px 0; font-size:1rem; }
+  .switch-row > span:last-child{ order:1; flex:1; }
+  .switch-row .switch{ order:2; }
+  .switch-row + .switch-row{ border-top:1px solid var(--m3-divider); }
+  .switch{ width:52px; height:32px; border:2px solid var(--m3-outline); background:transparent; }
+  .switch::after{ top:50%; left:6px; width:16px; height:16px; transform:translateY(-50%); background:var(--m3-outline);
+    transition:left .2s ease, width .2s ease, height .2s ease, background .2s ease; }
+  .switch-row input:checked + .switch{ background:var(--accent2); border-color:var(--accent2); }
+  .switch-row input:checked + .switch::after{ left:22px; width:24px; height:24px; background:var(--panel-bg); transform:translateY(-50%); }
+  .color-item input[type=color]{ width:40px; height:40px; border:2px solid var(--m3-outline); }
+
+  /* sliders con pista gruesa y asa vertical */
+  .offset-slider{ height:34px; }
+  .offset-slider::-webkit-slider-runnable-track{
+    height:14px; border-radius:99px;
+    background:linear-gradient(to right, var(--m3-track) var(--a), var(--progress) var(--a), var(--progress) var(--b), var(--m3-track) var(--b));
+  }
+  .offset-slider::-moz-range-track{
+    height:14px; border-radius:99px;
+    background:linear-gradient(to right, var(--m3-track) var(--a), var(--progress) var(--a), var(--progress) var(--b), var(--m3-track) var(--b));
+  }
+  .offset-slider::-webkit-slider-thumb{ width:5px; height:34px; margin-top:-10px; border-radius:3px; background:var(--progress); border:none; box-shadow:0 0 0 4px var(--panel-bg); }
+  .offset-slider::-moz-range-thumb{ width:5px; height:34px; border-radius:3px; background:var(--progress); border:none; box-shadow:0 0 0 4px var(--panel-bg); }
+  .offset-slider:hover::-webkit-slider-thumb{ transform:none; }
+  .vol-slider{ height:26px; }
+  .vol-slider::-webkit-slider-runnable-track{ height:10px; background:linear-gradient(90deg, var(--progress) var(--v), var(--m3-track) var(--v)); }
+  .vol-slider::-webkit-slider-thumb{ width:4px; height:26px; margin-top:-8px; border-radius:2px; background:var(--progress); box-shadow:0 0 0 3px var(--panel-bg); }
+  .vol-slider::-moz-range-track{ height:10px; background:var(--m3-track); }
+  .vol-slider::-moz-range-thumb{ width:4px; height:26px; border-radius:2px; background:var(--progress); box-shadow:0 0 0 3px var(--panel-bg); }
+  .seekbar{ height:26px; }
+  .seekbar-track{ height:10px; background:var(--m3-track); }
+  .seekbar-fill{ background:var(--progress); }
+  .seek-thumb{ display:block; position:absolute; top:50%; left:0; width:4px; height:26px; border-radius:2px;
+    background:var(--progress); transform:translate(-50%, -50%); box-shadow:0 0 0 3px var(--panel-bg); pointer-events:none; }
+
+  /* riel de navegación: icono con indicador en píldora y etiqueta debajo */
+  .sidebar{ border-radius:28px; }
+  .sidebar.is-collapsed{ border-radius:28px; }
+  .sidebar-nav-item.is-active{ color:var(--fg); background:var(--m3-selected); }
+  .sidebar.is-collapsed .sidebar-nav-item,
+  .sidebar.is-collapsed .sidebar-nav-item:hover,
+  .sidebar.is-collapsed .sidebar-nav-item.is-active{ background:transparent; color:var(--fg); }
+  .sidebar.is-collapsed .sidebar-nav-item{ border-radius:16px; padding:8px 0 6px; gap:4px; }
+  .sidebar.is-collapsed .sidebar-nav-item svg{ width:3.5rem; height:2rem; padding:.25rem 1rem; box-sizing:border-box; border-radius:1rem; transition:background .2s ease; }
+  .sidebar.is-collapsed .sidebar-nav-item:hover svg{ background:color-mix(in srgb, var(--fg) 10%, transparent); }
+  .sidebar.is-collapsed .sidebar-nav-item.is-active svg{ background:var(--m3-selected); }
+  .sidebar.is-collapsed .sidebar-nav-item.is-active .nav-label{ font-weight:700; }
+
+  /* tarjetas y avisos */
+  .player{ border-radius:28px; }
+  .playbar{ border-radius:28px; }
+  .offset-box{ border-radius:20px; }
+  .toast{ border-radius:16px; background:var(--fg); color:var(--panel-bg); }
+
   @media (max-width: 780px){
     :root{ --gap:10px; }
     .app-layout{ flex-direction:column-reverse; }
@@ -873,8 +977,17 @@
     :where(.lyrics-wrap[data-renderer="classic"]) .lyrics-list{ transition:none; }
     .view.is-visible{ animation:none; }
   }
+  /* Servicio de música: solo se ve lo que corresponde al elegido (Spotify o YouTube Music) */
+  html[data-service="ytm"] [data-svc="spotify"], html[data-service="spotify"] [data-svc="ytm"]{ display:none !important; }
+  /* Reproductor embebido de YouTube: siempre visible (sobre la portada o, si ésta no se ve, como miniatura) */
+  #yt-wrap{ position:fixed; z-index:30; left:0; top:0; width:200px; height:200px; overflow:hidden; background:#000;
+    border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,.45); visibility:hidden; pointer-events:none; }
+  #yt-wrap iframe{ position:absolute; top:0; left:50%; width:177.78% !important; height:100% !important;
+    transform:translateX(-50%); border:0; pointer-events:none; }
 </style>
 <style id="theme-style"></style>
+<script>try{document.documentElement.dataset.service=localStorage.getItem("spicy_service")==="ytm"?"ytm":"spotify";}catch(e){document.documentElement.dataset.service="spotify";}</script>
+<style id="font-css"></style>
 <style id="custom-css"></style>
 </head>
 <body>
@@ -891,40 +1004,40 @@
 
   <!-- ===== Sidebar ===== -->
   <aside class="sidebar" id="sidebar">
-    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Mostrar u ocultar el menú" aria-expanded="true">
+    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Show or hide the menu" data-i18n-aria="sidebar.toggle" aria-expanded="true">
       <svg viewBox="0 0 24 24"><path d="M3 5.5h18M3 12h18M3 18.5h18"/></svg>
     </button>
 
     <nav class="sidebar-nav">
-      <button class="sidebar-nav-item is-active" data-view="home" type="button" title="Inicio">
+      <button class="sidebar-nav-item is-active" data-view="home" type="button" title="Home" data-i18n-title="nav.home">
         <svg viewBox="0 0 24 24"><path d="M2.5 12 12 3.8 21.5 12"/><path d="M5.5 10.2V20.5h13V10.2"/><path d="M10 20.5v-5.2h4v5.2"/><path d="M7 7.6V4.6h2.2v1.2"/></svg>
-        <span class="nav-label">Inicio</span>
+        <span class="nav-label" data-i18n="nav.home">Home</span>
       </button>
-      <button class="sidebar-nav-item" data-view="search" type="button" title="Buscar">
+      <button class="sidebar-nav-item" data-view="search" type="button" title="Search" data-i18n-title="nav.search">
         <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m15.8 15.8 5.7 5.7"/></svg>
-        <span class="nav-label">Buscar</span>
+        <span class="nav-label" data-i18n="nav.search">Search</span>
       </button>
-      <button class="sidebar-nav-item" data-view="playlists" type="button" title="Playlists">
+      <button class="sidebar-nav-item" data-svc="spotify" data-view="playlists" type="button" title="Playlists">
         <svg viewBox="0 0 24 24"><path d="M21 15V6"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>
         <span class="nav-label">Playlists</span>
       </button>
-      <button class="sidebar-nav-item" data-view="player" type="button" title="Reproductor">
+      <button class="sidebar-nav-item" data-view="player" type="button" title="Player" data-i18n-title="nav.player">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.6"/><path class="solid" d="M10 8.2v7.6L16.4 12 10 8.2Z"/></svg>
-        <span class="nav-label">Reproductor</span>
+        <span class="nav-label" data-i18n="nav.player">Player</span>
       </button>
-      <button class="sidebar-nav-item" id="settings-btn" data-view="settings" type="button" title="Configuración">
+      <button class="sidebar-nav-item" id="settings-btn" data-view="settings" type="button" title="Settings" data-i18n-title="nav.settings">
         <svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-        <span class="nav-label">Configuración</span>
+        <span class="nav-label" data-i18n="nav.settings">Settings</span>
       </button>
-      <button class="sidebar-nav-item" data-view="credits" type="button" title="Créditos">
+      <button class="sidebar-nav-item" data-view="credits" type="button" title="Credits" data-i18n-title="nav.credits">
         <svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-        <span class="nav-label">Créditos</span>
+        <span class="nav-label" data-i18n="nav.credits">Credits</span>
       </button>
     </nav>
 
     <div class="sidebar-spacer"></div>
 
-    <div class="sidebar-powered">Powered by <b>Spotify</b> &amp; <b>Spicy&nbsp;Lyrics</b></div>
+    <div class="sidebar-powered" data-i18n-html="sidebar.powered">Powered by <b>Spotify</b> &amp; <b>Spicy&nbsp;Lyrics</b></div>
 
     <!-- Colapsada: logo.png (círculo) · Expandida: fulllogo.png (alargado).
          Si la imagen no existe se muestra un texto de respaldo. -->
@@ -942,110 +1055,179 @@
 
     <!-- INICIO (por ahora vacío; se le dará otro uso después) -->
     <section class="view page is-visible" id="view-home">
-      <h2>Inicio</h2>
-      <p>Esta sección todavía está vacía. Para conectar tu cuenta de Spotify, ve a Configuración.</p>
-      <button class="btn secondary" id="goto-settings-btn" type="button">Ir a Configuración</button>
+      <h2 data-i18n="nav.home">Home</h2>
+      <p data-i18n="home.text">This section is still empty. To connect your music service, go to Settings.</p>
+      <button class="btn secondary" id="goto-settings-btn" type="button" data-i18n="goto.settings">Go to Settings</button>
     </section>
 
     <!-- CONFIGURACIÓN -->
     <section class="view page" id="view-settings">
-      <h2>Configuración</h2>
+      <h2 data-i18n="nav.settings">Settings</h2>
 
-      <div class="panel" id="auth-return-box" hidden>
-        <h3>Código de Spotify recibido</h3>
-        <p class="hint" style="margin-top:0">Este navegador no inició el inicio de sesión, así que no puede terminarlo aquí. Copia esta dirección completa y pégala en la app donde generaste el enlace (Configuración → Conectar Spotify → campo «Pega aquí la dirección…»). Hazlo pronto: el código caduca en unos minutos.</p>
+      <div class="panel" id="auth-return-box" data-svc="spotify" hidden>
+        <h3 data-i18n="auth.returnTitle">Spotify code received</h3>
+        <div class="m3-card">
+        <p class="hint" style="margin-top:0" data-i18n="auth.returnHint">This browser did not start the sign-in, so it can’t finish it here. Copy this full address and paste it into the app where you generated the link (Settings → Connect Spotify → the “Paste here the address…” field). Do it soon: the code expires in a few minutes.</p>
         <textarea id="auth-return" class="link-area" readonly rows="5" spellcheck="false"></textarea>
         <div class="field-row actions-sm">
-          <button class="pill-btn solid" id="copy-return-btn" type="button">Copiar dirección</button>
+          <button class="pill-btn solid" id="copy-return-btn" type="button" data-i18n="copy.address">Copy address</button>
+        </div>
         </div>
       </div>
 
       <div class="panel">
+        <h3 data-i18n="lang.title">Language</h3>
+        <div class="m3-card">
+        <div class="field-label" id="lang-label" data-i18n="lang.label">Interface language</div>
+        <div class="field-row actions" role="group" aria-labelledby="lang-label">
+          <button class="pill-btn solid" id="lang-en-btn" type="button" aria-pressed="true" lang="en">English</button>
+          <button class="pill-btn" id="lang-es-btn" type="button" aria-pressed="false" lang="es">Español</button>
+        </div>
+        <p class="hint" data-i18n="lang.hint">The language is applied instantly and saved in this browser.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 data-i18n="svc.title">Music service</h3>
+        <div class="m3-card">
+        <div class="field-label" id="svc-label" data-i18n="svc.label">Connect to</div>
+        <div class="field-row actions" role="group" aria-labelledby="svc-label">
+          <button class="pill-btn solid" id="svc-spotify-btn" type="button" aria-pressed="true">Spotify</button>
+          <button class="pill-btn" id="svc-ytm-btn" type="button" aria-pressed="false">YouTube Music</button>
+        </div>
+        <p class="hint" data-i18n="svc.hint">Pick where your music comes from. Only the options that service needs are shown below. Changing it restarts the app.</p>
+        </div>
+      </div>
+
+      <div class="panel" data-svc="ytm">
+        <h3 data-i18n="yt.title">YouTube Music</h3>
+        <div class="m3-card">
+        <label class="field-label" for="yt-key-input" data-i18n="yt.keyLabel">YouTube Data API key</label>
+        <div class="field-row">
+          <input id="yt-key-input" class="pill-input" type="text" placeholder="Paste your API key here (starts with AIza)" data-i18n-ph="ph.ytKey" autocomplete="off" spellcheck="false">
+          <button class="pill-btn" id="yt-check-btn" type="button" data-i18n="yt.check">Check key</button>
+        </div>
+        <p class="hint" data-i18n-html="yt.hint">Saved in this browser. Create it in <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud</a> after enabling “YouTube Data API v3”, and restrict it to this site’s address and to that API. Each search uses 100 of the 10,000 free daily units. Playback uses YouTube’s embedded player, so the app must be opened from https:// (or localhost), and free accounts will hear ads. Lyrics come from <a href="https://lrclib.net" target="_blank" rel="noopener">LRCLIB</a>.</p>
+        <div class="panel-status" id="yt-status" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="panel" data-svc="spotify">
         <h3>Spotify</h3>
+        <div class="m3-card">
 
         <label class="field-label" for="client-id-input">Client ID</label>
         <div class="field-row">
-          <input id="client-id-input" class="pill-input" type="text" placeholder="Pega aquí tu Client ID" autocomplete="off" spellcheck="false">
-          <a class="pill-btn" href="clientidsetup-configuration.pdf" target="_blank" rel="noopener">Instrucciones</a>
+          <input id="client-id-input" class="pill-input" type="text" placeholder="Paste your Client ID here" data-i18n-ph="ph.clientId" autocomplete="off" spellcheck="false">
+          <a class="pill-btn" href="clientidsetup-configuration.pdf" target="_blank" rel="noopener" data-i18n="instructions">Instructions</a>
         </div>
-        <p class="hint">Se guarda en este navegador. Registra esta Redirect URI en tu app de Spotify:<br><code id="redirect-uri-text"></code></p>
+        <p class="hint" data-i18n-html="spotify.redirectHint">Saved in this browser. Register this Redirect URI in your Spotify app:<br><code id="redirect-uri-text"></code></p>
 
         <div class="field-row actions">
-          <button class="pill-btn solid" id="login-btn" type="button">Conectar Spotify</button>
-          <button class="pill-btn" id="logout-btn" type="button" hidden>Desconectar</button>
+          <button class="pill-btn solid" id="login-btn" type="button">Connect Spotify</button>
+          <button class="pill-btn" id="logout-btn" type="button" hidden data-i18n="disconnect">Disconnect</button>
         </div>
 
         <div class="link-box" id="auth-link-box" hidden>
-          <label class="field-label" for="auth-link">Enlace de autorización</label>
+          <label class="field-label" for="auth-link" data-i18n="auth.linkLabel">Authorization link</label>
           <textarea id="auth-link" class="link-area" readonly rows="5" spellcheck="false"></textarea>
           <div class="field-row actions-sm">
-            <button class="pill-btn" id="copy-link-btn" type="button">Copiar enlace</button>
-            <button class="pill-btn" id="open-link-btn" type="button">Abrir aquí</button>
+            <button class="pill-btn" id="copy-link-btn" type="button" data-i18n="copy.link">Copy link</button>
+            <button class="pill-btn" id="open-link-btn" type="button" data-i18n="open.here">Open here</button>
           </div>
-          <p class="hint">Abre el enlace en cualquier dispositivo (por ejemplo tu teléfono) con la misma cuenta de Spotify y aprueba el acceso. Después Spotify te llevará a la dirección de la app. Si el teléfono muestra un error («no se puede acceder»), es normal: toca la barra de direcciones, selecciona todo el texto y cópialo. Si en cambio abre la app, ahí mismo aparecerá la dirección lista para copiar. Pásala a esta computadora (mensaje, notas, correo…) y pégala aquí abajo. Si vuelves a pulsar Conectar Spotify, el enlace anterior deja de servir.</p>
+          <p class="hint" data-i18n="auth.linkHint">Open the link on any device (for example your phone) with the same Spotify account and approve access. Afterwards Spotify will take you to the app’s address. If the phone shows an error (“can’t be reached”), that’s normal: tap the address bar, select all the text and copy it. If instead it opens the app, the address will appear right there ready to copy. Move it to this computer (message, notes, email…) and paste it below. If you press Connect Spotify again, the previous link stops working.</p>
           <div class="field-row">
-            <input id="auth-paste" class="pill-input" type="text" placeholder="Pega aquí la dirección a la que te llevó Spotify" autocomplete="off" spellcheck="false">
-            <button class="pill-btn solid" id="auth-paste-btn" type="button">Continuar</button>
+            <input id="auth-paste" class="pill-input" type="text" placeholder="Paste here the address Spotify took you to" data-i18n-ph="ph.pasteAddress" autocomplete="off" spellcheck="false">
+            <button class="pill-btn solid" id="auth-paste-btn" type="button" data-i18n="continue">Continue</button>
           </div>
         </div>
 
-        <div class="panel-status" id="status">Estado: sin conectar.</div>
+        <div class="panel-status" id="status">Status: not connected.</div>
+        </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" data-svc="spotify">
         <h3>Spicy Lyrics</h3>
+        <div class="m3-card">
         <label class="field-label" for="spicy-key-input">Client Key</label>
         <div class="field-row">
-          <input id="spicy-key-input" class="pill-input" type="text" placeholder="Pega aquí tu Client Key (sl_pk_...)" autocomplete="off" spellcheck="false">
-          <a class="pill-btn" href="spicyclientkey.pdf" target="_blank" rel="noopener">Instrucciones</a>
+          <input id="spicy-key-input" class="pill-input" type="text" placeholder="Paste your Client Key here (sl_pk_...)" data-i18n-ph="ph.clientKey" autocomplete="off" spellcheck="false">
+          <a class="pill-btn" href="spicyclientkey.pdf" target="_blank" rel="noopener" data-i18n="instructions">Instructions</a>
         </div>
-        <p class="hint" id="spicy-key-hint">Se guarda en este navegador. Usa la clave pública (empieza con sl_pk_); nunca la secreta (sl_sk_).</p>
+        <p class="hint" id="spicy-key-hint">Saved in this browser. Use the public key (starts with sl_pk_); never the secret one (sl_sk_).</p>
+        </div>
       </div>
 
       <div class="panel">
-        <h3>Acceso rápido</h3>
+        <h3 data-i18n="access.title">Quick access</h3>
+        <div class="m3-card">
         <div class="field-row actions">
-          <button class="pill-btn" id="access-export-btn" type="button">Guardar acceso en un archivo</button>
-          <button class="pill-btn" id="access-import-btn" type="button">Cargar acceso desde un archivo</button>
+          <button class="pill-btn" id="access-export-btn" type="button" data-i18n="access.save">Save access to a file</button>
+          <button class="pill-btn" id="access-import-btn" type="button" data-i18n="access.load">Load access from a file</button>
           <input type="file" id="access-import-file" accept="application/json,.json" hidden>
         </div>
-        <p class="hint">Guarda tu Client ID, tu Client Key y tu sesión de Spotify en un archivo para iniciar rápido en otro navegador o dominio (el navegador guarda estos datos por separado en cada uno). <b>El archivo equivale a una contraseña</b>: no lo compartas ni lo subas a ningún repositorio.</p>
+        <p class="hint" data-i18n-html="access.hint">Saves your Client ID, your Client Key and your Spotify session to a file so you can sign in quickly in another browser or domain (the browser stores this data separately in each one). <b>The file is equivalent to a password</b>: don’t share it or upload it to any repository.</p>
+        </div>
       </div>
 
       <div class="panel">
-        <h3>Apariencia</h3>
-        <label class="switch-row"><input type="checkbox" id="fx-toggle" checked><span class="switch"></span><span>Fondo animado (portada difuminada y manchas en movimiento)</span></label>
-        <label class="switch-row"><input type="checkbox" id="auto-accent-toggle" checked><span class="switch"></span><span>Colores del resaltado automáticos (según la portada)</span></label>
+        <h3 data-i18n="appearance.title">Appearance</h3>
+        <div class="m3-card">
+        <label class="switch-row"><input type="checkbox" id="fx-toggle" checked><span class="switch"></span><span data-i18n="appearance.fx">Animated background (blurred cover and moving blobs)</span></label>
+        <label class="switch-row"><input type="checkbox" id="auto-accent-toggle" checked><span class="switch"></span><span data-i18n="appearance.auto">Automatic highlight colors (based on the cover)</span></label>
         <div class="color-grid" id="color-grid"></div>
         <div class="field-row actions">
-          <button class="pill-btn" id="reset-colors-btn" type="button">Restablecer colores</button>
+          <button class="pill-btn" id="reset-colors-btn" type="button" data-i18n="appearance.reset">Reset colors</button>
+        </div>
         </div>
       </div>
 
       <div class="panel">
-        <h3>Letras</h3>
-        <div class="field-label" id="renderer-label">Renderizador de letras</div>
-        <div class="field-row actions" role="group" aria-labelledby="renderer-label">
-          <button class="pill-btn solid" id="renderer-spicy-btn" type="button" aria-pressed="true">Spicy (nuevo)</button>
-          <button class="pill-btn" id="renderer-classic-btn" type="button" aria-pressed="false">Clásico (anterior)</button>
+        <h3 data-i18n="font.title">Font</h3>
+        <div class="m3-card">
+        <label class="field-label" for="font-input" data-i18n="font.label">Google Fonts link</label>
+        <div class="field-row">
+          <input id="font-input" class="pill-input" type="text" placeholder="https://fonts.googleapis.com/css2?family=..." data-i18n-ph="font.ph" autocomplete="off" spellcheck="false">
+          <button class="pill-btn solid" id="font-apply-btn" type="button" data-i18n="font.apply">Apply</button>
         </div>
-        <label class="switch-row"><input type="checkbox" id="lyrics-font-toggle" checked><span class="switch"></span><span>Usar la fuente de la interfaz en las letras (Spicy)</span></label>
-        <p class="hint">Spicy es el renderizador nuevo, derivado del de Spicy Lyrics y del AMLL TTML Tool (AGPL-3.0). Clásico es el anterior. El cambio se aplica al instante y se guarda en este navegador.</p>
-      </div>
-
-      <div class="panel">
-        <h3>TV y mando</h3>
-        <label class="switch-row"><input type="checkbox" id="tv-toggle"><span class="switch"></span><span>Modo TV (interfaz grande para verla de lejos)</span></label>
-        <label class="switch-row"><input type="checkbox" id="remote-toggle"><span class="switch"></span><span>Control remoto: reproducir en otro dispositivo de Spotify</span></label>
-        <p class="hint">Con el mando: flechas para moverte, OK para elegir y Atrás para volver (en el reproductor, izquierda y derecha sobre la barra de progreso adelantan o atrasan 10 s). Las teclas multimedia (play/pausa, siguiente, anterior) también funcionan. Muchas TV no pueden reproducir audio con el SDK de Spotify: en ese caso activa el control remoto, abre Spotify en tu teléfono o computadora, y la TV mostrará las letras y controlará esa reproducción. El control remoto necesita Spotify Premium.</p>
-      </div>
-
-      <div class="panel">
-        <h3>CSS personalizado</h3>
-        <p class="hint" style="margin-top:0">Se aplica al instante y se guarda en este navegador. La base trae ejemplos comentados (fuente, variables, formas): quita el comentario de lo que quieras activar.</p>
-        <textarea id="css-editor" class="css-editor" spellcheck="false" aria-label="CSS personalizado"></textarea>
+        <p class="hint" data-i18n-html="font.hint">On <a href="https://fonts.google.com" target="_blank" rel="noopener">fonts.google.com</a> pick a font, press “Get font” → “Get embed code” and paste here the link (or the whole code) it gives you. It is applied to the whole app, lyrics included, and saved in this browser.</p>
+        <div class="panel-status" id="font-status" aria-live="polite"></div>
         <div class="field-row actions">
-          <button class="pill-btn" id="css-reset-btn" type="button">Restablecer base</button>
+          <button class="pill-btn" id="font-reset-btn" type="button" data-i18n="font.reset">Use DynaPuff (default)</button>
+        </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 data-i18n="lyrics.title">Lyrics</h3>
+        <div class="m3-card">
+        <div class="field-label" id="renderer-label" data-i18n="lyrics.renderer">Lyrics renderer</div>
+        <div class="field-row actions" role="group" aria-labelledby="renderer-label">
+          <button class="pill-btn solid" id="renderer-spicy-btn" type="button" aria-pressed="true" data-i18n="lyrics.spicy">Spicy (new)</button>
+          <button class="pill-btn" id="renderer-classic-btn" type="button" aria-pressed="false" data-i18n="lyrics.classic">Classic (previous)</button>
+        </div>
+        <label class="switch-row"><input type="checkbox" id="lyrics-font-toggle" checked><span class="switch"></span><span data-i18n="lyrics.font">Use the interface font for the lyrics (Spicy)</span></label>
+        <p class="hint" data-i18n="lyrics.hint">Spicy is the new renderer, derived from the one in Spicy Lyrics and from the AMLL TTML Tool (AGPL-3.0). Classic is the previous one. The change is applied instantly and saved in this browser.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 data-i18n="tv.title">TV and remote</h3>
+        <div class="m3-card">
+        <label class="switch-row"><input type="checkbox" id="tv-toggle"><span class="switch"></span><span data-i18n="tv.mode">TV mode (large interface to view from afar)</span></label>
+        <label class="switch-row" data-svc="spotify"><input type="checkbox" id="remote-toggle"><span class="switch"></span><span data-i18n="tv.remote">Remote control: play on another Spotify device</span></label>
+        <p class="hint" data-i18n="tv.hint">With the remote: arrows to move, OK to select and Back to go back (in the player, left and right on the progress bar skip forward or back 10 s). The media keys (play/pause, next, previous) also work. Many TVs can’t play audio with the Spotify SDK: in that case turn on remote control, open Spotify on your phone or computer, and the TV will show the lyrics and control that playback. Remote control needs Spotify Premium.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 data-i18n="css.title">Custom CSS</h3>
+        <div class="m3-card">
+        <p class="hint" style="margin-top:0" data-i18n="css.hint">Applied instantly and saved in this browser. The base includes commented examples (font, variables, shapes): remove the comment from whatever you want to enable.</p>
+        <textarea id="css-editor" class="css-editor" spellcheck="false" aria-label="Custom CSS" data-i18n-aria="css.title"></textarea>
+        <div class="field-row actions">
+          <button class="pill-btn" id="css-reset-btn" type="button" data-i18n="css.reset">Reset base</button>
+        </div>
         </div>
       </div>
     </section>
@@ -1054,8 +1236,8 @@
     <section class="view page" id="view-playlists">
       <div class="page-head">
         <h2>Playlists</h2>
-        <button class="pill-btn" id="pl-queue-btn" type="button">Ver cola</button>
-        <button class="pill-btn" id="pl-refresh-btn" type="button">Actualizar</button>
+        <button class="pill-btn" id="pl-queue-btn" type="button" data-i18n="pl.viewQueue">View queue</button>
+        <button class="pill-btn" id="pl-refresh-btn" type="button" data-i18n="refresh">Refresh</button>
       </div>
       <div class="pl-msg" id="pl-msg" hidden></div>
       <div class="pl-grid" id="pl-list"></div>
@@ -1068,63 +1250,69 @@
             <div class="pl-head-name" id="pl-head-name"></div>
             <div class="pl-sub" id="pl-head-sub"></div>
           </div>
-          <button class="pill-btn solid" id="pl-play-btn" type="button">Reproducir</button>
+          <button class="pill-btn solid" id="pl-play-btn" type="button" data-i18n="play">Play</button>
         </div>
         <div class="panel pl-tracks" id="pl-tracks"></div>
-        <button class="pill-btn" id="pl-more-btn" type="button" hidden>Cargar más</button>
+        <button class="pill-btn" id="pl-more-btn" type="button" hidden data-i18n="loadMore">Load more</button>
       </div>
     </section>
 
     <section class="view page" id="view-queue">
       <div class="page-head">
-        <h2>Cola</h2>
-        <button class="pill-btn" id="queue-refresh-btn" type="button">Actualizar</button>
+        <h2 data-i18n="queue.title">Queue</h2>
+        <button class="pill-btn" id="queue-refresh-btn" type="button" data-i18n="refresh">Refresh</button>
       </div>
       <div class="pl-msg" id="queue-msg" hidden></div>
       <div class="qwrap" id="queue-wrap" hidden>
-        <p class="queue-hint">Spotify no permite quitar ni reordenar canciones de la cola desde otras apps. Puedes pulsar una canción para saltar hasta ella (las que están antes se omiten).</p>
-        <div class="queue-sub">Reproduciendo ahora</div>
+        <p class="queue-hint" data-i18n="queue.hint">Spotify doesn’t let other apps remove or reorder songs in the queue. You can tap a song to jump to it (the ones before it are skipped).</p>
+        <div class="queue-sub" data-i18n="queue.now">Now playing</div>
         <div class="panel pl-tracks" id="queue-now"></div>
-        <div class="queue-sub" id="queue-next-title">A continuación</div>
+        <div class="queue-sub" id="queue-next-title" data-tk="q.next">Up next</div>
         <div class="panel pl-tracks" id="queue-list"></div>
       </div>
     </section>
 
     <!-- CRÉDITOS -->
     <section class="view page" id="view-credits">
-      <h2>Créditos</h2>
+      <h2 data-i18n="nav.credits">Credits</h2>
 
       <div class="panel">
-        <h3>Hecho con</h3>
+        <h3 data-i18n="credits.builtWith">Built with</h3>
+        <div class="m3-card">
         <ul class="credits-list">
-          <li><strong>Spotify</strong> — la música, las portadas y la reproducción vienen de la Web API y el Web Playback SDK de Spotify. <a href="https://www.spotify.com" target="_blank" rel="noopener">spotify.com</a></li>
-          <li><strong>Spicy Lyrics</strong> — las letras sincronizadas las suben y sincronizan personas de su comunidad. El crédito de cada canción aparece al pie de la letra. <a href="https://github.com/Spikerko/spicy-lyrics" target="_blank" rel="noopener">github.com/Spikerko/spicy-lyrics</a></li>
-          <li><strong>DynaPuff</strong> — la fuente de toda la app, vía Google Fonts. <a href="https://fonts.google.com/specimen/DynaPuff" target="_blank" rel="noopener">fonts.google.com</a></li>
-          <li><strong>Lucide</strong> — el ícono de Configuración (licencia ISC). <a href="https://lucide.dev" target="_blank" rel="noopener">lucide.dev</a></li>
+          <li data-i18n-html="credits.spotify"><strong>Spotify</strong> — the music, covers and playback come from Spotify’s Web API and Web Playback SDK. <a href="https://www.spotify.com" target="_blank" rel="noopener">spotify.com</a></li>
+          <li data-i18n-html="credits.spicy"><strong>Spicy Lyrics</strong> — the synced lyrics are uploaded and synced by people in its community. The credit for each song appears at the bottom of the lyrics. <a href="https://github.com/Spikerko/spicy-lyrics" target="_blank" rel="noopener">github.com/Spikerko/spicy-lyrics</a></li>
+          <li data-i18n-html="credits.youtube"><strong>YouTube</strong> — playback comes from YouTube’s embedded player and search from the YouTube Data API v3. <a href="https://developers.google.com/youtube" target="_blank" rel="noopener">developers.google.com/youtube</a></li>
+        <li data-i18n-html="credits.lrclib"><strong>LRCLIB</strong> — the synced lyrics for YouTube Music songs. <a href="https://lrclib.net" target="_blank" rel="noopener">lrclib.net</a></li>
+        <li data-i18n-html="credits.dynapuff"><strong>DynaPuff</strong> — the default font of the whole app, via Google Fonts. <a href="https://fonts.google.com/specimen/DynaPuff" target="_blank" rel="noopener">fonts.google.com</a></li>
+          <li data-i18n-html="credits.lucide"><strong>Lucide</strong> — the Settings icon (ISC license). <a href="https://lucide.dev" target="_blank" rel="noopener">lucide.dev</a></li>
         </ul>
+        </div>
       </div>
 
       <div class="panel">
-        <h3>Proyecto</h3>
-        <p>Interfaz y código: omargalav.</p>
-        <p class="hint">Spotify es una marca de Spotify AB. Esta aplicación es un proyecto independiente: no está afiliada, patrocinada ni respaldada por Spotify ni por Spicy Lyrics. La música, las portadas y las letras pertenecen a sus respectivos titulares.</p>
+        <h3 data-i18n="credits.project">Project</h3>
+        <div class="m3-card">
+        <p data-i18n="credits.author">Interface and code: omargalav.</p>
+        <p class="hint" data-i18n="credits.disclaimer">Spotify is a trademark of Spotify AB; YouTube and YouTube Music are trademarks of Google LLC. This application is an independent project: it is not affiliated with, sponsored by or endorsed by Spotify, Google, YouTube, Spicy Lyrics or LRCLIB. The music, covers and lyrics belong to their respective owners.</p>
+        </div>
       </div>
     </section>
 
     <!-- BUSCAR -->
     <section class="view page" id="view-search">
-      <h2>Buscar</h2>
-      <input id="search-input" class="input" type="text" placeholder="Nombre de la canción o artista...">
+      <h2 data-i18n="nav.search">Search</h2>
+      <input id="search-input" class="input" type="text" placeholder="Song or artist name..." data-i18n-ph="ph.search">
       <br>
-      <button class="btn secondary" id="search-btn">Buscar</button>
+      <button class="btn secondary" id="search-btn" data-i18n="nav.search">Search</button>
       <div id="search-results"></div>
 
       <details class="advanced-uri">
-        <summary>Opción avanzada: pegar URI manualmente</summary>
-        <label for="track-uri">URI de la canción</label>
+        <summary data-i18n="search.advanced">Advanced option: paste a link or URI manually</summary>
+        <label for="track-uri" data-i18n="search.uriLabel">Song link or URI</label>
         <input id="track-uri" class="input" type="text" value="spotify:track:4uLU6hMCjMI75M1A2tKUQC">
         <br>
-        <button class="btn secondary" id="play-uri-btn">Reproducir esta URI</button>
+        <button class="btn secondary" id="play-uri-btn" data-i18n="search.playUri">Play this URI</button>
       </details>
     </section>
 
@@ -1138,18 +1326,18 @@
           </div>
 
           <div class="meta">
-            <div class="title" id="track-title">Título</div>
-            <div class="artist"><span id="track-artist">Artista</span><span id="track-album"></span></div>
+            <div class="title" id="track-title" data-i18n="track.title">Title</div>
+            <div class="artist"><span id="track-artist" data-i18n="track.artist">Artist</span><span id="track-album"></span></div>
           </div>
 
           <div class="track-actions">
-            <button class="circle-btn" id="fav-btn" type="button" title="Me gusta (se guarda solo en este navegador)" aria-label="Me gusta" aria-pressed="false">
+            <button class="circle-btn" id="fav-btn" type="button" title="Like (saved only in this browser)" data-i18n-title="fav.title" aria-label="Like" data-i18n-aria="fav.aria" aria-pressed="false">
               <svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
             </button>
-            <button class="circle-btn" id="share-btn" type="button" title="Copiar enlace de la canción" aria-label="Copiar enlace de la canción">
+            <button class="circle-btn" id="share-btn" type="button" title="Copy song link" data-i18n-title="share.title" aria-label="Copy song link" data-i18n-aria="share.title">
               <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
             </button>
-            <button class="circle-btn" id="more-btn" type="button" title="Abrir en Spotify" aria-label="Abrir la canción en Spotify">
+            <button class="circle-btn" id="more-btn" type="button" title="Open in Spotify" data-i18n-title="open.title" aria-label="Open the song in Spotify" data-i18n-aria="open.aria">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="19" r="1.3" fill="currentColor"/></svg>
             </button>
           </div>
@@ -1157,7 +1345,7 @@
 
         <div class="lyrics-col">
           <div class="lyrics-wrap" id="lyricsWrap" data-renderer="classic">
-            <div class="empty-state" id="emptyState">Busca y reproduce una canción para ver la letra.</div>
+            <div class="empty-state" id="emptyState" data-tk="lyr.empty">Search and play a song to see its lyrics.</div>
             <div class="lyrics-list" id="lyricsList"></div>
           </div>
 
@@ -1165,15 +1353,15 @@
             <div class="lyrics-attribution" id="lyrics-attribution"></div>
             <div class="offset-box">
               <div class="lyrics-offset">
-                <button class="offset-btn" id="offset-minus" title="Atrasar la letra 0.1s" aria-label="Atrasar la letra 0.1 segundos">
+                <button class="offset-btn" id="offset-minus" title="Delay the lyrics 0.1s" data-i18n-title="offset.minus" aria-label="Delay the lyrics 0.1 seconds" data-i18n-aria="offset.minus.aria">
                   <svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg>
                 </button>
-                <input type="range" class="offset-slider" id="offset-slider" min="-5" max="5" step="0.1" value="0.2" aria-label="Sincronía de la letra en segundos">
-                <button class="offset-btn" id="offset-plus" title="Adelantar la letra 0.1s" aria-label="Adelantar la letra 0.1 segundos">
+                <input type="range" class="offset-slider" id="offset-slider" min="-5" max="5" step="0.1" value="0.2" aria-label="Lyrics sync in seconds" data-i18n-aria="offset.slider">
+                <button class="offset-btn" id="offset-plus" title="Advance the lyrics 0.1s" data-i18n-title="offset.plus" aria-label="Advance the lyrics 0.1 seconds" data-i18n-aria="offset.plus.aria">
                   <svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
                 </button>
               </div>
-              <div class="offset-value" id="offset-value" title="Clic para volver a +0.2s">Sincronía: +0.2s</div>
+              <div class="offset-value" id="offset-value" title="Click to reset to +0.2s">Sync: +0.2s</div>
             </div>
           </div>
         </div>
@@ -1192,26 +1380,26 @@
 
         <div class="pb-center">
           <div class="controls">
-            <button class="control-btn small" id="shuffle-btn" type="button" title="Aleatorio" aria-label="Aleatorio" aria-pressed="false">
+            <button class="control-btn small" id="shuffle-btn" type="button" title="Shuffle" aria-label="Shuffle" data-i18n-aria="shuf" aria-pressed="false">
               <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg>
             </button>
-            <button class="control-btn" id="prev-btn" disabled title="Anterior" aria-label="Anterior">
+            <button class="control-btn" id="prev-btn" disabled title="Previous" data-i18n-title="prev" aria-label="Previous" data-i18n-aria="prev">
               <svg viewBox="0 0 24 24"><path d="M4.5 5v14"/><path d="M19.5 5 9 12l10.5 7"/></svg>
             </button>
-            <button class="control-btn play-btn" id="toggle-play-btn" data-entry disabled title="Play/Pausa" aria-label="Reproducir o pausar">
+            <button class="control-btn play-btn" id="toggle-play-btn" data-entry disabled title="Play/Pause" data-i18n-title="playpause.title" aria-label="Play or pause" data-i18n-aria="playpause.aria">
               <svg id="toggle-play-icon" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19.2 12 8 5.2Z" fill="currentColor" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
             </button>
-            <button class="control-btn" id="next-btn" disabled title="Siguiente" aria-label="Siguiente">
+            <button class="control-btn" id="next-btn" disabled title="Next" data-i18n-title="next" aria-label="Next" data-i18n-aria="next">
               <svg viewBox="0 0 24 24"><path d="M19.5 5v14"/><path d="M4.5 5 15 12 4.5 19"/></svg>
             </button>
-            <button class="control-btn small" id="repeat-btn" type="button" title="Repetir" aria-label="Repetir" data-mode="0" aria-pressed="false">
+            <button class="control-btn small" id="repeat-btn" type="button" title="Repeat" aria-label="Repeat" data-i18n-aria="rep" data-mode="0" aria-pressed="false">
               <svg viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
             </button>
           </div>
 
           <div class="seekrow">
             <span class="time" id="time-current">0:00</span>
-            <div class="seekbar" id="seekbar" role="slider" aria-label="Progreso de la canción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            <div class="seekbar" id="seekbar" role="slider" aria-label="Song progress" data-i18n-aria="seek.aria" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
               <div class="seekbar-track"><div class="seekbar-fill" id="seekbar-fill"></div></div>
               <div class="seek-thumb" id="seek-thumb"></div>
             </div>
@@ -1220,17 +1408,17 @@
         </div>
 
         <div class="pb-right">
-          <button class="icon-btn" id="focus-btn" type="button" title="Modo letra (ocultar la portada)" aria-label="Modo letra" aria-pressed="false">
+          <button class="icon-btn" id="focus-btn" type="button" title="Lyrics mode (hide the cover)" data-i18n-title="focus.title" aria-label="Lyrics mode" data-i18n-aria="focus.aria" aria-pressed="false">
             <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
           </button>
-          <button class="icon-btn" id="queue-btn" type="button" title="Cola de reproducción" aria-label="Cola de reproducción">
+          <button class="icon-btn" id="queue-btn" data-svc="spotify" type="button" title="Playback queue" data-i18n-title="queue.btn" aria-label="Playback queue" data-i18n-aria="queue.btn">
             <svg viewBox="0 0 24 24"><path d="M21 15V6"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>
           </button>
-          <button class="icon-btn" id="volume-btn" type="button" title="Silenciar" aria-label="Silenciar o activar el sonido">
+          <button class="icon-btn" id="volume-btn" type="button" title="Mute" data-i18n-title="mute.title" aria-label="Mute or unmute" data-i18n-aria="mute.aria">
             <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><g class="vol-waves"><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></g><path class="vol-x" d="m16 9 6 6M22 9l-6 6"/></svg>
           </button>
-          <input type="range" class="vol-slider" id="volume-slider" min="0" max="100" step="1" value="50" aria-label="Volumen">
-          <button class="icon-btn" id="fullscreen-btn" type="button" title="Pantalla completa" aria-label="Pantalla completa">
+          <input type="range" class="vol-slider" id="volume-slider" min="0" max="100" step="1" value="50" aria-label="Volume" data-i18n-aria="volume">
+          <button class="icon-btn" id="fullscreen-btn" type="button" title="Full screen" data-i18n-title="fs.title" aria-label="Full screen" data-i18n-aria="fs.title">
             <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
           </button>
         </div>
@@ -1238,19 +1426,19 @@
 
       <!-- Pantalla completa: barra de herramientas (solo visible con body.fs-mode) -->
       <div class="fs-toolbar" id="fs-toolbar">
-        <button class="circle-btn" id="fs-playlists-btn" type="button" title="Playlists" aria-label="Ir a Playlists">
+        <button class="circle-btn" id="fs-playlists-btn" data-svc="spotify" type="button" title="Playlists" aria-label="Go to Playlists" data-i18n-aria="fs.gotoPlaylists">
           <svg viewBox="0 0 24 24"><path d="M21 15V6"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>
         </button>
-        <button class="circle-btn" id="fs-hide-btn" type="button" title="Ocultar controles (muévete para mostrarlos)" aria-label="Ocultar controles">
+        <button class="circle-btn" id="fs-hide-btn" type="button" title="Hide controls (move to show them)" data-i18n-title="fs.hide.title" aria-label="Hide controls" data-i18n-aria="fs.hide.aria">
           <svg viewBox="0 0 24 24"><path d="M9.9 4.2A10 10 0 0 1 12 4c6.5 0 10 8 10 8a17 17 0 0 1-2.2 3.2"/><path d="M6.6 6.6A16 16 0 0 0 2 12s3.5 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="m2 2 20 20"/></svg>
         </button>
-        <button class="circle-btn" id="fs-expand-btn" type="button" title="Pantalla completa del navegador" aria-label="Alternar pantalla completa del navegador">
+        <button class="circle-btn" id="fs-expand-btn" type="button" title="Browser full screen" data-i18n-title="fs.browser.title" aria-label="Toggle browser full screen" data-i18n-aria="fs.browser.aria">
           <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
         </button>
-        <button class="circle-btn" id="fs-settings-btn" type="button" title="Configuración" aria-label="Ir a Configuración">
+        <button class="circle-btn" id="fs-settings-btn" type="button" title="Settings" data-i18n-title="nav.settings" aria-label="Go to Settings" data-i18n-aria="fs.gotoSettings">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
         </button>
-        <button class="circle-btn" id="fs-close-btn" type="button" title="Salir de pantalla completa (Esc)" aria-label="Salir de pantalla completa">
+        <button class="circle-btn" id="fs-close-btn" type="button" title="Exit full screen (Esc)" data-i18n-title="fs.exit.title" aria-label="Exit full screen" data-i18n-aria="fs.exit.aria">
           <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
         </button>
       </div>
@@ -1262,7 +1450,7 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <div class="loader" id="loader" role="status" aria-live="polite">
-  <span class="loader-text">Cargando...</span>
+  <span class="loader-text" data-i18n="loader.loading">Loading...</span>
   <span class="loader-track"><span class="loader-seg"><i></i></span></span>
 </div>
 
@@ -1285,16 +1473,589 @@ const LS = {
   remote:   "spicy_remote_mode",
   favs:     "spicy_favorite_tracks",  // ids de canciones marcadas con ♥ (solo en este navegador)
   volume:   "spicy_volume",           // 0..1
+  uiStyle:  "spicy_ui_style",         // "m3" = ya se aplicó la paleta del estilo Material You
   lyricsFont:"spicy_lyrics_font",     // "ui" (fuente de la interfaz) | "spicy" (fuente propia de Spicy)
-  renderer: "spicy_lyrics_renderer"   // "spicy" (nuevo) | "classic" (anterior)
+  renderer: "spicy_lyrics_renderer",  // "spicy" (nuevo) | "classic" (anterior)
+  lang:     "spicy_lang",             // "en" (por defecto) | "es"
+  font:     "spicy_font",             // enlace de Google Fonts (vacío = DynaPuff)
+  service:  "spicy_service",          // "spotify" (por defecto) | "ytm" (YouTube Music)
+  ytKey:    "spicy_yt_key"            // API key de YouTube Data v3
 };
 const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
 const lsDel = k => { try { localStorage.removeItem(k); } catch {} };
 
+/* ---- Idiomas (i18n): inglés = idioma principal · español se elige en Configuración ----
+   El idioma elegido se guarda en este navegador (localStorage) y se recuerda al volver. */
+const I18N = {
+  en: {
+    "access.hint": "Saves your Client ID, your Client Key and your Spotify session to a file so you can sign in quickly in another browser or domain (the browser stores this data separately in each one). <b>The file is equivalent to a password</b>: don’t share it or upload it to any repository.",
+    "access.load": "Load access from a file",
+    "access.save": "Save access to a file",
+    "access.title": "Quick access",
+    "appearance.auto": "Automatic highlight colors (based on the cover)",
+    "appearance.fx": "Animated background (blurred cover and moving blobs)",
+    "appearance.reset": "Reset colors",
+    "appearance.title": "Appearance",
+    "attr.apple": "Lyrics via Apple Music",
+    "attr.spotify": "Lyrics via Spotify",
+    "attr.synced": " — synced by ",
+    "attr.syncedComma": ", synced by ",
+    "attr.unknown": "unknown provider",
+    "attr.uploaded": " — uploaded by ",
+    "attr.uploadedSynced": " — uploaded and synced by ",
+    "attr.via": "Lyrics via ",
+    "auth.linkHint": "Open the link on any device (for example your phone) with the same Spotify account and approve access. Afterwards Spotify will take you to the app’s address. If the phone shows an error (“can’t be reached”), that’s normal: tap the address bar, select all the text and copy it. If instead it opens the app, the address will appear right there ready to copy. Move it to this computer (message, notes, email…) and paste it below. If you press Connect Spotify again, the previous link stops working.",
+    "auth.linkLabel": "Authorization link",
+    "auth.returnHint": "This browser did not start the sign-in, so it can’t finish it here. Copy this full address and paste it into the app where you generated the link (Settings → Connect Spotify → the “Paste here the address…” field). Do it soon: the code expires in a few minutes.",
+    "auth.returnTitle": "Spotify code received",
+    "color.accent": "Lyrics highlight",
+    "color.accent2": "Highlight (glow)",
+    "color.bgBase": "Base background",
+    "color.fg": "Card text and icons",
+    "color.panelBg": "Cards and menus",
+    "color.progress": "Progress bar",
+    "color.text": "Lyrics",
+    "confirm.export": "The file will contain your keys and your Spotify session. Anyone who has it can use them: keep it in a private place and don’t share it. Continue?",
+    "continue": "Continue",
+    "copy.address": "Copy address",
+    "copy.copied": "Copied!",
+    "copy.link": "Copy link",
+    "credits.author": "Interface and code: omargalav.",
+    "credits.builtWith": "Built with",
+    "credits.disclaimer": "Spotify is a trademark of Spotify AB; YouTube and YouTube Music are trademarks of Google LLC. This application is an independent project: it is not affiliated with, sponsored by or endorsed by Spotify, Google, YouTube, Spicy Lyrics or LRCLIB. The music, covers and lyrics belong to their respective owners.",
+    "credits.dynapuff": "<strong>DynaPuff</strong> — the default font of the whole app, via Google Fonts. <a href=\"https://fonts.google.com/specimen/DynaPuff\" target=\"_blank\" rel=\"noopener\">fonts.google.com</a>",
+    "credits.lucide": "<strong>Lucide</strong> — the Settings icon (ISC license). <a href=\"https://lucide.dev\" target=\"_blank\" rel=\"noopener\">lucide.dev</a>",
+    "credits.project": "Project",
+    "credits.spicy": "<strong>Spicy Lyrics</strong> — the synced lyrics are uploaded and synced by people in its community. The credit for each song appears at the bottom of the lyrics. <a href=\"https://github.com/Spikerko/spicy-lyrics\" target=\"_blank\" rel=\"noopener\">github.com/Spikerko/spicy-lyrics</a>",
+    "credits.spotify": "<strong>Spotify</strong> — the music, covers and playback come from Spotify’s Web API and Web Playback SDK. <a href=\"https://www.spotify.com\" target=\"_blank\" rel=\"noopener\">spotify.com</a>",
+    "css.hint": "Applied instantly and saved in this browser. The base includes commented examples (font, variables, shapes): remove the comment from whatever you want to enable.",
+    "css.reset": "Reset base",
+    "css.title": "Custom CSS",
+    "disconnect": "Disconnect",
+    "fav.aria": "Like",
+    "fav.title": "Like (saved only in this browser)",
+    "focus.aria": "Lyrics mode",
+    "focus.title": "Lyrics mode (hide the cover)",
+    "fs.browser.aria": "Toggle browser full screen",
+    "fs.browser.title": "Browser full screen",
+    "fs.exit.aria": "Exit full screen",
+    "fs.exit.title": "Exit full screen (Esc)",
+    "fs.gotoPlaylists": "Go to Playlists",
+    "fs.gotoSettings": "Go to Settings",
+    "fs.hide.aria": "Hide controls",
+    "fs.hide.title": "Hide controls (move to show them)",
+    "fs.title": "Full screen",
+    "goto.settings": "Go to Settings",
+    "home.text": "This section is still empty. To connect your music service, go to Settings.",
+    "instructions": "Instructions",
+    "lang.hint": "The language is applied instantly and saved in this browser.",
+    "lang.label": "Interface language",
+    "lang.title": "Language",
+    "loadMore": "Load more",
+    "loader.loading": "Loading...",
+    "login.connect": "Connect Spotify",
+    "login.connected": "Connected ✅",
+    "lyr.badKey": "The Spicy Lyrics Client Key is not valid. Check it in Settings.",
+    "lyr.empty": "Search and play a song to see its lyrics.",
+    "lyr.loadError": "Error loading the lyrics ({status}).",
+    "lyr.netError": "Could not connect to Spicy Lyrics.",
+    "lyr.noKey": "Add your Spicy Lyrics Client Key in Settings to see lyrics.",
+    "lyr.none": "No lyrics available for this song.",
+    "lyr.noneSpicy": "No lyrics available for this song on Spicy Lyrics.",
+    "lyr.renderError": "The lyrics were downloaded but could not be displayed ({msg}). Check the browser console.",
+    "lyr.searching": "Looking for lyrics...",
+    "lyrics.classic": "Classic (previous)",
+    "lyrics.font": "Use the interface font for the lyrics (Spicy)",
+    "lyrics.hint": "Spicy is the new renderer, derived from the one in Spicy Lyrics and from the AMLL TTML Tool (AGPL-3.0). Classic is the previous one. The change is applied instantly and saved in this browser.",
+    "lyrics.renderer": "Lyrics renderer",
+    "lyrics.spicy": "Spicy (new)",
+    "lyrics.title": "Lyrics",
+    "mute.aria": "Mute or unmute",
+    "mute.title": "Mute",
+    "nav.credits": "Credits",
+    "nav.home": "Home",
+    "nav.player": "Player",
+    "nav.search": "Search",
+    "nav.settings": "Settings",
+    "net.fail": "Could not connect to Spotify. Check your connection.",
+    "next": "Next",
+    "offset.minus": "Delay the lyrics 0.1s",
+    "offset.minus.aria": "Delay the lyrics 0.1 seconds",
+    "offset.plus": "Advance the lyrics 0.1s",
+    "offset.plus.aria": "Advance the lyrics 0.1 seconds",
+    "offset.reset": "Click to reset to {v}",
+    "offset.slider": "Lyrics sync in seconds",
+    "offset.value": "Sync: {v}",
+    "open.aria": "Open the song in Spotify",
+    "open.here": "Open here",
+    "open.title": "Open in Spotify",
+    "ph.clientId": "Paste your Client ID here",
+    "ph.clientKey": "Paste your Client Key here (sl_pk_...)",
+    "ph.pasteAddress": "Paste here the address Spotify took you to",
+    "ph.search": "Song or artist name...",
+    "pl.403list": "Spotify rejected the request (403). The playlists permission is probably missing: in Settings press Disconnect and then Connect Spotify again.",
+    "pl.403tracks": "Spotify only lets you see the songs of playlists that are yours or collaborative. You can still press Play.",
+    "pl.connectFirst": "Connect your Spotify account in Settings to see your playlists.",
+    "pl.empty": "This playlist is empty.",
+    "pl.expired": "Your Spotify session expired. Go to Settings and connect again.",
+    "pl.loadError": "Could not load ({status}).",
+    "pl.loading": "Loading playlists...",
+    "pl.localTrack": "Local songs can’t be played from here",
+    "pl.needPerm": "To see your playlists a new permission is needed. In Settings press Disconnect and connect Spotify again.",
+    "pl.noActive": "There is no active Spotify device. Open Spotify on your phone or computer and play something for a moment.",
+    "pl.noDeviceReady": "There is no device ready yet: connect Spotify in Settings and wait a few seconds.",
+    "pl.none": "You don’t have any playlists yet.",
+    "pl.playFail": "Spotify couldn’t play this ({status}).",
+    "pl.song1": "1 song",
+    "pl.songs": "{n} songs",
+    "pl.viewQueue": "View queue",
+    "pl.wait": "Spotify asks you to wait a moment. Try again in a few seconds.",
+    "play": "Play",
+    "playpause.aria": "Play or pause",
+    "playpause.title": "Play/Pause",
+    "prev": "Previous",
+    "q.connectFirst": "Connect your Spotify account in Settings to see the queue.",
+    "q.empty": "The queue is empty. Add songs with the button on each song in Search and in your playlists.",
+    "q.loading": "Loading the queue...",
+    "q.next": "Up next",
+    "q.nextN": "Up next · {n}",
+    "q.noDevice": "There is no active Spotify device. Play something and open the queue again.",
+    "q.noPerm": "Spotify wouldn’t let the queue be read: a new permission is needed (in Settings press Disconnect and connect Spotify again) or the account is not Premium.",
+    "q.nothingNow": "Nothing is playing right now.",
+    "q.skipTo": "Skip to this song",
+    "q.status": "Spotify responded {status}. Try Refresh.",
+    "queue.add": "Add to queue",
+    "queue.btn": "Playback queue",
+    "queue.hint": "Spotify doesn’t let other apps remove or reorder songs in the queue. You can tap a song to jump to it (the ones before it are skipped).",
+    "queue.now": "Now playing",
+    "queue.title": "Queue",
+    "refresh": "Refresh",
+    "rep": "Repeat",
+    "rep.context": "Repeat list",
+    "rep.off": "Repeat: off",
+    "rep.track": "Repeat song",
+    "search.advanced": "Advanced option: paste a link or URI manually",
+    "search.connectFirst": "First connect your Spotify account in Settings.",
+    "search.error": "Search error (expired token?).",
+    "search.none": "No results.",
+    "search.playUri": "Play this URI",
+    "search.searching": "Searching...",
+    "search.uriLabel": "Song link or URI",
+    "seek.aria": "Song progress",
+    "share.title": "Copy song link",
+    "shuf": "Shuffle",
+    "shuf.on": "Shuffle: on",
+    "sidebar.powered": "Powered by <b>Spotify</b> &amp; <b>Spicy&nbsp;Lyrics</b>",
+    "sidebar.toggle": "Show or hide the menu",
+    "spicy.hint": "Saved in this browser. Use the public key (starts with sl_pk_); never the secret one (sl_sk_).",
+    "spicy.secret": "⚠️ That is a secret key (sl_sk_) and was not saved. Use the public key (sl_pk_...).",
+    "spotify.redirectHint": "Saved in this browser. Register this Redirect URI in your Spotify app:<br><code id=\"redirect-uri-text\"></code>",
+    "st.accountError": "account error (do you have Premium?): {message}",
+    "st.approveNewTab": "approve access in the new tab. If this app doesn’t connect by itself, copy the address it takes you to and paste it in the field below.",
+    "st.authError": "authentication error: {message}",
+    "st.clientIdChanged": "Client ID changed: connect Spotify again.",
+    "st.codeReceived": "I received the Spotify code, but this browser did not start the sign-in. Copy the address above and paste it into the app where you generated the link.",
+    "st.denied": "Spotify did not authorize access ({err}).",
+    "st.disconnected": "not connected.",
+    "st.exchangeError": "error exchanging the code for a token. Check your Client ID and the Redirect URI.",
+    "st.exchanging": "exchanging the code for a token...",
+    "st.fromOtherTab": "session received from another tab, starting the player...",
+    "st.initError": "initialization error: {message}",
+    "st.linkReady": "link ready: open it here or on another device and approve access.",
+    "st.missingId": "the Client ID is missing: enter it and connect again.",
+    "st.needClientId": "first enter your Client ID (the Instructions button explains how to get it).",
+    "st.noCode": "that address doesn’t contain a Spotify code.",
+    "st.noCodePasted": "I couldn’t find a code in what you pasted. Copy the full address of the page Spotify took you to.",
+    "st.noDevice": "there is no device ready yet, wait a few seconds.",
+    "st.noPending": "there is no pending sign-in in this browser. Press Connect Spotify and use the new link.",
+    "st.notReady": "device disconnected ({id}).",
+    "st.popupBlocked": "the browser blocked the new tab. Use “Copy link” and open it yourself in another tab.",
+    "st.ready": "connected ✅ — device ready.",
+    "st.reconnectFail": "could not reconnect. Connect Spotify again.",
+    "st.reconnecting": "reconnecting with the saved session...",
+    "st.remoteIdle": "connected in remote control mode: nothing is playing. Open Spotify on another device and play something.",
+    "st.remotePlaying": "connected in remote control mode: playing on “{msg}”.",
+    "st.remotePlayingOther": "connected in remote control mode: playing on another device.",
+    "st.remoteSearching": "connected in remote control mode: looking for the device that is playing...",
+    "st.sessionReady": "session ready, starting the player...",
+    "st.staleState": "that response doesn’t belong to the most recently generated link. Press Connect Spotify again and use the new link.",
+    "st.switchingLocal": "switching to playing in this browser...",
+    "st.switchingRemote": "switching to remote control...",
+    "status.prefix": "Status: ",
+    "toast.accessInvalid": "That file is not a valid SaltyLyrics access file.",
+    "toast.accessLoaded": "Access loaded. Restarting…",
+    "toast.accessSaved": "Access file saved.",
+    "toast.connectFirst": "Connect your Spotify account in Settings.",
+    "toast.linkCopied": "Song link copied.",
+    "toast.noConnect": "Could not connect to Spotify.",
+    "toast.noDevice": "There is no active Spotify device. Open Spotify on your phone or computer and play something.",
+    "toast.noSong": "No song is playing yet.",
+    "toast.nothingPlaying": "Nothing is playing. Open Spotify on another device and play something.",
+    "toast.nothingToSave": "There is nothing to save yet.",
+    "toast.premium": "Spotify rejected the action (remote control needs Premium).",
+    "toast.queued": "“{name}” was added to the queue.",
+    "toast.queuedGeneric": "Added to the queue.",
+    "toast.skip1": "Skipping to the next song…",
+    "toast.skipN": "Skipping {n} songs…",
+    "toast.spotifyStatus": "Spotify responded {status}.",
+    "toast.wait": "Spotify asks you to wait a moment.",
+    "track.artist": "Artist",
+    "track.title": "Title",
+    "tv.hint": "With the remote: arrows to move, OK to select and Back to go back (in the player, left and right on the progress bar skip forward or back 10 s). The media keys (play/pause, next, previous) also work. Many TVs can’t play audio with the Spotify SDK: in that case turn on remote control, open Spotify on your phone or computer, and the TV will show the lyrics and control that playback. Remote control needs Spotify Premium.",
+    "tv.mode": "TV mode (large interface to view from afar)",
+    "tv.remote": "Remote control: play on another Spotify device",
+    "tv.title": "TV and remote",
+    "untitled": "Untitled",
+    "volume": "Volume",
+    "font.title": "Font",
+    "font.label": "Google Fonts link",
+    "font.ph": "https://fonts.googleapis.com/css2?family=...",
+    "font.apply": "Apply",
+    "font.hint": "On <a href=\"https://fonts.google.com\" target=\"_blank\" rel=\"noopener\">fonts.google.com</a> pick a font, press “Get font” → “Get embed code” and paste here the link (or the whole code) it gives you. It is applied to the whole app, lyrics included, and saved in this browser.",
+    "font.reset": "Use DynaPuff (default)",
+    "font.default": "Using the default font: DynaPuff.",
+    "font.current": "Current font: {family}.",
+    "font.loading": "Loading font...",
+    "font.bad": "That doesn’t look like a Google Fonts link. Copy the link from fonts.google.com (it starts with https://fonts.googleapis.com/css2?family=).",
+    "font.fail": "Couldn’t load that font. Check the link and your connection.",
+    "svc.title": "Music service",
+    "svc.label": "Connect to",
+    "svc.hint": "Pick where your music comes from. Only the options that service needs are shown below. Changing it restarts the app.",
+    "yt.title": "YouTube Music",
+    "yt.keyLabel": "YouTube Data API key",
+    "ph.ytKey": "Paste your API key here (starts with AIza)",
+    "yt.check": "Check key",
+    "yt.hint": "Saved in this browser. Create it in <a href=\"https://console.cloud.google.com/apis/credentials\" target=\"_blank\" rel=\"noopener\">Google Cloud</a> after enabling “YouTube Data API v3”, and restrict it to this site’s address and to that API. Each search uses 100 of the 10,000 free daily units. Playback uses YouTube’s embedded player, so the app must be opened from https:// (or localhost), and free accounts will hear ads. Lyrics come from <a href=\"https://lrclib.net\" target=\"_blank\" rel=\"noopener\">LRCLIB</a>.",
+    "yt.none": "No key saved yet.",
+    "yt.saved": "Key saved. Use “Check key” to test it.",
+    "yt.format": "That doesn’t look like a Google API key (it starts with AIza and has 39 characters). It was not saved.",
+    "yt.checking": "Checking the key...",
+    "yt.ok": "The key works ✅",
+    "yt.badKey": "Google says this key is not valid. Check that you copied it whole.",
+    "yt.notEnabled": "“YouTube Data API v3” is not enabled in the key’s project (or the key is restricted from using it).",
+    "yt.quota": "The daily quota of this key is used up. It resets at midnight Pacific time.",
+    "yt.referer": "Google rejected the request because of the key’s website restriction. Add this site’s address to it (opening the file from disk doesn’t work).",
+    "yt.error": "Google responded {status}.",
+    "yt.net": "Could not connect to Google. Check your connection.",
+    "yt.needKey": "First add your YouTube Data API key in Settings.",
+    "toast.ytLoad": "Could not load the YouTube player. Open the app from https:// or localhost and check your connection.",
+    "toast.ytUnavailable": "That video can’t be played here. Trying the next one…",
+    "toast.ytUnavailableLast": "That video can’t be played here.",
+    "toast.ytBadLink": "That doesn’t look like a YouTube link or video ID.",
+    "lyr.netErrorLrc": "Could not connect to LRCLIB.",
+    "attr.lrclib": "Lyrics via LRCLIB",
+    "open.titleYt": "Open in YouTube Music",
+    "open.ariaYt": "Open the song in YouTube Music",
+    "sidebar.poweredYt": "Powered by <b>YouTube</b> &amp; <b>LRCLIB</b>",
+    "credits.youtube": "<strong>YouTube</strong> — playback comes from YouTube’s embedded player and search from the YouTube Data API v3. <a href=\"https://developers.google.com/youtube\" target=\"_blank\" rel=\"noopener\">developers.google.com/youtube</a>",
+    "credits.lrclib": "<strong>LRCLIB</strong> — the synced lyrics for YouTube Music songs. <a href=\"https://lrclib.net\" target=\"_blank\" rel=\"noopener\">lrclib.net</a>"
+  },
+  es: {
+    "access.hint": "Guarda tu Client ID, tu Client Key y tu sesión de Spotify en un archivo para iniciar rápido en otro navegador o dominio (el navegador guarda estos datos por separado en cada uno). <b>El archivo equivale a una contraseña</b>: no lo compartas ni lo subas a ningún repositorio.",
+    "access.load": "Cargar acceso desde un archivo",
+    "access.save": "Guardar acceso en un archivo",
+    "access.title": "Acceso rápido",
+    "appearance.auto": "Colores del resaltado automáticos (según la portada)",
+    "appearance.fx": "Fondo animado (portada difuminada y manchas en movimiento)",
+    "appearance.reset": "Restablecer colores",
+    "appearance.title": "Apariencia",
+    "attr.apple": "Letra vía Apple Music",
+    "attr.spotify": "Letra vía Spotify",
+    "attr.synced": " — sincronizada por ",
+    "attr.syncedComma": ", sincronizada por ",
+    "attr.unknown": "proveedor desconocido",
+    "attr.uploaded": " — subida por ",
+    "attr.uploadedSynced": " — subida y sincronizada por ",
+    "attr.via": "Letra vía ",
+    "auth.linkHint": "Abre el enlace en cualquier dispositivo (por ejemplo tu teléfono) con la misma cuenta de Spotify y aprueba el acceso. Después Spotify te llevará a la dirección de la app. Si el teléfono muestra un error («no se puede acceder»), es normal: toca la barra de direcciones, selecciona todo el texto y cópialo. Si en cambio abre la app, ahí mismo aparecerá la dirección lista para copiar. Pásala a esta computadora (mensaje, notas, correo…) y pégala aquí abajo. Si vuelves a pulsar Conectar Spotify, el enlace anterior deja de servir.",
+    "auth.linkLabel": "Enlace de autorización",
+    "auth.returnHint": "Este navegador no inició el inicio de sesión, así que no puede terminarlo aquí. Copia esta dirección completa y pégala en la app donde generaste el enlace (Configuración → Conectar Spotify → campo «Pega aquí la dirección…»). Hazlo pronto: el código caduca en unos minutos.",
+    "auth.returnTitle": "Código de Spotify recibido",
+    "color.accent": "Resaltado de la letra",
+    "color.accent2": "Resaltado (brillo)",
+    "color.bgBase": "Fondo base",
+    "color.fg": "Texto e íconos de las tarjetas",
+    "color.panelBg": "Tarjetas y menús",
+    "color.progress": "Barra de progreso",
+    "color.text": "Letra",
+    "confirm.export": "El archivo contendrá tus llaves y tu sesión de Spotify. Quien lo tenga puede usarlas: guárdalo en un lugar privado y no lo compartas. ¿Continuar?",
+    "continue": "Continuar",
+    "copy.address": "Copiar dirección",
+    "copy.copied": "¡Copiado!",
+    "copy.link": "Copiar enlace",
+    "credits.author": "Interfaz y código: omargalav.",
+    "credits.builtWith": "Hecho con",
+    "credits.disclaimer": "Spotify es una marca de Spotify AB; YouTube y YouTube Music son marcas de Google LLC. Esta aplicación es un proyecto independiente: no está afiliada, patrocinada ni respaldada por Spotify, Google, YouTube, Spicy Lyrics ni LRCLIB. La música, las portadas y las letras pertenecen a sus respectivos dueños.",
+    "credits.dynapuff": "<strong>DynaPuff</strong> — la fuente predeterminada de toda la app, vía Google Fonts. <a href=\"https://fonts.google.com/specimen/DynaPuff\" target=\"_blank\" rel=\"noopener\">fonts.google.com</a>",
+    "credits.lucide": "<strong>Lucide</strong> — el ícono de Configuración (licencia ISC). <a href=\"https://lucide.dev\" target=\"_blank\" rel=\"noopener\">lucide.dev</a>",
+    "credits.project": "Proyecto",
+    "credits.spicy": "<strong>Spicy Lyrics</strong> — las letras sincronizadas las suben y sincronizan personas de su comunidad. El crédito de cada canción aparece al pie de la letra. <a href=\"https://github.com/Spikerko/spicy-lyrics\" target=\"_blank\" rel=\"noopener\">github.com/Spikerko/spicy-lyrics</a>",
+    "credits.spotify": "<strong>Spotify</strong> — la música, las portadas y la reproducción vienen de la Web API y el Web Playback SDK de Spotify. <a href=\"https://www.spotify.com\" target=\"_blank\" rel=\"noopener\">spotify.com</a>",
+    "css.hint": "Se aplica al instante y se guarda en este navegador. La base trae ejemplos comentados (fuente, variables, formas): quita el comentario de lo que quieras activar.",
+    "css.reset": "Restablecer base",
+    "css.title": "CSS personalizado",
+    "disconnect": "Desconectar",
+    "fav.aria": "Me gusta",
+    "fav.title": "Me gusta (se guarda solo en este navegador)",
+    "focus.aria": "Modo letra",
+    "focus.title": "Modo letra (ocultar la portada)",
+    "fs.browser.aria": "Alternar pantalla completa del navegador",
+    "fs.browser.title": "Pantalla completa del navegador",
+    "fs.exit.aria": "Salir de pantalla completa",
+    "fs.exit.title": "Salir de pantalla completa (Esc)",
+    "fs.gotoPlaylists": "Ir a Playlists",
+    "fs.gotoSettings": "Ir a Configuración",
+    "fs.hide.aria": "Ocultar controles",
+    "fs.hide.title": "Ocultar controles (muévete para mostrarlos)",
+    "fs.title": "Pantalla completa",
+    "goto.settings": "Ir a Configuración",
+    "home.text": "Esta sección todavía está vacía. Para conectar tu servicio de música, ve a Configuración.",
+    "instructions": "Instrucciones",
+    "lang.hint": "El idioma se aplica al instante y se guarda en este navegador.",
+    "lang.label": "Idioma de la interfaz",
+    "lang.title": "Idioma",
+    "loadMore": "Cargar más",
+    "loader.loading": "Cargando...",
+    "login.connect": "Conectar Spotify",
+    "login.connected": "Conectado ✅",
+    "lyr.badKey": "La Client Key de Spicy Lyrics no es válida. Revísala en Configuración.",
+    "lyr.empty": "Busca y reproduce una canción para ver la letra.",
+    "lyr.loadError": "Error al cargar la letra ({status}).",
+    "lyr.netError": "No se pudo conectar con Spicy Lyrics.",
+    "lyr.noKey": "Agrega tu Client Key de Spicy Lyrics en Configuración para ver letras.",
+    "lyr.none": "No hay letra disponible para esta canción.",
+    "lyr.noneSpicy": "No hay letra disponible para esta canción en Spicy Lyrics.",
+    "lyr.renderError": "La letra se descargó pero no se pudo mostrar ({msg}). Revisa la consola del navegador.",
+    "lyr.searching": "Buscando letra...",
+    "lyrics.classic": "Clásico (anterior)",
+    "lyrics.font": "Usar la fuente de la interfaz en las letras (Spicy)",
+    "lyrics.hint": "Spicy es el renderizador nuevo, derivado del de Spicy Lyrics y del AMLL TTML Tool (AGPL-3.0). Clásico es el anterior. El cambio se aplica al instante y se guarda en este navegador.",
+    "lyrics.renderer": "Renderizador de letras",
+    "lyrics.spicy": "Spicy (nuevo)",
+    "lyrics.title": "Letras",
+    "mute.aria": "Silenciar o activar el sonido",
+    "mute.title": "Silenciar",
+    "nav.credits": "Créditos",
+    "nav.home": "Inicio",
+    "nav.player": "Reproductor",
+    "nav.search": "Buscar",
+    "nav.settings": "Configuración",
+    "net.fail": "No se pudo conectar con Spotify. Revisa tu conexión.",
+    "next": "Siguiente",
+    "offset.minus": "Atrasar la letra 0.1s",
+    "offset.minus.aria": "Atrasar la letra 0.1 segundos",
+    "offset.plus": "Adelantar la letra 0.1s",
+    "offset.plus.aria": "Adelantar la letra 0.1 segundos",
+    "offset.reset": "Clic para volver a {v}",
+    "offset.slider": "Sincronía de la letra en segundos",
+    "offset.value": "Sincronía: {v}",
+    "open.aria": "Abrir la canción en Spotify",
+    "open.here": "Abrir aquí",
+    "open.title": "Abrir en Spotify",
+    "ph.clientId": "Pega aquí tu Client ID",
+    "ph.clientKey": "Pega aquí tu Client Key (sl_pk_...)",
+    "ph.pasteAddress": "Pega aquí la dirección a la que te llevó Spotify",
+    "ph.search": "Nombre de la canción o artista...",
+    "pl.403list": "Spotify rechazó la petición (403). Probablemente falta el permiso de playlists: en Configuración pulsa Desconectar y luego Conectar Spotify de nuevo.",
+    "pl.403tracks": "Spotify solo deja ver las canciones de playlists que son tuyas o colaborativas. Aun así puedes pulsar Reproducir.",
+    "pl.connectFirst": "Conecta tu cuenta de Spotify en Configuración para ver tus playlists.",
+    "pl.empty": "Esta playlist está vacía.",
+    "pl.expired": "La sesión de Spotify expiró. Ve a Configuración y vuelve a conectar.",
+    "pl.loadError": "No se pudo cargar ({status}).",
+    "pl.loading": "Cargando playlists...",
+    "pl.localTrack": "Las canciones locales no se pueden reproducir desde aquí",
+    "pl.needPerm": "Para ver tus playlists hace falta un permiso nuevo. En Configuración pulsa Desconectar y vuelve a Conectar Spotify.",
+    "pl.noActive": "No hay ningún dispositivo de Spotify activo. Abre Spotify en tu teléfono o computadora y reproduce algo un momento.",
+    "pl.noDeviceReady": "Todavía no hay un dispositivo listo: conecta Spotify en Configuración y espera unos segundos.",
+    "pl.none": "No tienes playlists todavía.",
+    "pl.playFail": "Spotify no pudo reproducir esto ({status}).",
+    "pl.song1": "1 canción",
+    "pl.songs": "{n} canciones",
+    "pl.viewQueue": "Ver cola",
+    "pl.wait": "Spotify pide esperar un momento. Intenta de nuevo en unos segundos.",
+    "play": "Reproducir",
+    "playpause.aria": "Reproducir o pausar",
+    "playpause.title": "Play/Pausa",
+    "prev": "Anterior",
+    "q.connectFirst": "Conecta tu cuenta de Spotify en Configuración para ver la cola.",
+    "q.empty": "La cola está vacía. Agrega canciones con el botón de cada canción en Buscar y en tus playlists.",
+    "q.loading": "Cargando la cola...",
+    "q.next": "A continuación",
+    "q.nextN": "A continuación · {n}",
+    "q.noDevice": "No hay ningún dispositivo de Spotify activo. Reproduce algo y vuelve a abrir la cola.",
+    "q.noPerm": "Spotify no dejó leer la cola: hace falta un permiso nuevo (en Configuración pulsa Desconectar y vuelve a Conectar Spotify) o la cuenta no es Premium.",
+    "q.nothingNow": "No suena nada ahora mismo.",
+    "q.skipTo": "Saltar hasta esta canción",
+    "q.status": "Spotify respondió {status}. Prueba con Actualizar.",
+    "queue.add": "Agregar a la cola",
+    "queue.btn": "Cola de reproducción",
+    "queue.hint": "Spotify no permite quitar ni reordenar canciones de la cola desde otras apps. Puedes pulsar una canción para saltar hasta ella (las que están antes se omiten).",
+    "queue.now": "Reproduciendo ahora",
+    "queue.title": "Cola",
+    "refresh": "Actualizar",
+    "rep": "Repetir",
+    "rep.context": "Repetir lista",
+    "rep.off": "Repetir: no",
+    "rep.track": "Repetir canción",
+    "search.advanced": "Opción avanzada: pegar un enlace o URI manualmente",
+    "search.connectFirst": "Primero conecta tu cuenta de Spotify en Configuración.",
+    "search.error": "Error al buscar (¿token expirado?).",
+    "search.none": "Sin resultados.",
+    "search.playUri": "Reproducir esta URI",
+    "search.searching": "Buscando...",
+    "search.uriLabel": "Enlace o URI de la canción",
+    "seek.aria": "Progreso de la canción",
+    "share.title": "Copiar enlace de la canción",
+    "shuf": "Aleatorio",
+    "shuf.on": "Aleatorio: activado",
+    "sidebar.powered": "Con tecnología de <b>Spotify</b> y <b>Spicy&nbsp;Lyrics</b>",
+    "sidebar.toggle": "Mostrar u ocultar el menú",
+    "spicy.hint": "Se guarda en este navegador. Usa la clave pública (empieza con sl_pk_); nunca la secreta (sl_sk_).",
+    "spicy.secret": "⚠️ Esa es una clave secreta (sl_sk_) y no se guardó. Usa la clave pública (sl_pk_...).",
+    "spotify.redirectHint": "Se guarda en este navegador. Registra esta Redirect URI en tu app de Spotify:<br><code id=\"redirect-uri-text\"></code>",
+    "st.accountError": "error de cuenta (¿tienes Premium?): {message}",
+    "st.approveNewTab": "aprueba el acceso en la pestaña nueva. Si esta app no se conecta sola, copia la dirección a la que te lleve y pégala en el campo de abajo.",
+    "st.authError": "error de autenticación: {message}",
+    "st.clientIdChanged": "Client ID cambiado: vuelve a conectar Spotify.",
+    "st.codeReceived": "recibí el código de Spotify, pero este navegador no inició el inicio de sesión. Copia la dirección de arriba y pégala en la app donde generaste el enlace.",
+    "st.denied": "Spotify no autorizó el acceso ({err}).",
+    "st.disconnected": "sin conectar.",
+    "st.exchangeError": "error al intercambiar el código por un token. Revisa tu Client ID y la Redirect URI.",
+    "st.exchanging": "intercambiando código por token...",
+    "st.fromOtherTab": "sesión recibida desde otra pestaña, iniciando reproductor...",
+    "st.initError": "error de inicialización: {message}",
+    "st.linkReady": "enlace listo: ábrelo aquí o en otro dispositivo y aprueba el acceso.",
+    "st.missingId": "falta el Client ID: escríbelo y vuelve a conectar.",
+    "st.needClientId": "escribe primero tu Client ID (el botón Instrucciones explica cómo obtenerlo).",
+    "st.noCode": "esa dirección no trae un código de Spotify.",
+    "st.noCodePasted": "no encontré un código en lo que pegaste. Copia la dirección completa de la página a la que te llevó Spotify.",
+    "st.noDevice": "todavía no hay un dispositivo listo, espera unos segundos.",
+    "st.noPending": "no hay un inicio de sesión pendiente en este navegador. Pulsa Conectar Spotify y usa el enlace nuevo.",
+    "st.notReady": "dispositivo desconectado ({id}).",
+    "st.popupBlocked": "el navegador bloqueó la pestaña nueva. Usa «Copiar enlace» y ábrelo tú en otra pestaña.",
+    "st.ready": "conectado ✅ — dispositivo listo.",
+    "st.reconnectFail": "no se pudo reconectar. Vuelve a conectar Spotify.",
+    "st.reconnecting": "reconectando con la sesión guardada...",
+    "st.remoteIdle": "conectado en modo control remoto: no hay nada sonando. Abre Spotify en otro dispositivo y reproduce algo.",
+    "st.remotePlaying": "conectado en modo control remoto: suena en «{msg}».",
+    "st.remotePlayingOther": "conectado en modo control remoto: suena en otro dispositivo.",
+    "st.remoteSearching": "conectado en modo control remoto: buscando el dispositivo que está sonando...",
+    "st.sessionReady": "sesión lista, iniciando reproductor...",
+    "st.staleState": "esa respuesta no es del último enlace generado. Pulsa Conectar Spotify de nuevo y usa el enlace nuevo.",
+    "st.switchingLocal": "cambiando a reproducir en este navegador...",
+    "st.switchingRemote": "cambiando a control remoto...",
+    "status.prefix": "Estado: ",
+    "toast.accessInvalid": "Ese archivo no es un acceso válido de SaltyLyrics.",
+    "toast.accessLoaded": "Acceso cargado. Reiniciando…",
+    "toast.accessSaved": "Archivo de acceso guardado.",
+    "toast.connectFirst": "Conecta tu cuenta de Spotify en Configuración.",
+    "toast.linkCopied": "Enlace de la canción copiado.",
+    "toast.noConnect": "No se pudo conectar con Spotify.",
+    "toast.noDevice": "No hay ningún dispositivo de Spotify activo. Abre Spotify en tu teléfono o computadora y reproduce algo.",
+    "toast.noSong": "Todavía no hay una canción sonando.",
+    "toast.nothingPlaying": "No hay nada sonando. Abre Spotify en otro dispositivo y reproduce algo.",
+    "toast.nothingToSave": "Todavía no hay nada que guardar.",
+    "toast.premium": "Spotify rechazó la acción (el control remoto necesita Premium).",
+    "toast.queued": "«{name}» se agregó a la cola.",
+    "toast.queuedGeneric": "Agregada a la cola.",
+    "toast.skip1": "Saltando a la siguiente canción…",
+    "toast.skipN": "Saltando {n} canciones…",
+    "toast.spotifyStatus": "Spotify respondió {status}.",
+    "toast.wait": "Spotify pide esperar un momento.",
+    "track.artist": "Artista",
+    "track.title": "Título",
+    "tv.hint": "Con el mando: flechas para moverte, OK para elegir y Atrás para volver (en el reproductor, izquierda y derecha sobre la barra de progreso adelantan o atrasan 10 s). Las teclas multimedia (play/pausa, siguiente, anterior) también funcionan. Muchas TV no pueden reproducir audio con el SDK de Spotify: en ese caso activa el control remoto, abre Spotify en tu teléfono o computadora, y la TV mostrará las letras y controlará esa reproducción. El control remoto necesita Spotify Premium.",
+    "tv.mode": "Modo TV (interfaz grande para verla de lejos)",
+    "tv.remote": "Control remoto: reproducir en otro dispositivo de Spotify",
+    "tv.title": "TV y mando",
+    "untitled": "Sin título",
+    "volume": "Volumen",
+    "font.title": "Fuente",
+    "font.label": "Enlace de Google Fonts",
+    "font.ph": "https://fonts.googleapis.com/css2?family=...",
+    "font.apply": "Aplicar",
+    "font.hint": "En <a href=\"https://fonts.google.com\" target=\"_blank\" rel=\"noopener\">fonts.google.com</a> elige una fuente, pulsa «Get font» → «Get embed code» y pega aquí el enlace (o todo el código) que te da. Se aplica a toda la app, letras incluidas, y se guarda en este navegador.",
+    "font.reset": "Usar DynaPuff (predeterminada)",
+    "font.default": "Usando la fuente predeterminada: DynaPuff.",
+    "font.current": "Fuente actual: {family}.",
+    "font.loading": "Cargando la fuente...",
+    "font.bad": "Eso no parece un enlace de Google Fonts. Copia el enlace de fonts.google.com (empieza con https://fonts.googleapis.com/css2?family=).",
+    "font.fail": "No se pudo cargar esa fuente. Revisa el enlace y tu conexión.",
+    "svc.title": "Servicio de música",
+    "svc.label": "Conectarse a",
+    "svc.hint": "Elige de dónde viene tu música. Abajo solo aparecen las opciones que necesita ese servicio. Al cambiarlo, la app se reinicia.",
+    "yt.title": "YouTube Music",
+    "yt.keyLabel": "API key de YouTube Data",
+    "ph.ytKey": "Pega aquí tu API key (empieza con AIza)",
+    "yt.check": "Probar clave",
+    "yt.hint": "Se guarda en este navegador. Créala en <a href=\"https://console.cloud.google.com/apis/credentials\" target=\"_blank\" rel=\"noopener\">Google Cloud</a> después de activar «YouTube Data API v3», y restríngela a la dirección de este sitio y a esa API. Cada búsqueda gasta 100 de las 10 000 unidades gratuitas diarias. La reproducción usa el reproductor embebido de YouTube, así que la app debe abrirse desde https:// (o localhost), y las cuentas gratuitas oirán anuncios. Las letras vienen de <a href=\"https://lrclib.net\" target=\"_blank\" rel=\"noopener\">LRCLIB</a>.",
+    "yt.none": "Todavía no hay una clave guardada.",
+    "yt.saved": "Clave guardada. Usa «Probar clave» para comprobarla.",
+    "yt.format": "Eso no parece una API key de Google (empieza con AIza y tiene 39 caracteres). No se guardó.",
+    "yt.checking": "Comprobando la clave...",
+    "yt.ok": "La clave funciona ✅",
+    "yt.badKey": "Google dice que esta clave no es válida. Revisa que la hayas copiado completa.",
+    "yt.notEnabled": "«YouTube Data API v3» no está activada en el proyecto de la clave (o la clave tiene prohibido usarla).",
+    "yt.quota": "Se agotó la cuota diaria de esta clave. Se renueva a medianoche (hora del Pacífico).",
+    "yt.referer": "Google rechazó la petición por la restricción de sitios de la clave. Agrega la dirección de este sitio (abrir el archivo desde el disco no funciona).",
+    "yt.error": "Google respondió {status}.",
+    "yt.net": "No se pudo conectar con Google. Revisa tu conexión.",
+    "yt.needKey": "Primero agrega tu API key de YouTube Data en Configuración.",
+    "toast.ytLoad": "No se pudo cargar el reproductor de YouTube. Abre la app desde https:// o localhost y revisa tu conexión.",
+    "toast.ytUnavailable": "Ese video no se puede reproducir aquí. Probando el siguiente…",
+    "toast.ytUnavailableLast": "Ese video no se puede reproducir aquí.",
+    "toast.ytBadLink": "Eso no parece un enlace ni un ID de video de YouTube.",
+    "lyr.netErrorLrc": "No se pudo conectar con LRCLIB.",
+    "attr.lrclib": "Letra vía LRCLIB",
+    "open.titleYt": "Abrir en YouTube Music",
+    "open.ariaYt": "Abrir la canción en YouTube Music",
+    "sidebar.poweredYt": "Con tecnología de <b>YouTube</b> y <b>LRCLIB</b>",
+    "credits.youtube": "<strong>YouTube</strong> — la reproducción viene del reproductor embebido de YouTube y la búsqueda de la YouTube Data API v3. <a href=\"https://developers.google.com/youtube\" target=\"_blank\" rel=\"noopener\">developers.google.com/youtube</a>",
+    "credits.lrclib": "<strong>LRCLIB</strong> — las letras sincronizadas de las canciones de YouTube Music. <a href=\"https://lrclib.net\" target=\"_blank\" rel=\"noopener\">lrclib.net</a>"
+  }
+};
+const I18N_HOOKS = [];
+const SERVICE = lsGet(LS.service) === "ytm" ? "ytm" : "spotify";   // se cambia en Configuración (reinicia la app)   // funciones que vuelven a pintar textos dinámicos al cambiar de idioma
+let LANG = lsGet(LS.lang) === "es" ? "es" : "en";
+function tx(key, vars) {
+  let s = (I18N[LANG] && I18N[LANG][key]);
+  if (s === undefined) s = I18N.en[key];
+  if (s === undefined) return key;
+  return vars ? s.replace(/\{(\w+)\}/g, (m, k) => (vars[k] !== undefined && vars[k] !== null ? vars[k] : m)) : s;
+}
+// Texto traducible que se recuerda en el elemento (data-tk) para retraducirlo al cambiar de idioma
+function setTx(el, key, vars) {
+  el.textContent = tx(key, vars);
+  el.dataset.tk = key;
+  if (vars) el.dataset.tv = JSON.stringify(vars); else delete el.dataset.tv;
+}
+function clearTx(el) { delete el.dataset.tk; delete el.dataset.tv; }
+function applyI18n() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = tx(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = tx(el.dataset.i18nHtml); });
+  document.querySelectorAll("[data-tk]").forEach(el => {
+    let v = null; try { v = el.dataset.tv ? JSON.parse(el.dataset.tv) : null; } catch {}
+    el.textContent = tx(el.dataset.tk, v);
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach(el => { el.title = tx(el.dataset.i18nTitle); });
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => {
+    el.setAttribute("aria-label", tx(el.dataset.i18nAria) + (el.dataset.ariaSuffix || ""));
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = tx(el.dataset.i18nPh); });
+  I18N_HOOKS.forEach(fn => { try { fn(); } catch (e) { console.warn("SaltyLyrics i18n:", e); } });
+}
+function setLang(l) {
+  if (l !== "en" && l !== "es") return;
+  LANG = l;
+  lsSet(LS.lang, l);
+  applyI18n();
+}
+
 const DEFAULT_THEME = {
-  panelBg: "#000000", fg: "#ffffff", text: "#ffffff", progress: "#38b6ff",
-  bgBase: "#0b0704", accent: "#ff7a30", accent2: "#ffcf8c",
+  panelBg: "#27241a", fg: "#e4e1d9", text: "#ffffff", progress: "#e1c24b",
+  bgBase: "#1c1b17", accent: "#e1c24b", accent2: "#e1c24b",
   autoAccent: true,  // resaltado según la portada
   fx: true           // fondo animado
 };
@@ -1303,6 +2064,15 @@ let theme = (() => {
   catch { return { ...DEFAULT_THEME }; }
 })();
 function saveTheme() { lsSet(LS.theme, JSON.stringify(theme)); }
+// Una sola vez: los colores guardados pasan a la paleta del estilo Material You
+// (se conservan el color de la letra, el resaltado automático y el fondo animado).
+// "Restablecer colores" en Configuración vuelve a esta paleta.
+if (lsGet(LS.uiStyle) !== "m3") {
+  const { panelBg, fg, progress, bgBase, accent, accent2 } = DEFAULT_THEME;
+  theme = { ...theme, panelBg, fg, progress, bgBase, accent, accent2 };
+  saveTheme();
+  lsSet(LS.uiStyle, "m3");
+}
 function applyTheme() {
   const t = theme;
   let css = `:root{--panel-bg:${t.panelBg};--fg:${t.fg};--text:${t.text};--progress:${t.progress};--bg-base:${t.bgBase};`;
@@ -1317,6 +2087,47 @@ function applyTheme() {
 applyTheme();
 document.getElementById("custom-css").textContent = lsGet(LS.css) || "";
 
+/* ---- Fuente: DynaPuff por defecto; se puede pegar un enlace de Google Fonts ----
+   Acepta la URL (fonts.googleapis.com/css2?family=...), el código <link>/@import que da Google
+   o la página de la fuente (fonts.google.com/specimen/...). Solo se admite fonts.googleapis.com. */
+function parseGoogleFont(input) {
+  const text = String(input || "").replace(/&amp;/g, "&").trim();
+  let url = null;
+  let m = text.match(/https?:\/\/fonts\.googleapis\.com\/css2?\?[^\s"'<>)]+/i);
+  if (m) url = m[0];
+  else {
+    m = text.match(/https?:\/\/fonts\.google\.com\/specimen\/([^\s"'<>?#\/]+)/i);
+    if (m) url = "https://fonts.googleapis.com/css2?family=" + m[1];
+  }
+  if (!url || url.length > 2000) return null;
+  if (!/[?&]display=/.test(url)) url += "&display=swap";
+  let u; try { u = new URL(url); } catch { return null; }
+  if (u.hostname !== "fonts.googleapis.com" || !/^\/css2?$/.test(u.pathname)) return null;
+  const fam = u.searchParams.get("family");
+  const family = fam ? fam.split(":")[0].trim() : "";
+  if (!family || !/^[\p{L}\p{N} ._-]{1,80}$/u.test(family)) return null;   // sin comillas ni símbolos: no se cuela CSS
+  return { url, family };
+}
+function applyFont(f) {
+  let link = document.getElementById("custom-font-link");
+  const st = document.getElementById("font-css");
+  if (!f) { if (link) link.remove(); st.textContent = ""; return; }
+  if (!link) {
+    link = document.createElement("link");
+    link.id = "custom-font-link"; link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }
+  link.href = f.url;
+  // DynaPuff queda como respaldo mientras carga la fuente elegida (o si falla)
+  st.textContent = ':root{ --font-display: "' + f.family + '", "DynaPuff", system-ui, -apple-system, "Segoe UI", sans-serif; }';
+}
+let currentFont = null;
+{
+  const saved = lsGet(LS.font);
+  const f = saved ? parseGoogleFont(saved) : null;
+  if (f) { currentFont = f; applyFont(f); }
+}
+
 /* Modo TV: se activa solo en navegadores de televisión (o con ?tv=1) y se puede
    cambiar en Configuración. Agranda la interfaz para verla de lejos. */
 const IS_TV_DEVICE = /Tizen|Web0S|WebOS|SMART-TV|SmartTV|HbbTV|BRAVIA|Android TV|GoogleTV|CrKey|NETTV|Viera|Roku|AFT[A-Z]/i.test(navigator.userAgent);
@@ -1325,6 +2136,7 @@ let tvMode = lsGet(LS.tv) === null ? IS_TV_DEVICE : lsGet(LS.tv) === "1";
 function applyTvMode() { document.documentElement.classList.toggle("tv-mode", tvMode); }
 applyTvMode();
 </script>
+<script>applyI18n();</script>
 <script src="spicy-renderer/dist/spicy-renderer.js?v=ed33968f42" onerror="console.warn('SaltyLyrics: no se pudo cargar spicy-renderer/dist/spicy-renderer.js; se usa el renderizador clásico.')"></script>
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script>
@@ -1395,7 +2207,12 @@ let player = null;
 // controla la música que suena en otro dispositivo de Spotify (por defecto en TV).
 let remoteMode = lsGet(LS.remote) === null ? IS_TV_DEVICE : lsGet(LS.remote) === "1";
 
-function setStatus(msg) { statusEl.textContent = "Estado: " + msg; }
+let lastStatus = { k: "st.disconnected", v: null };
+function renderStatus() { statusEl.textContent = tx("status.prefix") + tx(lastStatus.k, lastStatus.v); }
+function setStatus(k, v) { lastStatus = { k, v: v || null }; renderStatus(); }
+// Texto del botón de conexión según el estado (se vuelve a traducir al cambiar de idioma)
+let loginConnected = false;
+function setLoginLabel(connected) { loginConnected = connected; loginBtn.textContent = tx(connected ? "login.connected" : "login.connect"); }
 
 /* ---------------------------------------------------------------------
    SIDEBAR + navegación entre vistas
@@ -1449,7 +2266,7 @@ async function login() {
   CLIENT_ID = clientIdInput.value.trim();
   lsSet(LS.clientId, CLIENT_ID);
   if (!CLIENT_ID) {
-    setStatus("escribe primero tu Client ID (el botón Instrucciones explica cómo obtenerlo).");
+    setStatus("st.needClientId");
     clientIdInput.focus();
     return;
   }
@@ -1472,7 +2289,7 @@ async function login() {
   authLinkEl.value = "https://accounts.spotify.com/authorize?" + params.toString();
   authLinkBox.hidden = false;
   authPasteEl.value = "";
-  setStatus("enlace listo: ábrelo aquí o en otro dispositivo y aprueba el acceso.");
+  setStatus("st.linkReady");
 }
 
 // Acepta la dirección completa a la que Spotify redirige (o solo su parte "?code=...")
@@ -1488,20 +2305,20 @@ function parseAuthInput(text) {
 // Termina el inicio de sesión con la respuesta de Spotify (misma pestaña o pegada a mano)
 async function completeLogin(params) {
   const err = params.get("error");
-  if (err) { setStatus("Spotify no autorizó el acceso (" + err + ")."); return false; }
+  if (err) { setStatus("st.denied", { err }); return false; }
   const code = params.get("code");
-  if (!code) { setStatus("esa dirección no trae un código de Spotify."); return false; }
-  if (!CLIENT_ID) { setStatus("falta el Client ID: escríbelo y vuelve a conectar."); return false; }
+  if (!code) { setStatus("st.noCode"); return false; }
+  if (!CLIENT_ID) { setStatus("st.missingId"); return false; }
   if (!lsGet(LS.verifier)) {
-    setStatus("no hay un inicio de sesión pendiente en este navegador. Pulsa Conectar Spotify y usa el enlace nuevo.");
+    setStatus("st.noPending");
     return false;
   }
   const expected = lsGet(LS.authState);
   if (expected && params.get("state") !== expected) {
-    setStatus("esa respuesta no es del último enlace generado. Pulsa Conectar Spotify de nuevo y usa el enlace nuevo.");
+    setStatus("st.staleState");
     return false;
   }
-  setStatus("intercambiando código por token...");
+  setStatus("st.exchanging");
   const ok = await exchangeCodeForToken(code);
   if (ok) { lsDel(LS.verifier); lsDel(LS.authState); }
   return ok;
@@ -1542,7 +2359,7 @@ async function exchangeCodeForTokenInner(code) {
     code_verifier: lsGet(LS.verifier) || ""
   });
   if (!r.ok) {
-    setStatus("error al intercambiar el código por un token. Revisa tu Client ID y la Redirect URI.");
+    setStatus("st.exchangeError");
     return false;
   }
   saveTokens(r.data);
@@ -1588,12 +2405,12 @@ function disconnectSpotify() {
   prevBtn.disabled = true;
   nextBtn.disabled = true;
   togglePlayBtn.disabled = true;
-  loginBtn.textContent = "Conectar Spotify";
+  setLoginLabel(false);
   loginBtn.disabled = false;
   logoutBtn.hidden = true;
   authLinkBox.hidden = true;
   resetPlaylists();
-  setStatus("sin conectar.");
+  setStatus("st.disconnected");
 }
 
 /* ---------------------------------------------------------------------
@@ -1644,18 +2461,18 @@ let remoteBusy = false;
 let remotePaused = true;
 let remoteLastMsg = "";
 let toastTimer;
-function showToast(text) {
+function showToast(key, vars) {
   const el = $("toast");
-  el.textContent = text;
+  el.textContent = tx(key, vars);
   el.classList.add("is-visible");
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove("is-visible"), 4500);
 }
 function remoteError(res) {
-  if (res.status === 404) showToast("No hay ningún dispositivo de Spotify activo. Abre Spotify en tu teléfono o computadora y reproduce algo.");
-  else if (res.status === 403) showToast("Spotify rechazó la acción (el control remoto necesita Premium).");
-  else if (res.status === 429) showToast("Spotify pide esperar un momento.");
-  else showToast(`Spotify respondió ${res.status}.`);
+  if (res.status === 404) showToast("toast.noDevice");
+  else if (res.status === 403) showToast("toast.premium");
+  else if (res.status === 429) showToast("toast.wait");
+  else showToast("toast.spotifyStatus", { status: res.status });
 }
 async function remoteCall(method, path) {
   return fetch("https://api.spotify.com/v1/me/player" + path, { method, headers: await authHeaders() });
@@ -1683,7 +2500,7 @@ async function remoteTick() {
     const res = await fetch("https://api.spotify.com/v1/me/player?additional_types=track,episode", { headers: await authHeaders() });
     const t1 = performance.now();
     if (res.status === 204) {
-      if (remoteLastMsg !== "idle") { remoteLastMsg = "idle"; setStatus("conectado en modo control remoto: no hay nada sonando. Abre Spotify en otro dispositivo y reproduce algo."); showToast("No hay nada sonando. Abre Spotify en otro dispositivo y reproduce algo."); }
+      if (remoteLastMsg !== "idle") { remoteLastMsg = "idle"; setStatus("st.remoteIdle"); showToast("toast.nothingPlaying"); }
       return;
     }
     if (!res.ok) return;
@@ -1700,8 +2517,11 @@ async function remoteTick() {
       repeat_mode: { off: 0, context: 1, track: 2 }[d.repeat_state] ?? 0
     }, (t0 + t1) / 2);
     if (typeof d.device?.volume_percent === "number" && !volDragging) setVolumeUI(d.device.volume_percent / 100);
-    const msg = d.device?.name || "otro dispositivo";
-    if (remoteLastMsg !== msg) { remoteLastMsg = msg; setStatus(`conectado en modo control remoto: suena en «${msg}».`); }
+    const msg = d.device?.name || "\u2205";
+    if (remoteLastMsg !== msg) {
+      remoteLastMsg = msg;
+      if (d.device?.name) setStatus("st.remotePlaying", { msg: d.device.name }); else setStatus("st.remotePlayingOther");
+    }
   } catch {} finally { remoteBusy = false; }
 }
 function startRemote() {
@@ -1709,9 +2529,9 @@ function startRemote() {
   player = remotePlayer;
   remoteLastMsg = "";
   prevBtn.disabled = false; nextBtn.disabled = false; togglePlayBtn.disabled = false;
-  loginBtn.textContent = "Conectado ✅"; loginBtn.disabled = true;
+  setLoginLabel(true); loginBtn.disabled = true;
   logoutBtn.hidden = false; authLinkBox.hidden = true;
-  setStatus("conectado en modo control remoto: buscando el dispositivo que está sonando...");
+  setStatus("st.remoteSearching");
   remoteTick();
   remoteTimer = setInterval(remoteTick, 1000);
 }
@@ -1728,9 +2548,9 @@ function switchPlaybackMode(remote) {
   stopRemote();
   player = null; deviceId = null;
   prevBtn.disabled = true; nextBtn.disabled = true; togglePlayBtn.disabled = true;
-  loginBtn.textContent = "Conectar Spotify"; loginBtn.disabled = false;
-  if (accessToken) { setStatus(remote ? "cambiando a control remoto..." : "cambiando a reproducir en este navegador..."); startSession(); }
-  else setStatus("sin conectar.");
+  setLoginLabel(false); loginBtn.disabled = false;
+  if (accessToken) { setStatus(remote ? "st.switchingRemote" : "st.switchingLocal"); startSession(); }
+  else setStatus("st.disconnected");
 }
 
 window.onSpotifyWebPlaybackSDKReady = () => {
@@ -1746,20 +2566,20 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
   player.addListener("ready", ({ device_id }) => {
     deviceId = device_id;
-    setStatus("conectado ✅ — dispositivo listo.");
+    setStatus("st.ready");
     prevBtn.disabled = false;
     nextBtn.disabled = false;
     togglePlayBtn.disabled = false;
-    loginBtn.textContent = "Conectado ✅";
+    setLoginLabel(true);
     loginBtn.disabled = true;
     logoutBtn.hidden = false;
     authLinkBox.hidden = true;
   });
 
-  player.addListener("not_ready", ({ device_id }) => setStatus("dispositivo desconectado (" + device_id + ")."));
-  player.addListener("initialization_error", ({ message }) => setStatus("error de inicialización: " + message));
-  player.addListener("authentication_error", ({ message }) => setStatus("error de autenticación: " + message));
-  player.addListener("account_error", ({ message }) => setStatus("error de cuenta (¿tienes Premium?): " + message));
+  player.addListener("not_ready", ({ device_id }) => setStatus("st.notReady", { id: device_id }));
+  player.addListener("initialization_error", ({ message }) => setStatus("st.initError", { message }));
+  player.addListener("authentication_error", ({ message }) => setStatus("st.authError", { message }));
+  player.addListener("account_error", ({ message }) => setStatus("st.accountError", { message }));
 
   player.addListener("player_state_changed", state => applyPlayerState(state));
 
@@ -1768,6 +2588,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 let currentCoverUrl = null;
 function setTrackInfo(track) {
+  trackTitleEl.removeAttribute("data-i18n"); trackArtistEl.removeAttribute("data-i18n");
   trackTitleEl.textContent = track.name;
   const artistsText = track.artists.map(a => a.name).join(", ");
   trackArtistEl.textContent = artistsText;
@@ -1776,7 +2597,7 @@ function setTrackInfo(track) {
   pbArtistEl.textContent = artistsText;
   currentTrack = { id: track.id || null, name: track.name };
   refreshFavUI();
-  scheduleQueueRefresh(track.id);
+  if (SERVICE !== "ytm") scheduleQueueRefresh(track.id);
 
   const url = track.album.images[0]?.url || "";
   if (url === currentCoverUrl) return;
@@ -1869,21 +2690,23 @@ seekbarEl.addEventListener("pointercancel", endSeek);
    BUSCAR CANCIONES
    --------------------------------------------------------------------- */
 async function searchTracksInner() {
+  if (SERVICE === "ytm") return searchYtInner();
   const query = $("search-input").value.trim();
   const resultsEl = $("search-results");
   if (!query) return;
-  if (!accessToken) { resultsEl.textContent = "Primero conecta tu cuenta de Spotify en Configuración."; return; }
-  resultsEl.textContent = "Buscando...";
+  if (!accessToken) { setTx(resultsEl, "search.connectFirst"); return; }
+  setTx(resultsEl, "search.searching");
 
   const params = new URLSearchParams({ q: query, type: "track", limit: "10" });
   const res = await fetch("https://api.spotify.com/v1/search?" + params.toString(), {
     headers: await authHeaders()
   });
-  if (!res.ok) { resultsEl.textContent = "Error al buscar (¿token expirado?)."; return; }
+  if (!res.ok) { setTx(resultsEl, "search.error"); return; }
 
   const tracks = (await res.json()).tracks?.items || [];
-  if (tracks.length === 0) { resultsEl.textContent = "Sin resultados."; return; }
+  if (tracks.length === 0) { setTx(resultsEl, "search.none"); return; }
 
+  clearTx(resultsEl);
   resultsEl.innerHTML = "";
   tracks.forEach(track => {
     const item = document.createElement("div");
@@ -1922,7 +2745,7 @@ async function searchTracksInner() {
    --------------------------------------------------------------------- */
 async function playTrackUri(uri) {
   if (!deviceId && !remoteMode) {
-    setStatus("todavía no hay un dispositivo listo, espera unos segundos.");
+    setStatus("st.noDevice");
     return;
   }
   const res = await fetch(`https://api.spotify.com/v1/me/player/play${deviceId ? "?device_id=" + deviceId : ""}`, {
@@ -1932,20 +2755,22 @@ async function playTrackUri(uri) {
   });
   if (remoteMode) { if (!res.ok) remoteError(res); else setTimeout(remoteTick, 700); }
 }
-function playTrack() { return playTrackUri(trackUriInput.value.trim()); }
+function playTrack() { return SERVICE === "ytm" ? ytPlayFromInput() : playTrackUri(trackUriInput.value.trim()); }
 
 /* Agregar a la cola de reproducción (POST /me/player/queue; usa el permiso user-modify-playback-state) */
 async function addToQueue(uri, name) {
   if (!uri) return;
+  if (SERVICE === "ytm") { ytAddToQueue(uri, name); return; }
   const res = await playerApi("POST", "/queue?uri=" + encodeURIComponent(uri));
-  if (res) showToast(name ? `«${name}» se agregó a la cola.` : "Agregada a la cola.");
+  if (res) showToast(name ? "toast.queued" : "toast.queuedGeneric", { name });
 }
 function queueButton(uri, name) {
   const b = document.createElement("button");
   b.type = "button";
   b.className = "row-queue-btn";
-  b.title = "Agregar a la cola";
-  b.setAttribute("aria-label", "Agregar a la cola" + (name ? ": " + name : ""));
+  b.title = tx("queue.add"); b.dataset.i18nTitle = "queue.add";
+  b.setAttribute("aria-label", tx("queue.add") + (name ? ": " + name : "")); b.dataset.i18nAria = "queue.add";
+  if (name) b.dataset.ariaSuffix = ": " + name;
   b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>';
   b.addEventListener("click", e => { e.stopPropagation(); addToQueue(uri, name); });
   return b;
@@ -1955,6 +2780,7 @@ async function playPrevious() { if (player) await player.previousTrack(); }
 async function playNext() { if (player) await player.nextTrack(); }
 
 async function init() {
+  if (SERVICE === "ytm") { ytStart(); return; }
   clientIdInput.value = CLIENT_ID;
   $("redirect-uri-text").textContent = REDIRECT_URI;
 
@@ -1968,25 +2794,25 @@ async function init() {
       authReturnEl.value = window.location.href;
       authReturnBox.hidden = false;
       showView("settings");
-      setStatus("recibí el código de Spotify, pero este navegador no inició el inicio de sesión. Copia la dirección de arriba y pégala en la app donde generaste el enlace.");
+      setStatus("st.codeReceived");
     } else {
       await completeLogin(query);
       window.history.replaceState({}, document.title, REDIRECT_URI);
     }
   } else if (CLIENT_ID && lsGet(LS.refresh)) {
     // Sesión guardada: reconecta sin pasar por Spotify
-    setStatus("reconectando con la sesión guardada...");
+    setStatus("st.reconnecting");
     accessToken = lsGet(LS.access);
     tokenExpiresAt = Number(lsGet(LS.expires) || 0);
     if (!accessToken || Date.now() >= tokenExpiresAt) {
       setLoading("auth", true);
       try { await refreshAccessToken(); } finally { setLoading("auth", false); }
     }
-    if (!accessToken) setStatus("no se pudo reconectar. Vuelve a conectar Spotify.");
+    if (!accessToken) setStatus("st.reconnectFail");
   }
 
   if (accessToken) {
-    setStatus("sesión lista, iniciando reproductor...");
+    setStatus("st.sessionReady");
     startSession();
   }
 }
@@ -2000,8 +2826,8 @@ $("open-link-btn").addEventListener("click", () => {
     // Dentro de un iframe, Spotify no deja que su página de permisos se abra: va en pestaña nueva
     const w = window.open(url, "_blank");
     setStatus(w
-      ? "aprueba el acceso en la pestaña nueva. Si esta app no se conecta sola, copia la dirección a la que te lleve y pégala en el campo de abajo."
-      : "el navegador bloqueó la pestaña nueva. Usa «Copiar enlace» y ábrelo tú en otra pestaña.");
+      ? "st.approveNewTab"
+      : "st.popupBlocked");
   } else {
     window.location.href = url;
   }
@@ -2016,29 +2842,29 @@ window.addEventListener("storage", async e => {
   if (accessToken) {
     authLinkBox.hidden = true;
     authPasteEl.value = "";
-    setStatus("sesión recibida desde otra pestaña, iniciando reproductor...");
+    setStatus("st.fromOtherTab");
     startSession();
   }
 });
-async function copyFrom(textEl, btn, idleLabel) {
+async function copyFrom(textEl, btn, idleKey) {
   try { await navigator.clipboard.writeText(textEl.value); }
   catch { textEl.select(); document.execCommand("copy"); }
-  btn.textContent = "¡Copiado!";
-  setTimeout(() => { btn.textContent = idleLabel; }, 1600);
+  btn.textContent = tx("copy.copied");
+  setTimeout(() => { btn.textContent = tx(idleKey); }, 1600);
 }
-$("copy-link-btn").addEventListener("click", () => copyFrom(authLinkEl, $("copy-link-btn"), "Copiar enlace"));
-$("copy-return-btn").addEventListener("click", () => copyFrom(authReturnEl, $("copy-return-btn"), "Copiar dirección"));
+$("copy-link-btn").addEventListener("click", () => copyFrom(authLinkEl, $("copy-link-btn"), "copy.link"));
+$("copy-return-btn").addEventListener("click", () => copyFrom(authReturnEl, $("copy-return-btn"), "copy.address"));
 authReturnEl.addEventListener("focus", () => authReturnEl.select());
 async function submitPastedAuth() {
   const params = parseAuthInput(authPasteEl.value);
   if (!params) {
-    setStatus("no encontré un código en lo que pegaste. Copia la dirección completa de la página a la que te llevó Spotify.");
+    setStatus("st.noCodePasted");
     return;
   }
   if (await completeLogin(params)) {
     authPasteEl.value = "";
     authLinkBox.hidden = true;
-    setStatus("sesión lista, iniciando reproductor...");
+    setStatus("st.sessionReady");
     startSession();
   }
 }
@@ -2053,7 +2879,7 @@ clientIdInput.addEventListener("change", () => {
   const hadSession = !!(accessToken || lsGet(LS.refresh));
   CLIENT_ID = v;
   lsSet(LS.clientId, v);
-  if (hadSession) { disconnectSpotify(); setStatus("Client ID cambiado: vuelve a conectar Spotify."); }
+  if (hadSession) { disconnectSpotify(); setStatus("st.clientIdChanged"); }
 });
 $("search-btn").addEventListener("click", searchTracks);
 $("search-input").addEventListener("keydown", e => { if (e.key === "Enter") searchTracks(); });
@@ -2189,20 +3015,24 @@ function applyLyricsOffset(ms, save = true) {
   const pct = ((ms + OFFSET_MAX_MS) / (2 * OFFSET_MAX_MS)) * 100;
   offsetSlider.style.setProperty("--a", Math.min(pct, 50) + "%");
   offsetSlider.style.setProperty("--b", Math.max(pct, 50) + "%");
-  offsetValueEl.textContent = "Sincronía: " + (ms > 0 ? "+" : "") + (ms / 1000).toFixed(1) + "s";
+  renderOffsetLabel();
   syncLyrics(nowMs() + lyricsOffsetMs);
 }
 offsetSlider.addEventListener("input", () => applyLyricsOffset(parseFloat(offsetSlider.value) * 1000));
 $("offset-minus").addEventListener("click", () => applyLyricsOffset(lyricsOffsetMs - OFFSET_STEP_MS));
 $("offset-plus").addEventListener("click", () => applyLyricsOffset(lyricsOffsetMs + OFFSET_STEP_MS));
 const fmtOffset = ms => (ms > 0 ? "+" : "") + (ms / 1000).toFixed(1) + "s";
-offsetValueEl.title = "Clic para volver a " + fmtOffset(DEFAULT_OFFSET_MS);
+function renderOffsetLabel() {
+  offsetValueEl.textContent = tx("offset.value", { v: fmtOffset(lyricsOffsetMs) });
+  offsetValueEl.title = tx("offset.reset", { v: fmtOffset(DEFAULT_OFFSET_MS) });
+}
+renderOffsetLabel();
 offsetValueEl.addEventListener("click", () => { applyLyricsOffset(DEFAULT_OFFSET_MS); lsDel(LS.offset); });
 applyLyricsOffset(lyricsOffsetMs, false);
 
 const toMs = s => Math.round((s || 0) * 1000);
 
-function showLyricsMessage(text) {
+function showLyricsMessage(key, vars) {
   destroySpicy();
   currentLyricsBody = null;
   lyricsList.innerHTML = "";
@@ -2211,11 +3041,13 @@ function showLyricsMessage(text) {
   lyricsWrap.classList.remove("is-static");
   loaderGap = false;
   refreshLoader();
-  emptyState.textContent = text;
+  setTx(emptyState, key, vars);
   emptyState.style.display = "flex";
 }
 
+let attrBody = null;
 function renderAttribution(body) {
+  attrBody = body;
   lyricsAttributionEl.textContent = "";
   const add = t => lyricsAttributionEl.append(t);
   const person = p => {
@@ -2232,16 +3064,17 @@ function renderAttribution(body) {
     const up = attr.Uploader, mk = attr.Maker;
     const strong = document.createElement("strong");
     strong.textContent = "Spicy Lyrics";
-    add("Letra vía "); lyricsAttributionEl.append(strong);
+    add(tx("attr.via")); lyricsAttributionEl.append(strong);
     if (up?.username && mk?.username && up.username === mk.username) {
-      add(" — subida y sincronizada por "); person(up);
+      add(tx("attr.uploadedSynced")); person(up);
     } else {
-      if (up?.username) { add(" — subida por "); person(up); }
-      if (mk?.username) { add(up?.username ? ", sincronizada por " : " — sincronizada por "); person(mk); }
+      if (up?.username) { add(tx("attr.uploaded")); person(up); }
+      if (mk?.username) { add(tx(up?.username ? "attr.syncedComma" : "attr.synced")); person(mk); }
     }
-  } else if (body.source === "apple_music") add("Letra vía Apple Music");
-  else if (body.source === "spotify") add("Letra vía Spotify");
-  else add("Letra vía " + (body.source || "proveedor desconocido"));
+  } else if (body.source === "apple_music") add(tx("attr.apple"));
+  else if (body.source === "spotify") add(tx("attr.spotify"));
+  else if (body.source === "lrclib") add(tx("attr.lrclib"));
+  else add(tx("attr.via") + (body.source || tx("attr.unknown")));
 }
 
 // Convierte las sílabas de la API en "piezas" con tiempo propio.
@@ -2360,7 +3193,7 @@ function renderLyricsClassic(body) {
     });
   });
 
-  if (!lines.length) { showLyricsMessage("No hay letra disponible para esta canción."); return; }
+  if (!lines.length) { showLyricsMessage("lyr.none"); return; }
 
   emptyState.style.display = "none";
   loaderGap = false;
@@ -2391,11 +3224,14 @@ async function fetchAndRenderLyricsInner(trackId) {
   if (!trackId || trackId === currentLyricsTrackId) return;
   currentLyricsTrackId = trackId;
   lyricsSyncType = null;
+  attrBody = null;
   lyricsAttributionEl.textContent = "";
-  showLyricsMessage("Buscando letra...");
+  showLyricsMessage("lyr.searching");
+
+  if (SERVICE === "ytm") { await fetchYtLyrics(trackId); return; }
 
   if (!SPICY_KEY) {
-    showLyricsMessage("Agrega tu Client Key de Spicy Lyrics en Configuración para ver letras.");
+    showLyricsMessage("lyr.noKey");
     return;
   }
 
@@ -2406,9 +3242,9 @@ async function fetchAndRenderLyricsInner(trackId) {
       if (linkedId && linkedId !== trackId) res = await fetchLyricsById(linkedId);
     }
     if (trackId !== currentLyricsTrackId) return; // el usuario cambió de canción
-    if (res.status === 404) { showLyricsMessage("No hay letra disponible para esta canción en Spicy Lyrics."); return; }
-    if (res.status === 401 || res.status === 403) { showLyricsMessage("La Client Key de Spicy Lyrics no es válida. Revísala en Configuración."); return; }
-    if (!res.ok) { showLyricsMessage(`Error al cargar la letra (${res.status}).`); return; }
+    if (res.status === 404) { showLyricsMessage("lyr.noneSpicy"); return; }
+    if (res.status === 401 || res.status === 403) { showLyricsMessage("lyr.badKey"); return; }
+    if (!res.ok) { showLyricsMessage("lyr.loadError", { status: res.status }); return; }
 
     const data = await res.json();
     if (trackId !== currentLyricsTrackId) return;
@@ -2416,12 +3252,12 @@ async function fetchAndRenderLyricsInner(trackId) {
       renderLyrics(data.Body);
     } catch (err) {
       console.error("Spicy Lyrics: la letra llegó pero no se pudo mostrar", err, data);
-      showLyricsMessage("La letra se descargó pero no se pudo mostrar (" + err.message + "). Revisa la consola del navegador.");
+      showLyricsMessage("lyr.renderError", { msg: err.message });
     }
   } catch (err) {
     console.error("Spicy Lyrics: error de red", err);
     if (trackId === currentLyricsTrackId)
-      showLyricsMessage("No se pudo conectar con Spicy Lyrics.");
+      showLyricsMessage("lyr.netError");
   }
 }
 
@@ -2590,7 +3426,7 @@ function renderLyrics(body) {
       }
       lyricsWrap.dataset.renderer = "spicy";
       renderAttribution(body);
-      if (!spicy.render(body)) { showLyricsMessage("No hay letra disponible para esta canción."); return; }
+      if (!spicy.render(body)) { showLyricsMessage("lyr.none"); return; }
       emptyState.style.display = "none";
       loaderGap = false;   // los puntos de interludio ya los dibuja Spicy
       refreshLoader();
@@ -2627,8 +3463,10 @@ if (window.ResizeObserver) new ResizeObserver(() => positionLines()).observe(lyr
 /* ---------------------------------------------------------------------
    LOOP DE ANIMACIÓN — letras y barra de progreso a 60fps
    --------------------------------------------------------------------- */
+var ytPlaceHostFn = null;   // la define el módulo de YouTube Music (si está activo)
 let lastShownSecond = -1;
 function animationLoop() {
+  if (ytPlaceHostFn) ytPlaceHostFn();
   if (player && currentDurationMs) {
     const pos = nowMs();
     if (!isSeeking) {
@@ -2663,15 +3501,29 @@ let plNextUrl = null;
 let plTrackCount = 0;
 let plLastCard = null;
 
-function plMsg(text, goSettings = false) {
-  plMsgEl.textContent = text || "";
-  plMsgEl.hidden = !text;
-  if (text && goSettings) {
+// Mensaje bajo el título: recibe una clave de traducción (o "" para ocultarlo)
+function msgInto(el, key, goSettings, vars) {
+  el.textContent = "";
+  el.hidden = !key;
+  if (!key) return;
+  const s = document.createElement("span");
+  setTx(s, key, vars);
+  el.appendChild(s);
+  if (goSettings) {
     const b = document.createElement("button");
-    b.type = "button"; b.className = "pill-btn"; b.textContent = "Ir a Configuración";
+    b.type = "button"; b.className = "pill-btn"; b.dataset.i18n = "goto.settings"; b.textContent = tx("goto.settings");
     b.addEventListener("click", () => showView("settings"));
-    plMsgEl.appendChild(b);
+    el.appendChild(b);
   }
+}
+function plMsg(key, goSettings = false, vars = null) { msgInto(plMsgEl, key, goSettings, vars); }
+function plSubText(total, owner) {
+  return [total != null ? (total === 1 ? tx("pl.song1") : tx("pl.songs", { n: total })) : "", owner].filter(Boolean).join(" · ");
+}
+function setPlSub(el, total, owner) {
+  el.dataset.plTotal = total != null ? String(total) : "";
+  el.dataset.plOwner = owner || "";
+  el.textContent = plSubText(total, owner);
 }
 
 function resetPlaylists() {
@@ -2690,26 +3542,26 @@ function onOpenPlaylists() {
 // Respuestas de error de la API -> mensaje claro. Devuelve true si hubo error.
 function plHandleError(res, what) {
   if (res.ok) return false;
-  if (res.status === 401) plMsg("La sesión de Spotify expiró. Ve a Configuración y vuelve a conectar.", true);
-  else if (res.status === 403 && what === "list") plMsg("Spotify rechazó la petición (403). Probablemente falta el permiso de playlists: en Configuración pulsa Desconectar y luego Conectar Spotify de nuevo.", true);
-  else if (res.status === 403) plMsg("Spotify solo deja ver las canciones de playlists que son tuyas o colaborativas. Aun así puedes pulsar Reproducir.");
-  else if (res.status === 429) plMsg("Spotify pide esperar un momento. Intenta de nuevo en unos segundos.");
-  else plMsg(`No se pudo cargar (${res.status}).`);
+  if (res.status === 401) plMsg("pl.expired", true);
+  else if (res.status === 403 && what === "list") plMsg("pl.403list", true);
+  else if (res.status === 403) plMsg("pl.403tracks");
+  else if (res.status === 429) plMsg("pl.wait");
+  else plMsg("pl.loadError", false, { status: res.status });
   return true;
 }
 
 async function loadPlaylistsInner() {
   plListEl.innerHTML = "";
   if (!accessToken && !lsGet(LS.refresh)) {
-    plMsg("Conecta tu cuenta de Spotify en Configuración para ver tus playlists.", true);
+    plMsg("pl.connectFirst", true);
     return;
   }
   const granted = lsGet(LS.scope);
   if (granted && !granted.split(" ").includes(PL_SCOPE)) {
-    plMsg("Para ver tus playlists hace falta un permiso nuevo. En Configuración pulsa Desconectar y vuelve a Conectar Spotify.", true);
+    plMsg("pl.needPerm", true);
     return;
   }
-  plMsg("Cargando playlists...");
+  plMsg("pl.loading");
   try {
     const all = [];
     let url = "https://api.spotify.com/v1/me/playlists?limit=50";
@@ -2721,11 +3573,11 @@ async function loadPlaylistsInner() {
       url = data.next;
     }
     plLoaded = true;
-    if (!all.length) { plMsg("No tienes playlists todavía."); return; }
+    if (!all.length) { plMsg("pl.none"); return; }
     plMsg("");
     all.forEach(renderPlaylistCard);
   } catch {
-    plMsg("No se pudo conectar con Spotify. Revisa tu conexión.");
+    plMsg("net.fail");
   }
 }
 
@@ -2747,11 +3599,11 @@ function renderPlaylistCard(p) {
   const url = p.images?.[1]?.url || p.images?.[0]?.url;
   card.appendChild(coverEl(url, "pl-cover"));
   const name = document.createElement("div");
-  name.className = "pl-name"; name.textContent = p.name || "Sin título";
+  name.className = "pl-name"; if (p.name) name.textContent = p.name; else setTx(name, "untitled");
   const sub = document.createElement("div");
   sub.className = "pl-sub";
   const total = p.items?.total ?? p.tracks?.total;
-  sub.textContent = [total != null ? `${total} canciones` : "", p.owner?.display_name].filter(Boolean).join(" · ");
+  setPlSub(sub, total, p.owner?.display_name);
   card.append(name, sub);
   card.addEventListener("click", () => { plLastCard = card; openPlaylist(p); });
   plListEl.appendChild(card);
@@ -2764,9 +3616,9 @@ async function openPlaylist(p) {
   plMsg("");
   plTracksEl.innerHTML = "";
   plTrackCount = 0;
-  $("pl-head-name").textContent = p.name || "Sin título";
+  { const hn = $("pl-head-name"); if (p.name) { clearTx(hn); hn.textContent = p.name; } else setTx(hn, "untitled"); }
   const total = p.items?.total ?? p.tracks?.total;
-  $("pl-head-sub").textContent = [total != null ? `${total} canciones` : "", p.owner?.display_name].filter(Boolean).join(" · ");
+  setPlSub($("pl-head-sub"), total, p.owner?.display_name);
   const headCover = $("pl-head-cover");
   headCover.innerHTML = "";
   const url = p.images?.[1]?.url || p.images?.[0]?.url;
@@ -2799,9 +3651,9 @@ async function loadMoreTracksInner() {
     });
     plNextUrl = data.next;
     plMoreBtn.hidden = !plNextUrl;
-    if (!plTrackCount) plMsg("Esta playlist está vacía.");
+    if (!plTrackCount) plMsg("pl.empty");
   } catch {
-    plMsg("No se pudo conectar con Spotify. Revisa tu conexión.");
+    plMsg("net.fail");
   } finally {
     plMoreBtn.disabled = false;
   }
@@ -2815,7 +3667,7 @@ function renderTrackRow(t, n) {
   const imgs = t.album?.images || t.images || [];
   const thumb = coverEl(imgs[imgs.length - 1]?.url, "thumb");
   const info = document.createElement("div"); info.className = "info";
-  const title = document.createElement("div"); title.className = "t"; title.textContent = t.name || "Sin título";
+  const title = document.createElement("div"); title.className = "t"; if (t.name) title.textContent = t.name; else setTx(title, "untitled");
   const artist = document.createElement("div"); artist.className = "a";
   artist.textContent = t.artists?.length ? t.artists.map(a => a.name).join(", ") : (t.show?.name || "");
   info.append(title, artist);
@@ -2823,14 +3675,14 @@ function renderTrackRow(t, n) {
   row.append(num, thumb, info, dur);
   if (!t.is_local && t.uri) row.appendChild(queueButton(t.uri, t.name));
   if (!t.is_local) row.addEventListener("click", () => playContext(plCurrent.uri, t.uri));
-  else row.title = "Las canciones locales no se pueden reproducir desde aquí";
+  else { row.title = tx("pl.localTrack"); row.dataset.i18nTitle = "pl.localTrack"; }
   return row;
 }
 
 // Reproduce dentro de la playlist, para que siguiente/anterior sigan su orden
 async function playContext(contextUri, trackUri) {
   if (!deviceId && !remoteMode) {
-    plMsg("Todavía no hay un dispositivo listo: conecta Spotify en Configuración y espera unos segundos.", true);
+    plMsg("pl.noDeviceReady", true);
     return;
   }
   const body = { context_uri: contextUri };
@@ -2841,14 +3693,14 @@ async function playContext(contextUri, trackUri) {
       headers: { ...(await authHeaders()), "Content-Type": "application/json" },
       body: JSON.stringify(body)
     });
-    if (res.status === 404 && remoteMode) { plMsg("No hay ningún dispositivo de Spotify activo. Abre Spotify en tu teléfono o computadora y reproduce algo un momento."); return; }
-    if (!res.ok) { plMsg(`Spotify no pudo reproducir esto (${res.status}).`); return; }
+    if (res.status === 404 && remoteMode) { plMsg("pl.noActive"); return; }
+    if (!res.ok) { plMsg("pl.playFail", false, { status: res.status }); return; }
     plMsg("");
     showView("player");
     if (remoteMode) setTimeout(remoteTick, 700);
     requestAnimationFrame(() => togglePlayBtn.focus({ preventScroll: true }));
   } catch {
-    plMsg("No se pudo conectar con Spotify. Revisa tu conexión.");
+    plMsg("net.fail");
   }
 }
 
@@ -2873,15 +3725,12 @@ plMoreBtn.addEventListener("click", loadMoreTracks);
 // ---- Client Key de Spicy Lyrics ----
 const spicyKeyInput = $("spicy-key-input");
 const spicyKeyHint = $("spicy-key-hint");
-const SPICY_HINT = spicyKeyHint.textContent;
 spicyKeyInput.value = SPICY_KEY;
 
 // La clave secreta (sl_sk_) jamás debe usarse en el navegador
 function spicyKeyIsOk(v) {
   const secret = v.startsWith("sl_sk_");
-  spicyKeyHint.textContent = secret
-    ? "⚠️ Esa es una clave secreta (sl_sk_) y no se guardó. Usa la clave pública (sl_pk_...)."
-    : SPICY_HINT;
+  spicyKeyHint.textContent = tx(secret ? "spicy.secret" : "spicy.hint");
   spicyKeyHint.classList.toggle("is-warn", secret);
   return !secret;
 }
@@ -2904,14 +3753,15 @@ spicyKeyInput.addEventListener("change", () => {
 const fxToggle = $("fx-toggle");
 const autoAccentToggle = $("auto-accent-toggle");
 const COLOR_FIELDS = [
-  ["panelBg",  "Tarjetas y menús"],
-  ["fg",       "Texto e íconos de las tarjetas"],
-  ["progress", "Barra de progreso"],
-  ["text",     "Letra"],
-  ["bgBase",   "Fondo base"],
-  ["accent",   "Resaltado de la letra"],
-  ["accent2",  "Resaltado (brillo)"]
+  ["panelBg",  "color.panelBg"],
+  ["fg",       "color.fg"],
+  ["progress", "color.progress"],
+  ["text",     "color.text"],
+  ["bgBase",   "color.bgBase"],
+  ["accent",   "color.accent"],
+  ["accent2",  "color.accent2"]
 ];
+const colorLabels = {};
 const colorInputs = {};
 COLOR_FIELDS.forEach(([key, label]) => {
   const item = document.createElement("label");
@@ -2920,7 +3770,7 @@ COLOR_FIELDS.forEach(([key, label]) => {
   input.type = "color";
   input.value = theme[key];
   const text = document.createElement("span");
-  text.textContent = label;
+  text.textContent = tx(label); text.dataset.i18n = label; colorLabels[key] = text;
   item.append(input, text);
   $("color-grid").appendChild(item);
   colorInputs[key] = input;
@@ -2971,7 +3821,7 @@ $("reset-colors-btn").addEventListener("click", () => {
 syncAppearanceUI();
 
 // ---- CSS personalizado ----
-const CSS_TEMPLATE = `/* ==========================================================
+const CSS_TEMPLATES = { es: `/* ==========================================================
    CSS PERSONALIZADO — base para mods
    Lo que escribas aquí se aplica al instante y se guarda en
    este navegador. Para activar un ejemplo, quita su comentario.
@@ -3031,11 +3881,72 @@ body{ background: linear-gradient(135deg, #1a1033, #0b0704); }
    .bg  .blob                                     fondo animado
    .loader                                        barra "Cargando..."
 */
-`;
+`, en: `/* ==========================================================
+   CUSTOM CSS — base for mods
+   Whatever you write here is applied instantly and saved in
+   this browser. To enable an example, remove its comment.
+   If you define a variable here, it overrides the colors in
+   Appearance (this CSS is loaded last).
+   ========================================================== */
+
+
+/* ---- 1) Font (changes the font of the whole app, lyrics included) ----
+   The @import must always be at the very top of everything.
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400..700&display=swap");
+:root{ --font-display: "Poppins", system-ui, sans-serif; }
+*/
+
+
+/* ---- 2) Main variables ----
+
+:root{
+  --panel-bg: #000000;
+  --fg: #ffffff;
+  --text: #ffffff;
+  --progress: #38b6ff;
+  --bg-base: #0b0704;
+  --gap: 18px;
+}
+*/
+
+/* To set --accent and --accent2 (lyrics highlight) by hand,
+   first turn off "Automatic highlight colors" in Appearance. */
+
+
+/* ---- 3) Shapes and sizes ----
+
+.sidebar, .player, .panel, .offset-box{ border-radius: 24px; }
+.cover{ border-radius: 12px; }
+.line{ font-size: clamp(1.8rem, 3.2vw, 2.8rem); }
+.line.active{ transform: scale(1.08); }
+*/
+
+
+/* ---- 4) Custom background (turn off the animated background first) ----
+
+body{ background: linear-gradient(135deg, #1a1033, #0b0704); }
+*/
+
+
+/* ---- 5) Selector guide ----
+   .sidebar  .sidebar-nav-item  .sidebar-logo     sidebar
+   .player  .cover  .meta  .title  .artist        player card
+   .seekbar-track  .seekbar-fill                  progress bar
+   .control-btn  .play-btn                        buttons
+   .lyrics-wrap  .line  .line.active  .word       lyrics
+   .bg-row                                        backing vocals (bottom row)
+   .offset-box  .lyrics-attribution               sync and credits
+   .panel  .pill-btn  .pill-input                 Settings
+   .bg  .blob                                     animated background
+   .loader                                        "Loading..." bar
+*/
+` };
+const cssTemplate = () => CSS_TEMPLATES[LANG];
 const cssEditor = $("css-editor");
 const customCssEl = document.getElementById("custom-css");
 const savedCss = lsGet(LS.css);
-cssEditor.value = savedCss !== null ? savedCss : CSS_TEMPLATE;
+cssEditor.value = savedCss !== null ? savedCss : cssTemplate();
 
 function applyCustomCss(value) {
   customCssEl.textContent = value;
@@ -3047,7 +3958,7 @@ cssEditor.addEventListener("input", () => {
   cssTimer = setTimeout(() => { lsSet(LS.css, cssEditor.value); applyCustomCss(cssEditor.value); }, 150);
 });
 $("css-reset-btn").addEventListener("click", () => {
-  cssEditor.value = CSS_TEMPLATE;
+  cssEditor.value = cssTemplate();
   lsDel(LS.css);
   applyCustomCss("");
 });
@@ -3205,42 +4116,42 @@ let shuffleOn = false;
 let repeatMode = 0;            // 0 = no · 1 = lista/álbum · 2 = una canción
 let volDragging = false;
 const REPEAT_STATES = ["off", "context", "track"];
-const REPEAT_TITLES = ["Repetir: no", "Repetir lista", "Repetir canción"];
+const REPEAT_TITLE_KEYS = ["rep.off", "rep.context", "rep.track"];
 const shuffleBtn = $("shuffle-btn"), repeatBtn = $("repeat-btn");
 const volumeBtn = $("volume-btn"), volumeSlider = $("volume-slider");
 const favBtn = $("fav-btn");
 
 // Llamada a la API del reproductor de Spotify (usa el dispositivo actual si lo conocemos)
 async function playerApi(method, path) {
-  if (!accessToken) { showToast("Conecta tu cuenta de Spotify en Configuración."); return null; }
+  if (!accessToken) { showToast("toast.connectFirst"); return null; }
   const dev = deviceId ? (path.includes("?") ? "&" : "?") + "device_id=" + deviceId : "";
   try {
     const res = await fetch("https://api.spotify.com/v1/me/player" + path + dev, { method, headers: await authHeaders() });
     if (!res.ok) { remoteError(res); return null; }
     return res;
-  } catch { showToast("No se pudo conectar con Spotify."); return null; }
+  } catch { showToast("toast.noConnect"); return null; }
 }
 
 function setShuffleUI(on) {
   shuffleOn = on;
   shuffleBtn.classList.toggle("is-on", on);
   shuffleBtn.setAttribute("aria-pressed", String(on));
-  shuffleBtn.title = on ? "Aleatorio: activado" : "Aleatorio";
+  shuffleBtn.title = tx(on ? "shuf.on" : "shuf");
 }
 function setRepeatUI(mode) {
   repeatMode = mode;
   repeatBtn.dataset.mode = String(mode);
   repeatBtn.classList.toggle("is-on", mode > 0);
   repeatBtn.setAttribute("aria-pressed", String(mode > 0));
-  repeatBtn.title = REPEAT_TITLES[mode] || "Repetir";
+  repeatBtn.title = tx(REPEAT_TITLE_KEYS[mode] || "rep");
 }
 shuffleBtn.addEventListener("click", async () => {
   const next = !shuffleOn;
-  if (await playerApi("PUT", "/shuffle?state=" + next)) setShuffleUI(next);
+  if (SERVICE === "ytm" || await playerApi("PUT", "/shuffle?state=" + next)) setShuffleUI(next);
 });
 repeatBtn.addEventListener("click", async () => {
   const next = (repeatMode + 1) % 3;
-  if (await playerApi("PUT", "/repeat?state=" + REPEAT_STATES[next])) setRepeatUI(next);
+  if (SERVICE === "ytm" || await playerApi("PUT", "/repeat?state=" + REPEAT_STATES[next])) setRepeatUI(next);
 });
 
 // Volumen (0..1): el SDK lo cambia directo; en modo remoto, por la API
@@ -3335,17 +4246,18 @@ favBtn.addEventListener("click", () => {
   lsSet(LS.favs, JSON.stringify([...favs]));
   refreshFavUI();
 });
-const trackUrl = () => currentTrack && currentTrack.id ? "https://open.spotify.com/track/" + currentTrack.id : null;
+const trackUrl = () => currentTrack && currentTrack.id
+  ? (SERVICE === "ytm" ? "https://music.youtube.com/watch?v=" : "https://open.spotify.com/track/") + currentTrack.id : null;
 $("share-btn").addEventListener("click", async () => {
   const url = trackUrl();
-  if (!url) { showToast("Todavía no hay una canción sonando."); return; }
+  if (!url) { showToast("toast.noSong"); return; }
   try { await navigator.clipboard.writeText(url); }
   catch { const t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
-  showToast("Enlace de la canción copiado.");
+  showToast("toast.linkCopied");
 });
 $("more-btn").addEventListener("click", () => {
   const url = trackUrl();
-  if (!url) { showToast("Todavía no hay una canción sonando."); return; }
+  if (!url) { showToast("toast.noSong"); return; }
   window.open(url, "_blank", "noopener");
 });
 
@@ -3359,16 +4271,7 @@ const queueView = $("view-queue"), queueMsgEl = $("queue-msg"), queueWrap = $("q
 const queueNowEl = $("queue-now"), queueListEl = $("queue-list"), queueNextTitle = $("queue-next-title");
 let queueLoadedFor = null, queueTimer = null, queueSkipping = false, queueLoadSeq = 0;
 
-function queueMessage(text, goSettings = false) {
-  queueMsgEl.textContent = text || "";
-  queueMsgEl.hidden = !text;
-  if (text && goSettings) {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "pill-btn"; b.textContent = "Ir a Configuración";
-    b.addEventListener("click", () => showView("settings"));
-    queueMsgEl.appendChild(b);
-  }
-}
+function queueMessage(key, goSettings = false, vars = null) { msgInto(queueMsgEl, key, goSettings, vars); }
 
 function queueRow(t, n, isNow) {
   const row = document.createElement("div");
@@ -3377,7 +4280,7 @@ function queueRow(t, n, isNow) {
   const imgs = t.album?.images || t.images || [];
   const thumb = coverEl(imgs[imgs.length - 1]?.url, "thumb");
   const info = document.createElement("div"); info.className = "info";
-  const title = document.createElement("div"); title.className = "t"; title.textContent = t.name || "Sin título";
+  const title = document.createElement("div"); title.className = "t"; if (t.name) title.textContent = t.name; else setTx(title, "untitled");
   const artist = document.createElement("div"); artist.className = "a";
   artist.textContent = t.artists?.length ? t.artists.map(a => a.name).join(", ") : (t.show?.name || "");
   info.append(title, artist);
@@ -3385,42 +4288,42 @@ function queueRow(t, n, isNow) {
   row.append(num, thumb, info, dur);
   if (!isNow) {
     row.tabIndex = 0; row.setAttribute("role", "button");
-    row.title = "Saltar hasta esta canción";
+    row.title = tx("q.skipTo"); row.dataset.i18nTitle = "q.skipTo";
     row.addEventListener("click", () => skipInQueue(n));
   }
   return row;
 }
 
 async function loadQueue() {
-  if (!accessToken && !lsGet(LS.refresh)) { queueWrap.hidden = true; queueMessage("Conecta tu cuenta de Spotify en Configuración para ver la cola.", true); return; }
+  if (!accessToken && !lsGet(LS.refresh)) { queueWrap.hidden = true; queueMessage("q.connectFirst", true); return; }
   const seq = ++queueLoadSeq;
-  if (queueWrap.hidden) queueMessage("Cargando la cola...");
+  if (queueWrap.hidden) queueMessage("q.loading");
   try {
     const res = await fetch("https://api.spotify.com/v1/me/player/queue", { headers: await authHeaders() });
     if (seq !== queueLoadSeq) return;
     if (res.status === 401 || res.status === 403) {
       queueWrap.hidden = true;
-      queueMessage("Spotify no dejó leer la cola: hace falta un permiso nuevo (en Configuración pulsa Desconectar y vuelve a Conectar Spotify) o la cuenta no es Premium.", true);
+      queueMessage("q.noPerm", true);
       return;
     }
-    if (res.status === 404 || res.status === 204) { queueWrap.hidden = true; queueMessage("No hay ningún dispositivo de Spotify activo. Reproduce algo y vuelve a abrir la cola."); return; }
-    if (!res.ok) { queueWrap.hidden = true; queueMessage(`Spotify respondió ${res.status}. Prueba con Actualizar.`); return; }
+    if (res.status === 404 || res.status === 204) { queueWrap.hidden = true; queueMessage("q.noDevice"); return; }
+    if (!res.ok) { queueWrap.hidden = true; queueMessage("q.status", false, { status: res.status }); return; }
     const data = await res.json();
     if (seq !== queueLoadSeq) return;
     const now = data.currently_playing, next = data.queue || [];
     queueNowEl.innerHTML = ""; queueListEl.innerHTML = "";
     if (now) queueNowEl.appendChild(queueRow(now, 0, true));
-    else { const e = document.createElement("div"); e.className = "queue-empty"; e.textContent = "No suena nada ahora mismo."; queueNowEl.appendChild(e); }
+    else { const e = document.createElement("div"); e.className = "queue-empty"; setTx(e, "q.nothingNow"); queueNowEl.appendChild(e); }
     if (next.length) next.forEach((t, i) => queueListEl.appendChild(queueRow(t, i + 1, false)));
-    else { const e = document.createElement("div"); e.className = "queue-empty"; e.textContent = "La cola está vacía. Agrega canciones con el botón de cada canción en Buscar y en tus playlists."; queueListEl.appendChild(e); }
-    queueNextTitle.textContent = next.length ? `A continuación · ${next.length}` : "A continuación";
+    else { const e = document.createElement("div"); e.className = "queue-empty"; setTx(e, "q.empty"); queueListEl.appendChild(e); }
+    setTx(queueNextTitle, next.length ? "q.nextN" : "q.next", { n: next.length });
     queueLoadedFor = now ? now.id : null;
     queueMessage("");
     queueWrap.hidden = false;
   } catch {
     if (seq !== queueLoadSeq) return;
     queueWrap.hidden = true;
-    queueMessage("No se pudo conectar con Spotify. Revisa tu conexión.");
+    queueMessage("net.fail");
   }
 }
 
@@ -3435,7 +4338,7 @@ function scheduleQueueRefresh(trackId) {
 async function skipInQueue(n) {
   if (queueSkipping || n < 1) return;
   queueSkipping = true;
-  showToast(n === 1 ? "Saltando a la siguiente canción…" : `Saltando ${n} canciones…`);
+  showToast(n === 1 ? "toast.skip1" : "toast.skipN", { n });
   try {
     for (let i = 0; i < n; i++) {
       if (player && !remoteMode) await player.nextTrack();
@@ -3452,18 +4355,18 @@ $("queue-refresh-btn").addEventListener("click", loadQueue);
 $("pl-queue-btn").addEventListener("click", () => showView("queue"));
 
 /* ---- Acceso rápido: exportar / importar credenciales y sesión ---- */
-const ACCESS_FIELDS = { clientId: LS.clientId, spicyKey: LS.spicyKey, refreshToken: LS.refresh, scope: LS.scope };
+const ACCESS_FIELDS = { clientId: LS.clientId, spicyKey: LS.spicyKey, refreshToken: LS.refresh, scope: LS.scope, ytKey: LS.ytKey, service: LS.service };
 $("access-export-btn").addEventListener("click", () => {
   const data = { app: "SaltyLyrics", version: 1 };
   for (const [name, key] of Object.entries(ACCESS_FIELDS)) { const v = lsGet(key); if (v) data[name] = v; }
-  if (!data.clientId && !data.spicyKey && !data.refreshToken) { showToast("Todavía no hay nada que guardar."); return; }
-  if (!confirm("El archivo contendrá tus llaves y tu sesión de Spotify. Quien lo tenga puede usarlas: guárdalo en un lugar privado y no lo compartas. ¿Continuar?")) return;
+  if (!data.clientId && !data.spicyKey && !data.refreshToken && !data.ytKey) { showToast("toast.nothingToSave"); return; }
+  if (!confirm(tx("confirm.export"))) return;
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
   a.download = "saltylyrics-acceso.json";
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  showToast("Archivo de acceso guardado.");
+  showToast("toast.accessSaved");
 });
 $("access-import-btn").addEventListener("click", () => $("access-import-file").click());
 $("access-import-file").addEventListener("change", async e => {
@@ -3482,12 +4385,484 @@ $("access-import-file").addEventListener("change", async e => {
     if (!n) throw new Error("vacío");
     // el token de acceso se vuelve a pedir con el refresh token al recargar
     lsDel(LS.access); lsDel(LS.expires);
-    showToast("Acceso cargado. Reiniciando…");
+    showToast("toast.accessLoaded");
     setTimeout(() => location.reload(), 600);
   } catch {
-    showToast("Ese archivo no es un acceso válido de SaltyLyrics.");
+    showToast("toast.accessInvalid");
   }
 });
+
+/* ======================================================================
+   YOUTUBE MUSIC
+   · Reproduce con el reproductor embebido de YouTube (IFrame Player API).
+   · Busca con la YouTube Data API v3 (la API key la pone cada persona en Configuración).
+   · Las letras sincronizadas vienen de LRCLIB (título + artista + duración).
+   El reproductor se presenta a la interfaz con la misma "forma" que el SDK de Spotify
+   (togglePlay / seek / getCurrentState...), así que botones, barra, reloj y letras no cambian.
+   ====================================================================== */
+let YT_KEY = lsGet(LS.ytKey) || "";
+const ytKeyInput = $("yt-key-input"), ytStatus = $("yt-status"), ytWrap = (() => {
+  const w = document.createElement("div");
+  w.id = "yt-wrap";
+  w.innerHTML = '<div id="yt-player"></div>';
+  document.body.appendChild(w);
+  return w;
+})();
+const ytCatalog = new Map();    // id -> canción (de las búsquedas)
+let ytQueue = [], ytIndex = -1;
+let ytApi = null, ytReady = false, ytPlaying = false, ytPending = false, ytFailStreak = 0, ytApiRequested = false;
+
+/* ---- Panel de Configuración ---- */
+const YT_KEY_RE = /^AIza[0-9A-Za-z_-]{35}$/;
+ytKeyInput.value = YT_KEY;
+ytKeyInput.addEventListener("input", () => {
+  const v = ytKeyInput.value.trim();
+  if (!v) { YT_KEY = ""; lsDel(LS.ytKey); setTx(ytStatus, "yt.none"); return; }
+  if (YT_KEY_RE.test(v)) { YT_KEY = v; lsSet(LS.ytKey, v); setTx(ytStatus, "yt.saved"); }
+  else setTx(ytStatus, "yt.format");
+});
+I18N_HOOKS.push(() => { if (!ytStatus.dataset.tk) setTx(ytStatus, YT_KEY ? "yt.saved" : "yt.none"); });
+
+async function ytApiGet(path, params) {
+  const url = "https://www.googleapis.com/youtube/v3/" + path + "?" + new URLSearchParams({ ...params, key: YT_KEY });
+  const res = await fetch(url);
+  let data = null;
+  try { data = await res.json(); } catch {}
+  return { res, data };
+}
+// Convierte un error de la API de Google en una clave de traducción
+function ytErrorKey(res, data) {
+  const e = data && data.error;
+  const reason = (e && e.errors && e.errors[0] && e.errors[0].reason) || "";
+  const text = reason + " " + ((e && e.message) || "");
+  if (/keyInvalid|API key not valid|API_KEY_INVALID/i.test(text)) return ["yt.badKey", null];
+  if (/quotaExceeded|dailyLimitExceeded|rateLimitExceeded/i.test(text)) return ["yt.quota", null];
+  if (/referer|referrer/i.test(text)) return ["yt.referer", null];
+  if (res.status === 403 || /accessNotConfigured|SERVICE_DISABLED|has not been used/i.test(text)) return ["yt.notEnabled", null];
+  return ["yt.error", { status: res.status }];
+}
+$("yt-check-btn").addEventListener("click", async () => {
+  if (!YT_KEY) { setTx(ytStatus, "yt.none"); return; }
+  setTx(ytStatus, "yt.checking");
+  try {
+    const { res, data } = await ytApiGet("videos", { part: "id", id: "dQw4w9WgXcQ" });
+    if (res.ok) setTx(ytStatus, "yt.ok");
+    else { const [k, v] = ytErrorKey(res, data); setTx(ytStatus, k, v); }
+  } catch { setTx(ytStatus, "yt.net"); }
+});
+
+/* ---- Datos de las canciones ---- */
+function ytDurationMs(iso) {
+  const m = /^P(?:\d+D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(iso || "");
+  return m ? (((+m[1] || 0) * 60 + (+m[2] || 0)) * 60 + (+m[3] || 0)) * 1000 : 0;
+}
+// "Artista - Canción (Official Video)" → { name, artist }. Los canales "- Topic" ya traen el título limpio.
+function ytClean(title, channel) {
+  const topic = /\s-\s*Topic$/i.test(channel);
+  let artist = channel.replace(/\s-\s*Topic$/i, "").replace(/VEVO$/i, "").trim();
+  let t = String(title || "");
+  t = t.replace(/\s*[\(\[\{【][^\)\]\}】]*\b(official|oficial|lyrics?|letra|audio|video|vídeo|music video|visuali[sz]er|hd|hq|4k|remaster(?:ed)?|clip|explicit)\b[^\)\]\}】]*[\)\]\}】]/ig, "");
+  t = t.replace(/\s*\|.*$/, "").trim();
+  if (!topic) {
+    const m = t.match(/^(.+?)\s+[-–—]\s+(.+)$/);
+    if (m && !/^(remaster|live|radio edit|official|lyrics|audio|video)/i.test(m[2])) { artist = m[1].trim(); t = m[2].trim(); }
+  }
+  t = t.replace(/\s+[-–—]\s+(remaster(?:ed)?(?:\s+\d{4})?|\d{4}\s+remaster(?:ed)?|official.*|lyrics?.*|audio.*)$/i, "").trim();
+  return { name: t || String(title || ""), artist };
+}
+function ytItemFromVideo(v) {
+  const sn = v.snippet || {};
+  const meta = ytClean(sn.title || "", sn.channelTitle || "");
+  const th = sn.thumbnails || {};
+  return {
+    id: v.id, name: meta.name, artist: meta.artist, rawTitle: sn.title || "",
+    durationMs: ytDurationMs(v.contentDetails && v.contentDetails.duration),
+    cover: (th.medium && th.medium.url) || ("https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg")
+  };
+}
+// Pide los datos completos (duración, si se puede insertar...) de una lista de IDs, en el mismo orden
+async function ytFetchVideos(ids) {
+  const { res, data } = await ytApiGet("videos", { part: "snippet,contentDetails,status", id: ids.join(",") });
+  if (!res.ok) return { error: ytErrorKey(res, data) };
+  const byId = new Map((data.items || []).map(v => [v.id, v]));
+  const items = ids.map(id => byId.get(id))
+    .filter(v => v && !(v.status && (v.status.embeddable === false || v.status.privacyStatus === "private")))
+    .map(ytItemFromVideo);
+  items.forEach(it => ytCatalog.set(it.id, it));
+  return { items };
+}
+
+/* ---- Búsqueda ---- */
+async function searchYtInner() {
+  const query = $("search-input").value.trim();
+  const resultsEl = $("search-results");
+  if (!query) return;
+  if (!YT_KEY) { setTx(resultsEl, "yt.needKey"); return; }
+  setTx(resultsEl, "search.searching");
+  let items;
+  try {
+    const s = await ytApiGet("search", { part: "snippet", type: "video", videoCategoryId: "10", videoEmbeddable: "true", maxResults: "12", q: query });
+    if (!s.res.ok) { const [k, v] = ytErrorKey(s.res, s.data); setTx(resultsEl, k, v); return; }
+    const ids = (s.data.items || []).map(i => i.id && i.id.videoId).filter(Boolean);
+    if (!ids.length) { setTx(resultsEl, "search.none"); return; }
+    const r = await ytFetchVideos(ids);
+    if (r.error) { setTx(resultsEl, r.error[0], r.error[1]); return; }
+    items = r.items;
+  } catch { setTx(resultsEl, "yt.net"); return; }
+  if (!items.length) { setTx(resultsEl, "search.none"); return; }
+
+  clearTx(resultsEl);
+  resultsEl.innerHTML = "";
+  items.forEach((it, i) => {
+    const row = document.createElement("div");
+    row.className = "result-item";
+    row.tabIndex = 0;
+    row.setAttribute("role", "button");
+    const img = document.createElement("img");
+    img.src = it.cover; img.alt = "";
+    const info = document.createElement("div");
+    const name = document.createElement("div");
+    name.className = "result-name"; name.textContent = it.name;
+    const artist = document.createElement("div");
+    artist.className = "result-artist"; artist.textContent = it.artist;
+    info.append(name, artist);
+    row.append(img, info, queueButton(it.id, it.name));
+    row.addEventListener("click", () => { ytPlayList(items, i); showView("player"); });
+    resultsEl.appendChild(row);
+  });
+}
+// "Reproducir esta URI": acepta un enlace de YouTube / YouTube Music o el ID de 11 caracteres
+async function ytPlayFromInput() {
+  const raw = trackUriInput.value.trim();
+  const m = raw.match(/(?:[?&]v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/) || raw.match(/^([\w-]{11})$/);
+  if (!m) { showToast("toast.ytBadLink"); return; }
+  if (!YT_KEY) { showToast("yt.needKey"); return; }
+  try {
+    const r = await ytFetchVideos([m[1]]);
+    if (r.error) { showToast(r.error[0], r.error[1]); return; }
+    if (!r.items.length) { showToast("toast.ytUnavailableLast"); return; }
+    ytPlayList(r.items, 0);
+    showView("player");
+  } catch { showToast("yt.net"); }
+}
+
+/* ---- Reproductor (IFrame API) ---- */
+function ytStart() {
+  trackUriInput.value = "";
+  trackUriInput.placeholder = "https://music.youtube.com/watch?v=...";
+  ytPlaceHostFn = ytPlaceHost;
+  ytLoadApi();
+}
+function ytLoadApi() {
+  if (ytApiRequested) return;
+  ytApiRequested = true;
+  if (window.YT && window.YT.Player) { ytCreatePlayer(); return; }
+  window.onYouTubeIframeAPIReady = ytCreatePlayer;
+  const s = document.createElement("script");
+  s.src = "https://www.youtube.com/iframe_api";
+  s.onerror = () => { ytApiRequested = false; showToast("toast.ytLoad"); };
+  document.head.appendChild(s);
+}
+function ytCreatePlayer() {
+  const vars = { controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1, playsinline: 1, rel: 0 };
+  if (/^https?:$/.test(location.protocol)) vars.origin = location.origin;
+  ytApi = new YT.Player("yt-player", {
+    width: "100%", height: "100%", playerVars: vars,
+    events: { onReady: ytOnReady, onStateChange: ytOnState, onError: ytOnError }
+  });
+}
+function ytOnReady() {
+  ytReady = true;
+  try { ytApi.setVolume(Math.round(savedVolume() * 100)); } catch {}
+  player = ytAdapter;
+  prevBtn.disabled = false; nextBtn.disabled = false; togglePlayBtn.disabled = false;
+  if (ytPending) { ytPending = false; ytLoadIndex(ytIndex); }
+}
+const ytAdapter = {
+  async togglePlay() {
+    if (!ytReady || ytIndex < 0) return;
+    if (ytApi.getPlayerState() === 1) ytApi.pauseVideo(); else ytApi.playVideo();
+  },
+  async previousTrack() { ytPrev(); },
+  async nextTrack() { ytAdvance(false); },
+  async seek(ms) { if (ytReady && ytIndex >= 0) ytApi.seekTo(ms / 1000, true); },
+  async setVolume(v) { if (ytReady) { ytApi.setVolume(Math.round(v * 100)); if (v > 0 && ytApi.isMuted()) ytApi.unMute(); } },
+  async getCurrentState() { return (ytReady && ytIndex >= 0) ? { position: ytApi.getCurrentTime() * 1000, paused: !ytPlaying } : null; },
+  disconnect() {}
+};
+
+// Estado con la misma forma que el del SDK de Spotify: así se reutiliza applyPlayerState
+function ytState(pos) {
+  const it = ytQueue[ytIndex];
+  const dur = currentDurationMs || (ytReady ? (ytApi.getDuration() || 0) * 1000 : 0);
+  return {
+    paused: !ytPlaying,
+    position: pos !== undefined ? pos : (ytReady ? (ytApi.getCurrentTime() || 0) * 1000 : 0),
+    duration: it.durationMs || dur,
+    shuffle: shuffleOn, repeat_mode: repeatMode,
+    track_window: { current_track: {
+      id: it.id, name: it.name, artists: [{ name: it.artist }],
+      album: { name: "", images: [{ url: it.cover }, { url: it.cover }] }
+    } }
+  };
+}
+function ytPlayList(items, index) {
+  items.forEach(it => ytCatalog.set(it.id, it));
+  ytQueue = items.slice();
+  ytFailStreak = 0;
+  ytLoadIndex(index);
+}
+function ytLoadIndex(i) {
+  if (i < 0 || i >= ytQueue.length) return;
+  ytIndex = i;
+  const it = ytQueue[i];
+  ytPlaying = true;
+  currentDurationMs = it.durationMs || 0;
+  anchorClock(0, false);
+  ytWrap.style.visibility = "visible";
+  applyPlayerState(ytState(0));          // pinta ya el título, la portada y busca la letra
+  if (!ytReady) { ytPending = true; ytLoadApi(); return; }
+  ytApi.loadVideoById({ videoId: it.id, startSeconds: 0 });
+}
+function ytOnState(e) {
+  const S = YT.PlayerState;
+  if (ytIndex < 0) return;
+  if (e.data === S.PLAYING) {
+    ytPlaying = true; ytFailStreak = 0;
+    if (!currentDurationMs) currentDurationMs = (ytApi.getDuration() || 0) * 1000;
+    applyPlayerState(ytState());
+  } else if (e.data === S.PAUSED) {
+    ytPlaying = false;
+    applyPlayerState(ytState());
+  } else if (e.data === S.BUFFERING) {
+    anchorClock((ytApi.getCurrentTime() || 0) * 1000, false);   // el reloj espera mientras carga
+  } else if (e.data === S.ENDED) {
+    ytPlaying = false;
+    if (repeatMode === 2) { ytApi.seekTo(0, true); ytApi.playVideo(); return; }
+    if (!ytAdvance(true)) applyPlayerState(ytState());
+  }
+}
+function ytOnError() {
+  ytFailStreak++;
+  const more = ytFailStreak < ytQueue.length && ytAdvance(true);
+  showToast(more ? "toast.ytUnavailable" : "toast.ytUnavailableLast");
+}
+// Siguiente canción de la lista local (aleatorio / repetir lista respetados). Devuelve si hubo siguiente.
+function ytAdvance(auto) {
+  if (!ytQueue.length) return false;
+  let n;
+  if (shuffleOn && ytQueue.length > 1) {
+    do { n = Math.floor(Math.random() * ytQueue.length); } while (n === ytIndex);
+  } else n = ytIndex + 1;
+  if (n >= ytQueue.length) {
+    if (repeatMode === 1) n = 0;
+    else return false;
+  }
+  ytLoadIndex(n);
+  return true;
+}
+function ytPrev() {
+  if (!ytReady || ytIndex < 0) return;
+  if ((ytApi.getCurrentTime() || 0) > 3 || ytIndex === 0) { ytApi.seekTo(0, true); anchorClock(0, clock.playing); return; }
+  ytLoadIndex(ytIndex - 1);
+}
+function ytAddToQueue(id, name) {
+  const it = ytCatalog.get(id);
+  if (!it) return;
+  ytQueue.splice(ytIndex + 1, 0, it);
+  showToast(name ? "toast.queued" : "toast.queuedGeneric", { name });
+}
+
+/* ---- El video siempre a la vista: sobre la portada, o como miniatura si la portada está oculta ---- */
+let ytPlaceKey = "";
+function ytPlaceHost() {
+  const b = coverBox.getBoundingClientRect();
+  const onCover = coverBox.offsetParent !== null && b.width > 60 && b.height > 60;
+  let x, y, w, h;
+  if (onCover) { x = b.left; y = b.top; w = b.width; h = b.height; }
+  else {
+    w = h = 200;                                         // arriba a la derecha: no tapa la barra de abajo ni el control de sincronía
+    x = Math.max(8, window.innerWidth - w - 16);
+    y = Math.max(8, Math.min(90, window.innerHeight - h - 8));
+  }
+  const key = [x, y, w, h].map(Math.round).join(",");
+  if (key === ytPlaceKey) return;
+  ytPlaceKey = key;
+  const s = ytWrap.style;
+  s.left = x + "px"; s.top = y + "px"; s.width = w + "px"; s.height = h + "px";
+}
+
+/* ---- Letras sincronizadas desde LRCLIB ---- */
+const lrcCache = new Map();
+function parseLrc(text) {
+  const out = [];
+  String(text || "").split(/\r?\n/).forEach(l => {
+    const times = [...l.matchAll(/\[(\d+):(\d+(?:\.\d+)?)\]/g)];
+    if (!times.length) return;
+    const txt = l.replace(/\[[^\]]*\]/g, "").replace(/<[^>]*>/g, "").trim();
+    times.forEach(m => out.push({ t: Number(m[1]) * 60 + Number(m[2]), text: txt }));
+  });
+  return out.sort((a, b) => a.t - b.t);
+}
+function lrcToBody(entries, durSec) {
+  const content = [];
+  entries.forEach((e, i) => {
+    if (!e.text) return;                       // las líneas vacías solo marcan dónde termina la anterior
+    const next = entries[i + 1];
+    content.push({ Text: e.text, StartTime: e.t, EndTime: next ? next.t : Math.max(e.t + 5, durSec || 0) });
+  });
+  return { Type: "Line", Content: content, source: "lrclib" };
+}
+async function lrcSearch(params) {
+  const res = await fetch("https://lrclib.net/api/search?" + new URLSearchParams(params));
+  if (!res.ok) throw new Error("lrclib " + res.status);
+  const list = await res.json();
+  return Array.isArray(list) ? list : [];
+}
+async function lrcFind(it, durSec) {
+  const tries = [
+    { track_name: it.name, artist_name: it.artist },
+    { q: it.name + " " + it.artist },
+    { q: it.name }
+  ];
+  for (const p of tries) {
+    const list = await lrcSearch(p);
+    if (!list.length) continue;
+    const close = x => !durSec || !x.duration || Math.abs(x.duration - durSec) <= 10;
+    const synced = list.filter(x => x.syncedLyrics && !x.instrumental && close(x))
+      .sort((a, b) => Math.abs((a.duration || durSec) - durSec) - Math.abs((b.duration || durSec) - durSec))[0];
+    if (synced) return lrcToBody(parseLrc(synced.syncedLyrics), durSec);
+    const plain = list.find(x => x.plainLyrics && !x.instrumental && close(x));
+    if (plain) return { Type: "Static", Lines: plain.plainLyrics.split(/\r?\n/).map(Text => ({ Text })), source: "lrclib" };
+  }
+  return null;
+}
+async function fetchYtLyrics(id) {
+  const it = ytCatalog.get(id) || ytQueue[ytIndex];
+  if (!it) { showLyricsMessage("lyr.none"); return; }
+  const durSec = Math.round((it.durationMs || currentDurationMs || 0) / 1000);
+  try {
+    let body = lrcCache.get(id);
+    if (body === undefined) { body = await lrcFind(it, durSec); lrcCache.set(id, body); }
+    if (id !== currentLyricsTrackId) return;       // el usuario cambió de canción
+    if (!body || !(body.Content || body.Lines || []).length) { showLyricsMessage("lyr.none"); return; }
+    try { renderLyrics(body); }
+    catch (err) {
+      console.error("SaltyLyrics: la letra llegó pero no se pudo mostrar", err, body);
+      showLyricsMessage("lyr.renderError", { msg: err.message });
+    }
+  } catch (err) {
+    console.error("LRCLIB: error de red", err);
+    if (id === currentLyricsTrackId) showLyricsMessage("lyr.netErrorLrc");
+  }
+}
+
+/* ---- Selector de servicio (Configuración) ---- */
+function syncServiceUI() {
+  [["spotify", "svc-spotify-btn"], ["ytm", "svc-ytm-btn"]].forEach(([s, id]) => {
+    const b = $(id);
+    b.classList.toggle("solid", SERVICE === s);
+    b.setAttribute("aria-pressed", String(SERVICE === s));
+  });
+}
+function setService(s) {
+  if (s === SERVICE) return;
+  lsSet(LS.service, s);
+  try { sessionStorage.setItem("spicy_reopen", "settings"); } catch {}
+  location.reload();       // se reinicia la app: cada servicio arranca limpio
+}
+$("svc-spotify-btn").addEventListener("click", () => setService("spotify"));
+$("svc-ytm-btn").addEventListener("click", () => setService("ytm"));
+I18N_HOOKS.push(syncServiceUI);
+if (SERVICE === "ytm") {
+  // textos que mencionaban a Spotify
+  const more = $("more-btn");
+  more.dataset.i18nTitle = "open.titleYt"; more.dataset.i18nAria = "open.ariaYt";
+  const pw = document.querySelector('[data-i18n-html="sidebar.powered"]');
+  if (pw) pw.dataset.i18nHtml = "sidebar.poweredYt";
+}
+
+/* ---- Fuente personalizada (enlace de Google Fonts) ---- */
+const fontInput = $("font-input"), fontStatus = $("font-status"), fontApplyBtn = $("font-apply-btn");
+function showCurrentFont() {
+  if (currentFont) setTx(fontStatus, "font.current", { family: currentFont.family });
+  else setTx(fontStatus, "font.default");
+}
+if (currentFont) fontInput.value = currentFont.url;
+// Prueba que Google responde por esa fuente antes de guardarla (si no existe, devuelve error)
+function waitStylesheet(url) {
+  return new Promise((resolve, reject) => {
+    const l = document.createElement("link");
+    let tm;
+    const done = ok => { clearTimeout(tm); l.remove(); ok ? resolve() : reject(new Error("font")); };
+    tm = setTimeout(() => done(false), 10000);
+    l.rel = "stylesheet"; l.href = url;
+    l.onload = () => done(true); l.onerror = () => done(false);
+    document.head.appendChild(l);
+  });
+}
+function resetFont() {
+  currentFont = null;
+  applyFont(null);
+  lsDel(LS.font);
+  fontInput.value = "";
+  showCurrentFont();
+}
+async function submitFont() {
+  const raw = fontInput.value.trim();
+  if (!raw) { resetFont(); return; }
+  const f = parseGoogleFont(raw);
+  if (!f) { setTx(fontStatus, "font.bad"); return; }
+  setTx(fontStatus, "font.loading");
+  fontApplyBtn.disabled = true;
+  try {
+    await waitStylesheet(f.url);
+    currentFont = f;
+    applyFont(f);
+    lsSet(LS.font, f.url);
+    fontInput.value = f.url;
+    showCurrentFont();
+  } catch {
+    setTx(fontStatus, "font.fail");
+  } finally {
+    fontApplyBtn.disabled = false;
+  }
+}
+fontApplyBtn.addEventListener("click", submitFont);
+fontInput.addEventListener("keydown", e => { if (e.key === "Enter") submitFont(); });
+$("font-reset-btn").addEventListener("click", resetFont);
+I18N_HOOKS.push(() => { if (!fontStatus.dataset.tk) showCurrentFont(); });
+
+/* ---- Idioma: botones en Configuración + retraducción de lo dinámico ---- */
+function syncLangUI() {
+  [["en", "lang-en-btn"], ["es", "lang-es-btn"]].forEach(([l, id]) => {
+    const b = $(id);
+    b.classList.toggle("solid", LANG === l);
+    b.setAttribute("aria-pressed", String(LANG === l));
+  });
+}
+$("lang-en-btn").addEventListener("click", () => setLang("en"));
+$("lang-es-btn").addEventListener("click", () => setLang("es"));
+// Si cambias el idioma en otra pestaña de la app, esta lo sigue
+window.addEventListener("storage", e => {
+  if (e.key === LS.lang && e.newValue && e.newValue !== LANG) { LANG = e.newValue === "es" ? "es" : "en"; applyI18n(); }
+});
+I18N_HOOKS.push(() => {
+  renderStatus();
+  setLoginLabel(loginConnected);
+  setShuffleUI(shuffleOn);
+  setRepeatUI(repeatMode);
+  renderOffsetLabel();
+  if (attrBody) renderAttribution(attrBody);
+  spicyKeyIsOk(spicyKeyInput.value.trim());
+  document.querySelectorAll("[data-pl-total]").forEach(el =>
+    { el.textContent = plSubText(el.dataset.plTotal === "" ? null : Number(el.dataset.plTotal), el.dataset.plOwner); });
+  if (lsGet(LS.css) === null) cssEditor.value = cssTemplate();
+  const ru = $("redirect-uri-text"); if (ru) ru.textContent = REDIRECT_URI;
+  syncLangUI();
+});
+applyI18n();
+try { if (sessionStorage.getItem("spicy_reopen") === "settings") { sessionStorage.removeItem("spicy_reopen"); showView("settings"); } } catch {}
 
 init();
 if (tvMode) focusSidebarActive();
