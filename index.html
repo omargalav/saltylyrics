@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SaltyLyrics</title>
+<link rel="icon" id="favicon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231d1c18'/%3E%3Cpath d='M27 43V19l18-4v22' fill='none' stroke='%23e3c34a' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='22' cy='43' r='6' fill='%23e3c34a'/%3E%3Ccircle cx='40' cy='37' r='6' fill='%23e3c34a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&display=swap" rel="stylesheet">
 <!-- Renderizador Spicy (opcional): con "Clásico" la app no depende de este archivo. El ?v= lo actualiza `npm run build`. -->
-<link rel="stylesheet" href="spicy-renderer/dist/spicy-renderer.css?v=ed33968f42">
+<link rel="stylesheet" href="spicy-renderer/dist/spicy-renderer.css?v=abd45c7fea">
 <style>
   :root{
     --bg-base: #1c1b17;
@@ -715,7 +716,7 @@
   /* líneas con timing por palabra */
   :where(.lyrics-wrap[data-renderer="classic"]) .row{ display:flex; flex-wrap:wrap; column-gap:0.32em; max-width:100%; }
   :where(.lyrics-wrap[data-renderer="classic"]) .line.opposite .row{ justify-content:flex-end; }
-  :where(.lyrics-wrap[data-renderer="classic"]) .wgroup{ display:inline-block; white-space:nowrap; }
+  :where(.lyrics-wrap[data-renderer="classic"]) .wgroup{ display:inline-block; max-width:100%; white-space:normal; overflow-wrap:anywhere; }  /* una palabra larguísima se parte entre sílabas en vez de salirse de la pantalla */
   /* coros / voces de fondo: fila aparte debajo de la línea principal */
   :where(.lyrics-wrap[data-renderer="classic"]) .bg-row{ font-size:.6em; font-weight:600; margin-top:4px; line-height:1.25; }
   :where(.lyrics-wrap[data-renderer="classic"]) .line.active .bg-row{ font-weight:700; }
@@ -979,13 +980,60 @@
   }
   /* Servicio de música: solo se ve lo que corresponde al elegido (Spotify o YouTube Music) */
   html[data-service="ytm"] [data-svc="spotify"], html[data-service="spotify"] [data-svc="ytm"]{ display:none !important; }
+  /* Despliegues con clave de Spicy incluida (config.js) pueden ocultar el campo */
+  html[data-spicy-key="hidden"] #spicy-panel{ display:none !important; }
   /* Reproductor embebido de YouTube: siempre visible (sobre la portada o, si ésta no se ve, como miniatura) */
   #yt-wrap{ position:fixed; z-index:30; left:0; top:0; width:200px; height:200px; overflow:hidden; background:#000;
     border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,.45); visibility:hidden; pointer-events:none; }
   #yt-wrap iframe{ position:absolute; top:0; left:50%; width:177.78% !important; height:100% !important;
     transform:translateX(-50%); border:0; pointer-events:none; }
+  /* Inicio: la letra "en vivo" como protagonista (el nombre se ilumina como una línea sincronizada) */
+  .home-body{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    gap:clamp(14px, 2.4vh, 22px); min-height:calc(100dvh - 250px); padding:clamp(8px, 3vh, 32px) 0 24px; }
+  .page .home-body p{ max-width:none; margin:0; }
+  .home-welcome{ display:flex; flex-direction:column; align-items:center; gap:.05em; line-height:1.05; }
+  .home-line{ font-size:clamp(1.1rem, 2.4vw, 1.7rem); font-weight:700; color:var(--text); opacity:.5; filter:blur(1.2px);
+    transition:filter .3s ease, opacity .3s ease; }
+  .home-title{ font-size:clamp(2.8rem, 10vw, 7.2rem); font-weight:800; letter-spacing:-.01em; line-height:1.08; padding:.04em .1em .12em;
+    color:transparent; -webkit-background-clip:text; background-clip:text;
+    background-image:linear-gradient(90deg, var(--text) 0%, var(--text) 38%, var(--accent2) 50%,
+      color-mix(in srgb, var(--text) 30%, transparent) 62%, color-mix(in srgb, var(--text) 30%, transparent) 100%);
+    background-size:250% 100%; background-position:100% 0;
+    filter:drop-shadow(0 0 24px color-mix(in srgb, var(--accent) 45%, transparent));
+    animation:home-sweep 6.4s cubic-bezier(.45,.05,.35,1) infinite; }
+  @keyframes home-sweep{
+    0%{ background-position:100% 0; opacity:1; }
+    55%{ background-position:0 0; opacity:1; }
+    88%{ background-position:0 0; opacity:1; }
+    100%{ background-position:0 0; opacity:.3; }
+  }
+  .home-tagline{ font-size:clamp(1rem, 1.9vw, 1.3rem); font-weight:600; color:var(--text); opacity:.5; filter:blur(.7px);
+    transition:filter .3s ease, opacity .3s ease; }
+  .home-body:hover .home-line, .home-body:hover .home-tagline{ filter:none; opacity:.8; }
+  .home-meta{ display:inline-flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:.6rem; padding:.42rem 1.05rem; margin-top:6px;
+    border-radius:999px; font-size:.82rem; font-weight:700; color:var(--text-mid);
+    border:1px solid color-mix(in srgb, var(--fg) 20%, transparent); background:color-mix(in srgb, var(--panel-bg) 70%, transparent); }
+  .home-meta i{ width:3px; height:3px; border-radius:50%; background:currentColor; opacity:.55; }
+  .home-channel{ display:inline-flex; align-items:center; gap:.42rem; }
+  .home-channel .dot{ width:8px; height:8px; border-radius:50%; background:#59d98a; box-shadow:0 0 9px #59d98a; }
+  .home-channel[data-channel="beta"] .dot{ background:#f2b84b; box-shadow:0 0 9px #f2b84b; }
+  .home-actions{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-top:clamp(10px, 3vh, 28px); }
+  .home-btn{ display:inline-flex; align-items:center; gap:.7rem; background:#ffffff; color:#111111; border:0; border-radius:999px;
+    padding:.85rem 1.5rem .85rem 1.1rem; font-family:inherit; font-weight:700; font-size:1rem; cursor:pointer;
+    box-shadow:0 10px 28px -12px color-mix(in srgb, var(--accent) 75%, transparent);
+    transition:transform .15s ease, box-shadow .2s ease; }
+  .home-btn svg{ width:20px; height:20px; flex:none; fill:none; stroke:#111111; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .home-btn .tag{ font-size:.7rem; font-weight:800; letter-spacing:.06em; color:#111111; background:#e9e9e9; border:1px solid #d6d6d6;
+    border-radius:999px; padding:.16rem .52rem; }
+  .home-btn:hover{ transform:translateY(-2px) scale(1.03); box-shadow:0 18px 36px -12px color-mix(in srgb, var(--accent) 90%, transparent); }
+  .home-btn:active{ transform:scale(.97); }
+  .home-note{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; margin-top:clamp(6px, 2vh, 18px); }
+  .home-note[hidden]{ display:none; }
+  .page .home-note p{ font-size:.92rem; color:var(--text-mid); }
+  @media (prefers-reduced-motion: reduce){ .home-title{ animation:none; background-position:0 0; } }
 </style>
 <style id="theme-style"></style>
+<script src="config.js"></script>
 <script>try{document.documentElement.dataset.service=localStorage.getItem("spicy_service")==="ytm"?"ytm":"spotify";}catch(e){document.documentElement.dataset.service="spotify";}</script>
 <style id="font-css"></style>
 <style id="custom-css"></style>
@@ -1056,8 +1104,33 @@
     <!-- INICIO (por ahora vacío; se le dará otro uso después) -->
     <section class="view page is-visible" id="view-home">
       <h2 data-i18n="nav.home">Home</h2>
-      <p data-i18n="home.text">This section is still empty. To connect your music service, go to Settings.</p>
-      <button class="btn secondary" id="goto-settings-btn" type="button" data-i18n="goto.settings">Go to Settings</button>
+      <div class="home-body">
+        <div class="home-welcome" role="heading" aria-level="3">
+          <span class="home-line" data-i18n="home.welcome">Welcome to</span>
+          <span class="home-title">SaltyLyrics</span>
+        </div>
+        <p class="home-tagline" data-i18n="home.tagline">Every word, right on time.</p>
+
+        <div class="home-meta" id="home-meta">
+          <span id="home-version">Version 1.0.0</span><i></i>
+          <span id="home-build">build 1</span><i></i>
+          <span class="home-channel" id="home-channel"><b class="dot"></b><span id="home-channel-text">stable</span></span>
+        </div>
+
+        <div class="home-actions">
+          <button class="home-btn" id="manual-es-btn" type="button" lang="es">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg><span class="tag">ES</span><span>Ver manual de uso y configuración</span>
+          </button>
+          <button class="home-btn" id="manual-en-btn" type="button" lang="en">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg><span class="tag">EN</span><span>View user manual and settings</span>
+          </button>
+        </div>
+
+        <div class="home-note" id="home-note">
+          <p data-i18n="home.text">Ready to start? Connect your music service in Settings.</p>
+          <button class="btn secondary" id="goto-settings-btn" type="button" data-i18n="goto.settings">Go to Settings</button>
+        </div>
+      </div>
     </section>
 
     <!-- CONFIGURACIÓN -->
@@ -1146,7 +1219,7 @@
         </div>
       </div>
 
-      <div class="panel" data-svc="spotify">
+      <div class="panel" id="spicy-panel" data-svc="spotify">
         <h3>Spicy Lyrics</h3>
         <div class="m3-card">
         <label class="field-label" for="spicy-key-input">Client Key</label>
@@ -1547,7 +1620,7 @@ const I18N = {
     "fs.hide.title": "Hide controls (move to show them)",
     "fs.title": "Full screen",
     "goto.settings": "Go to Settings",
-    "home.text": "This section is still empty. To connect your music service, go to Settings.",
+    "home.text": "Ready to start? Connect your music service in Settings.",
     "instructions": "Instructions",
     "lang.hint": "The language is applied instantly and saved in this browser.",
     "lang.label": "Interface language",
@@ -1749,7 +1822,15 @@ const I18N = {
     "open.ariaYt": "Open the song in YouTube Music",
     "sidebar.poweredYt": "Powered by <b>YouTube</b> &amp; <b>LRCLIB</b>",
     "credits.youtube": "<strong>YouTube</strong> — playback comes from YouTube’s embedded player and search from the YouTube Data API v3. <a href=\"https://developers.google.com/youtube\" target=\"_blank\" rel=\"noopener\">developers.google.com/youtube</a>",
-    "credits.lrclib": "<strong>LRCLIB</strong> — the synced lyrics for YouTube Music songs. <a href=\"https://lrclib.net\" target=\"_blank\" rel=\"noopener\">lrclib.net</a>"
+    "credits.lrclib": "<strong>LRCLIB</strong> — the synced lyrics for YouTube Music songs. <a href=\"https://lrclib.net\" target=\"_blank\" rel=\"noopener\">lrclib.net</a>",
+    "home.welcome": "Welcome to",
+    "home.tagline": "Every word, right on time.",
+    "home.version": "Version {v}",
+    "home.build": "build {b}",
+    "home.channel.stable": "stable",
+    "home.channel.beta": "beta",
+    "toast.manualSoon": "The manual isn’t available yet.",
+    "spicy.builtin": "This site already includes a Spicy Lyrics key. Paste your own only if you want to use yours instead."
   },
   es: {
     "access.hint": "Guarda tu Client ID, tu Client Key y tu sesión de Spotify en un archivo para iniciar rápido en otro navegador o dominio (el navegador guarda estos datos por separado en cada uno). <b>El archivo equivale a una contraseña</b>: no lo compartas ni lo subas a ningún repositorio.",
@@ -1810,7 +1891,7 @@ const I18N = {
     "fs.hide.title": "Ocultar controles (muévete para mostrarlos)",
     "fs.title": "Pantalla completa",
     "goto.settings": "Ir a Configuración",
-    "home.text": "Esta sección todavía está vacía. Para conectar tu servicio de música, ve a Configuración.",
+    "home.text": "¿Listo para empezar? Conecta tu servicio de música en Configuración.",
     "instructions": "Instrucciones",
     "lang.hint": "El idioma se aplica al instante y se guarda en este navegador.",
     "lang.label": "Idioma de la interfaz",
@@ -2012,11 +2093,34 @@ const I18N = {
     "open.ariaYt": "Abrir la canción en YouTube Music",
     "sidebar.poweredYt": "Con tecnología de <b>YouTube</b> y <b>LRCLIB</b>",
     "credits.youtube": "<strong>YouTube</strong> — la reproducción viene del reproductor embebido de YouTube y la búsqueda de la YouTube Data API v3. <a href=\"https://developers.google.com/youtube\" target=\"_blank\" rel=\"noopener\">developers.google.com/youtube</a>",
-    "credits.lrclib": "<strong>LRCLIB</strong> — las letras sincronizadas de las canciones de YouTube Music. <a href=\"https://lrclib.net\" target=\"_blank\" rel=\"noopener\">lrclib.net</a>"
+    "credits.lrclib": "<strong>LRCLIB</strong> — las letras sincronizadas de las canciones de YouTube Music. <a href=\"https://lrclib.net\" target=\"_blank\" rel=\"noopener\">lrclib.net</a>",
+    "home.welcome": "Bienvenido a",
+    "home.tagline": "Cada palabra, justo a tiempo.",
+    "home.version": "Versión {v}",
+    "home.build": "build {b}",
+    "home.channel.stable": "estable",
+    "home.channel.beta": "beta",
+    "toast.manualSoon": "El manual todavía no está disponible.",
+    "spicy.builtin": "Este sitio ya incluye una clave de Spicy Lyrics. Pega la tuya solo si quieres usar la tuya en su lugar."
   }
 };
 const I18N_HOOKS = [];
-const SERVICE = lsGet(LS.service) === "ytm" ? "ytm" : "spotify";   // se cambia en Configuración (reinicia la app)   // funciones que vuelven a pintar textos dinámicos al cambiar de idioma
+const SERVICE = lsGet(LS.service) === "ytm" ? "ytm" : "spotify";
+/* ---- Configuración del despliegue (config.js) ----
+   En el repositorio abierto config.js va VACÍO: cada persona pone su propia Client Key en Configuración.
+   La versión publicada por el autor puede traer una clave por defecto (se genera al desplegar, ver DEPLOY.md).
+   La clave de Configuración, si existe, siempre manda sobre la de config.js. */
+const APP_CONFIG = window.SALTY_CONFIG && typeof window.SALTY_CONFIG === "object" ? window.SALTY_CONFIG : {};
+function hostAllowed() {
+  const list = Array.isArray(APP_CONFIG.allowedHosts) ? APP_CONFIG.allowedHosts : [];
+  if (!list.length) return true;                          // sin lista: sin restricción
+  const h = location.hostname.toLowerCase();
+  return list.some(p => { p = String(p).toLowerCase(); return p.startsWith("*.") ? h.endsWith(p.slice(1)) : h === p; });
+}
+// Solo claves públicas (sl_pk_...) y solo en los dominios permitidos: la secreta (sl_sk_) jamás se usa en el navegador
+const DEFAULT_SPICY_KEY = (typeof APP_CONFIG.spicyKey === "string" && /^sl_pk_/.test(APP_CONFIG.spicyKey.trim()) && hostAllowed())
+  ? APP_CONFIG.spicyKey.trim() : "";
+document.documentElement.dataset.spicyKey = DEFAULT_SPICY_KEY && APP_CONFIG.hideSpicyKeyField === true ? "hidden" : "";   // se cambia en Configuración (reinicia la app)   // funciones que vuelven a pintar textos dinámicos al cambiar de idioma
 let LANG = lsGet(LS.lang) === "es" ? "es" : "en";
 function tx(key, vars) {
   let s = (I18N[LANG] && I18N[LANG][key]);
@@ -2137,7 +2241,7 @@ function applyTvMode() { document.documentElement.classList.toggle("tv-mode", tv
 applyTvMode();
 </script>
 <script>applyI18n();</script>
-<script src="spicy-renderer/dist/spicy-renderer.js?v=ed33968f42" onerror="console.warn('SaltyLyrics: no se pudo cargar spicy-renderer/dist/spicy-renderer.js; se usa el renderizador clásico.')"></script>
+<script src="spicy-renderer/dist/spicy-renderer.js?v=abd45c7fea" onerror="console.warn('SaltyLyrics: no se pudo cargar spicy-renderer/dist/spicy-renderer.js; se usa el renderizador clásico.')"></script>
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script>
 /* ======================================================================
@@ -2146,7 +2250,7 @@ applyTvMode();
 // Client ID y Client Key de Spicy Lyrics: se escriben en Configuración y se
 // guardan en este navegador (ya no van dentro del código).
 let CLIENT_ID = lsGet(LS.clientId) || "";
-let SPICY_KEY = lsGet(LS.spicyKey) || "";
+let SPICY_KEY = lsGet(LS.spicyKey) || DEFAULT_SPICY_KEY;   // la de Configuración manda; si no hay, la del despliegue
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 // ⚠️ Esta REDIRECT_URI cambia según dónde sirvas este archivo. Agrégala en
 // tu app del Spotify Dashboard (puedes tener varias a la vez).
@@ -2160,6 +2264,11 @@ const SCOPES = [
   "playlist-read-private",
   "playlist-read-collaborative"
 ].join(" ");
+
+// Versión que se muestra en Inicio y enlaces a los manuales (uno por idioma).
+// Si un enlace está vacío, el botón avisa que el manual todavía no está disponible.
+const APP_INFO = { version: "1.0.0", build: "1", channel: "stable" };   // channel: "stable" | "beta"
+const MANUAL_URLS = { es: "", en: "" };
 
 /* ====================================================================== */
 
@@ -2209,7 +2318,7 @@ let remoteMode = lsGet(LS.remote) === null ? IS_TV_DEVICE : lsGet(LS.remote) ===
 
 let lastStatus = { k: "st.disconnected", v: null };
 function renderStatus() { statusEl.textContent = tx("status.prefix") + tx(lastStatus.k, lastStatus.v); }
-function setStatus(k, v) { lastStatus = { k, v: v || null }; renderStatus(); }
+function setStatus(k, v) { lastStatus = { k, v: v || null }; renderStatus(); refreshHomeNote(); }
 // Texto del botón de conexión según el estado (se vuelve a traducir al cambiar de idioma)
 let loginConnected = false;
 function setLoginLabel(connected) { loginConnected = connected; loginBtn.textContent = tx(connected ? "login.connected" : "login.connect"); }
@@ -2226,6 +2335,7 @@ function showView(view) {
   if (view === "player") requestAnimationFrame(positionLines);
   if (view === "playlists") onOpenPlaylists();
   if (view === "queue") loadQueue();
+  if (view === "home") refreshHomeNote();
   refreshLoader();
 }
 // Solo los botones con data-view navegan (Configuración no hace nada por ahora)
@@ -2449,6 +2559,7 @@ function applyPlayerState(state, at = performance.now()) {
   timeDurationEl.textContent = formatTime(state.duration);
   anchorClock(state.position, !state.paused, at);
   syncLyrics(nowMs() + lyricsOffsetMs);
+  updateBrowserPlayback(state);
 
   togglePlayIcon.innerHTML = state.paused ? ICON_PLAY : ICON_PAUSE;
   if (typeof state.shuffle === "boolean") setShuffleUI(state.shuffle);
@@ -2596,6 +2707,7 @@ function setTrackInfo(track) {
   pbTitleEl.textContent = track.name;
   pbArtistEl.textContent = artistsText;
   currentTrack = { id: track.id || null, name: track.name };
+  updateBrowserTrack(track, artistsText);
   refreshFavUI();
   if (SERVICE !== "ytm") scheduleQueueRefresh(track.id);
 
@@ -2619,6 +2731,7 @@ function setTrackInfo(track) {
   }
 }
 
+let mediaPosTick = 0;
 // Re-sincroniza el ancla con la posición real del SDK (corrige deriva)
 setInterval(async () => {
   if (!player) return;
@@ -2628,6 +2741,7 @@ setInterval(async () => {
     const t0 = performance.now();
     const state = await player.getCurrentState();
     if (state) anchorClock(state.position, !state.paused, (t0 + performance.now()) / 2);
+    if (++mediaPosTick % 10 === 0) { ensureMediaMetadata(); updateMediaPosition(); }
   } catch {}
 }, 1000);
 
@@ -2671,6 +2785,7 @@ seekbarEl.addEventListener("pointermove", e => {
 async function seekTo(ms) {
   ms = Math.max(0, Math.min(currentDurationMs || 0, ms));
   anchorClock(ms, clock.playing);
+  updateMediaPosition();
   syncLyrics(ms + lyricsOffsetMs);
   if (player) await player.seek(ms);
 }
@@ -2680,6 +2795,7 @@ async function endSeek(e) {
   seekbarEl.classList.remove("is-dragging");
   const ms = Math.max(0, Math.min(1, fractionFromPointer(e.clientX))) * currentDurationMs;
   anchorClock(ms, clock.playing);
+  updateMediaPosition();
   syncLyrics(ms + lyricsOffsetMs);
   if (player) await player.seek(ms);
 }
@@ -3725,24 +3841,26 @@ plMoreBtn.addEventListener("click", loadMoreTracks);
 // ---- Client Key de Spicy Lyrics ----
 const spicyKeyInput = $("spicy-key-input");
 const spicyKeyHint = $("spicy-key-hint");
-spicyKeyInput.value = SPICY_KEY;
+spicyKeyInput.value = lsGet(LS.spicyKey) || "";   // el campo muestra solo la clave propia, nunca la del despliegue
 
 // La clave secreta (sl_sk_) jamás debe usarse en el navegador
 function spicyKeyIsOk(v) {
   const secret = v.startsWith("sl_sk_");
-  spicyKeyHint.textContent = tx(secret ? "spicy.secret" : "spicy.hint");
+  spicyKeyHint.textContent = tx(secret ? "spicy.secret" : (DEFAULT_SPICY_KEY && !v ? "spicy.builtin" : "spicy.hint"));
   spicyKeyHint.classList.toggle("is-warn", secret);
   return !secret;
 }
 spicyKeyInput.addEventListener("input", () => {
   const v = spicyKeyInput.value.trim();
-  if (spicyKeyIsOk(v)) lsSet(LS.spicyKey, v);
+  if (spicyKeyIsOk(v)) { if (v) lsSet(LS.spicyKey, v); else lsDel(LS.spicyKey); }
 });
 spicyKeyInput.addEventListener("change", () => {
   const v = spicyKeyInput.value.trim();
-  if (!spicyKeyIsOk(v) || v === SPICY_KEY) return;
-  SPICY_KEY = v;
-  lsSet(LS.spicyKey, v);
+  if (!spicyKeyIsOk(v)) return;
+  const next = v || DEFAULT_SPICY_KEY;       // campo vacío = volver a la clave del despliegue (si la hay)
+  if (next === SPICY_KEY) return;
+  SPICY_KEY = next;
+  if (v) lsSet(LS.spicyKey, v); else lsDel(LS.spicyKey);
   // vuelve a pedir la letra de la canción actual con la clave nueva
   const id = currentLyricsTrackId;
   currentLyricsTrackId = null;
@@ -4049,8 +4167,13 @@ function handleBack() {
   return false;
 }
 
+let lastMediaAction = "", lastMediaAt = 0;
 function handleMedia(action) {
   if (!player) return;
+  // Una misma tecla puede llegar como evento de teclado y como acción de Media Session: solo cuenta una vez
+  const nowT = performance.now();
+  if (action === lastMediaAction && nowT - lastMediaAt < 250) return;
+  lastMediaAction = action; lastMediaAt = nowT;
   if (action === "next") playNext();
   else if (action === "prev") playPrevious();
   else if (action === "toggle") togglePlay();
@@ -4417,8 +4540,8 @@ const YT_KEY_RE = /^AIza[0-9A-Za-z_-]{35}$/;
 ytKeyInput.value = YT_KEY;
 ytKeyInput.addEventListener("input", () => {
   const v = ytKeyInput.value.trim();
-  if (!v) { YT_KEY = ""; lsDel(LS.ytKey); setTx(ytStatus, "yt.none"); return; }
-  if (YT_KEY_RE.test(v)) { YT_KEY = v; lsSet(LS.ytKey, v); setTx(ytStatus, "yt.saved"); }
+  if (!v) { YT_KEY = ""; lsDel(LS.ytKey); setTx(ytStatus, "yt.none"); refreshHomeNote(); return; }
+  if (YT_KEY_RE.test(v)) { YT_KEY = v; lsSet(LS.ytKey, v); setTx(ytStatus, "yt.saved"); refreshHomeNote(); }
   else setTx(ytStatus, "yt.format");
 });
 I18N_HOOKS.push(() => { if (!ytStatus.dataset.tk) setTx(ytStatus, YT_KEY ? "yt.saved" : "yt.none"); });
@@ -4780,6 +4903,170 @@ if (SERVICE === "ytm") {
   more.dataset.i18nTitle = "open.titleYt"; more.dataset.i18nAria = "open.ariaYt";
   const pw = document.querySelector('[data-i18n-html="sidebar.powered"]');
   if (pw) pw.dataset.i18nHtml = "sidebar.poweredYt";
+}
+
+/* ---- Inicio: versión, avisos y manuales ---- */
+function renderHome() {
+  $("home-version").textContent = tx("home.version", { v: APP_INFO.version });
+  $("home-build").textContent = tx("home.build", { b: APP_INFO.build });
+  const key = "home.channel." + APP_INFO.channel;
+  $("home-channel-text").textContent = I18N.en[key] !== undefined ? tx(key) : APP_INFO.channel;
+  $("home-channel").dataset.channel = APP_INFO.channel;
+  refreshHomeNote();
+}
+// El aviso "conecta tu servicio" solo se muestra mientras falta conectar algo
+function refreshHomeNote() {
+  let connected = false;
+  try { connected = SERVICE === "ytm" ? !!YT_KEY : !!accessToken; } catch {}
+  const note = $("home-note");
+  if (note) note.hidden = connected;
+}
+["es", "en"].forEach(l => $("manual-" + l + "-btn").addEventListener("click", () => {
+  const url = MANUAL_URLS[l];
+  if (url) window.open(url, "_blank", "noopener"); else showToast("toast.manualSoon");
+}));
+I18N_HOOKS.push(renderHome);
+
+/* ======================================================================
+   NAVEGADOR: título de la pestaña, ícono con la portada y controles multimedia del sistema
+   (Media Session: el widget de Chrome/Edge, la pantalla de bloqueo, los audífonos, el reloj...).
+   ====================================================================== */
+const BASE_TITLE = document.title;
+const faviconEl = document.getElementById("favicon");
+const DEFAULT_FAVICON = faviconEl ? faviconEl.getAttribute("href") : "";
+const HAS_MEDIA_SESSION = "mediaSession" in navigator;
+let browserTrackKey = "";
+
+// Descarga la portada UNA vez y la entrega recortada a cuadrado en varios tamaños (data URLs, no dependen de ningún dominio).
+// Así el navegador/sistema no tiene que pedirla por su cuenta a otro sitio, algo que en la ficha multimedia a veces falla en silencio.
+// Devuelve null si la imagen no permite leerse (sin CORS).
+function coverVariants(url, sizes) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const s = Math.min(img.naturalWidth, img.naturalHeight);
+        const sx = (img.naturalWidth - s) / 2, sy = (img.naturalHeight - s) / 2;
+        const out = {};
+        sizes.forEach(size => {
+          const c = document.createElement("canvas");
+          c.width = c.height = size;
+          c.getContext("2d").drawImage(img, sx, sy, s, s, 0, 0, size, size);
+          out[size] = c.toDataURL("image/jpeg", 0.88);
+        });
+        resolve(out);
+      } catch { resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+function setFavicon(href, isSvg) {
+  if (!faviconEl) return;
+  if (isSvg || !href) faviconEl.setAttribute("type", "image/svg+xml"); else faviconEl.removeAttribute("type");
+  faviconEl.setAttribute("href", href || DEFAULT_FAVICON);
+}
+let lastMeta = null;
+function setMediaMetadata(title, artist, album, artwork) {
+  lastMeta = { title, artist, album, artwork };
+  if (!HAS_MEDIA_SESSION || typeof MediaMetadata === "undefined") return;
+  try { navigator.mediaSession.metadata = new MediaMetadata({ title, artist, album, artwork }); } catch {}
+}
+// Si otra cosa (p. ej. el reproductor incrustado) pisa los metadatos, se vuelven a poner los nuestros
+function ensureMediaMetadata() {
+  if (!HAS_MEDIA_SESSION || !lastMeta) return;
+  const m = navigator.mediaSession.metadata;
+  const ours = lastMeta.artwork[0] && lastMeta.artwork[0].src;
+  const theirs = m && m.artwork && m.artwork[0] && m.artwork[0].src;
+  if (!m || m.title !== lastMeta.title || theirs !== ours) setMediaMetadata(lastMeta.title, lastMeta.artist, lastMeta.album, lastMeta.artwork);
+}
+function updateBrowserTrack(track, artists) {
+  const name = track.name || "";
+  document.title = name ? name + (artists ? " — " + artists : "") + " · " + BASE_TITLE : BASE_TITLE;
+
+  const images = ((track.album && track.album.images) || []).filter(i => i && i.url);
+  const url = images[0] ? images[0].url : "";
+  const key = (track.id || name) + "|" + url;
+  if (key === browserTrackKey) return;          // mismo tema y misma portada: nada que rehacer
+  browserTrackKey = key;
+
+  const album = (track.album && track.album.name) || "";
+  const seen = new Set();
+  const remote = images.filter(i => !seen.has(i.url) && seen.add(i.url))
+    .map(i => ({ src: i.url, sizes: i.width && i.height ? i.width + "x" + i.height : "512x512", type: "image/jpeg" }));
+  setMediaMetadata(name, artists, album, remote);   // primero con las URLs (rápido)...
+  if (!url) { setFavicon("", true); return; }
+  setFavicon(url, false);
+
+  // ...y en cuanto se descarga la portada, se reemplaza por copias cuadradas incrustadas (512, 256 y 128 px)
+  coverVariants(url, [512, 256, 128, 64]).then(v => {
+    if (browserTrackKey !== key || !v) return;      // cambió de canción, o la imagen no se puede leer: quedan las URLs
+    setMediaMetadata(name, artists, album, [512, 256, 128].map(z => ({ src: v[z], sizes: z + "x" + z, type: "image/jpeg" })));
+    if (SERVICE === "ytm") setFavicon(v[64], false);   // miniaturas 16:9 → ícono cuadrado
+  });
+}
+function updateMediaPosition() {
+  if (!HAS_MEDIA_SESSION || !navigator.mediaSession.setPositionState) return;
+  const dur = (currentDurationMs || 0) / 1000;
+  if (!(dur > 0) || !isFinite(dur)) return;
+  try {
+    navigator.mediaSession.setPositionState({ duration: dur, playbackRate: 1, position: Math.max(0, Math.min(dur, nowMs() / 1000)) });
+  } catch {}
+}
+function updateBrowserPlayback(state) {
+  if (!HAS_MEDIA_SESSION) return;
+  try { navigator.mediaSession.playbackState = state.paused ? "paused" : "playing"; } catch {}
+  anchorSet(!state.paused);
+  ensureMediaMetadata();
+  updateMediaPosition();
+}
+/* ---- "Ancla" de audio ----
+   Spotify y YouTube suenan dentro de un iframe de otro dominio, y el navegador/Windows solo muestran título, artista y portada
+   de la página que REPRODUCE el audio. Para que esa sesión sea la de SaltyLyrics, la página reproduce en bucle 10 s de silencio
+   (se genera aquí mismo, sin archivos ni red) mientras suena la música, y se pausa cuando la música se pausa. */
+const MEDIA_ANCHOR = (() => {
+  const rate = 8000, n = rate * 10;
+  const buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+  const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+  w(0, "RIFF"); v.setUint32(4, 36 + n, true); w(8, "WAVE"); w(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+  w(36, "data"); v.setUint32(40, n, true);
+  new Uint8Array(buf, 44).fill(128);                      // 128 = silencio en WAV de 8 bits
+  const a = new Audio(URL.createObjectURL(new Blob([buf], { type: "audio/wav" })));
+  a.loop = true; a.preload = "auto"; a.setAttribute("playsinline", ""); a.id = "media-anchor"; a.hidden = true;
+  document.body.appendChild(a);
+  return a;
+})();
+let anchorTouched = -1e9, anchorArmed = false;
+function anchorSet(playing) {
+  anchorTouched = performance.now();
+  if (!playing) { if (!MEDIA_ANCHOR.paused) MEDIA_ANCHOR.pause(); return; }
+  if (!MEDIA_ANCHOR.paused) return;
+  MEDIA_ANCHOR.play().catch(() => {
+    // El navegador exige un gesto del usuario antes de reproducir: se reintenta con el próximo clic o tecla
+    if (anchorArmed) return;
+    anchorArmed = true;
+    const retry = () => { anchorArmed = false; if (clock.playing) anchorSet(true); };
+    document.addEventListener("pointerdown", retry, { once: true });
+    document.addEventListener("keydown", retry, { once: true });
+  });
+}
+// Si el navegador/sistema pausa o reanuda el ancla por su cuenta (en vez de llamar a nuestros manejadores), se traduce a la app
+MEDIA_ANCHOR.addEventListener("pause", () => { if (performance.now() - anchorTouched > 400 && clock.playing) handleMedia("pause"); });
+MEDIA_ANCHOR.addEventListener("play", () => { if (performance.now() - anchorTouched > 400 && !clock.playing) handleMedia("play"); });
+
+if (HAS_MEDIA_SESSION) {
+  const on = (name, fn) => { try { navigator.mediaSession.setActionHandler(name, fn); } catch {} };
+  on("play", () => handleMedia("play"));
+  on("pause", () => handleMedia("pause"));
+  on("stop", () => handleMedia("pause"));
+  on("previoustrack", () => handleMedia("prev"));
+  on("nexttrack", () => handleMedia("next"));
+  on("seekbackward", () => handleMedia("rewind"));
+  on("seekforward", () => handleMedia("forward"));
+  on("seekto", d => { if (d && typeof d.seekTime === "number") seekTo(d.seekTime * 1000); });
 }
 
 /* ---- Fuente personalizada (enlace de Google Fonts) ---- */

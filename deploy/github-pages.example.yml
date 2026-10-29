@@ -1,0 +1,39 @@
+# EJEMPLO (no probado): publica en GitHub Pages generando config.js con tu clave desde un "secret".
+# Cópialo como .github/workflows/pages.yml y en el repo: Settings → Pages → Source: "GitHub Actions".
+# Crea el secret en Settings → Secrets and variables → Actions → New repository secret:
+#   SPICY_CLIENT_KEY   (tu clave PÚBLICA, sl_pk_...)
+# Opcional, como "Variables": ALLOWED_HOSTS (ej. tuusuario.github.io) y HIDE_SPICY_KEY_FIELD (true/false).
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Generar config.js con la clave (solo existe en el sitio publicado)
+        run: node scripts/make-config.mjs
+        env:
+          SPICY_CLIENT_KEY: ${{ secrets.SPICY_CLIENT_KEY }}
+          ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
+          HIDE_SPICY_KEY_FIELD: ${{ vars.HIDE_SPICY_KEY_FIELD }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4

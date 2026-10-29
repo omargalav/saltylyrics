@@ -53,6 +53,8 @@
 	z-index: 1;
 	flex: 1;
 	overflow-y: auto;
+	/* Nunca hay scroll horizontal: si algo no cabe, se parte en otra fila (ver .wordGroup). */
+	overflow-x: hidden;
 	padding: 25cqh 15cqw 45cqh;
 	scroll-behavior: smooth;
 	/* Sin barra de scroll visible (el scroll con rueda/tacto sigue funcionando). */
@@ -80,12 +82,16 @@
 
 .spicy-root .line {
 	--blur: 0px;
-	--line-size: clamp(1.85rem, 7cqw, 3.5rem);
+	/* Se adapta al ancho y también al alto del área de letras (ventanas bajas, celulares en horizontal). */
+	--line-size: clamp(1.85rem, min(7cqw, 11cqh), 3.5rem);
 	display: flex;
 	flex-wrap: wrap;
 	box-sizing: border-box;
 	margin: 1cqw 0;
 	font-size: var(--line-size);
+	min-width: 0;
+	max-width: 100%;
+	overflow-wrap: anywhere;
 	font-weight: 700;
 	line-height: 1.1818;
 	transform-origin: left center;
@@ -249,6 +255,8 @@
 	--gradient-position: -20%;
 	display: inline-block;
 	white-space: pre-wrap;
+	max-width: 100%;
+	overflow-wrap: anywhere;
 	background: linear-gradient(
 		90deg,
 		color-mix(in srgb, var(--spicy-fg) 85%, transparent)
@@ -304,8 +312,10 @@
 }
 .spicy-root .wordGroup {
 	display: inline-flex;
-	flex: 0 0 auto;
-	flex-wrap: nowrap;
+	/* Una palabra hecha de muchas sílabas se parte entre sílabas si no cabe en el ancho de la pantalla. */
+	flex: 0 1 auto;
+	max-width: 100%;
+	flex-wrap: wrap;
 	justify-content: flex-start;
 	white-space: nowrap;
 }

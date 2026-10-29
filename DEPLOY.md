@@ -36,6 +36,42 @@ podrían seguir con el bundle viejo en caché.
 - Los `.js`/`.css` del bundle usan caché larga porque van protegidos por `?v=`. Las fuentes `.woff2` tienen
   nombre estable (sin hash), por eso llevan una caché más corta (30 días) y no `immutable`.
 
+## Clave de Spicy Lyrics por defecto en TU versión (sin publicarla en el repo)
+
+La idea: el repositorio abierto sigue pidiendo que cada persona escriba su propia Client Key en
+**Configuración**, pero el sitio que publicas tú ya trae la tuya. La clave **no se escribe en el código**:
+se inyecta al desplegar, en un archivo `config.js` que solo existe en el sitio publicado.
+
+**Cómo funciona**
+- `config.js` (en la raíz) se carga antes que la app. En el repo va **vacío** (`spicyKey: ""`).
+- `scripts/make-config.mjs` lo regenera durante el despliegue a partir de variables de entorno.
+- En la app, la clave que la persona escriba en Configuración **siempre manda** sobre la del despliegue;
+  si deja el campo vacío, vuelve a usarse la del despliegue. El campo nunca muestra la clave del despliegue
+  y el archivo de "Acceso rápido" tampoco la incluye.
+
+**Variables** (se leen al ejecutar `node scripts/make-config.mjs`)
+
+| Variable | Obligatoria | Qué hace |
+|---|---|---|
+| `SPICY_CLIENT_KEY` | sí | Tu Client Key **pública** (`sl_pk_...`). Se rechaza la secreta (`sl_sk_...`). Sin ella el script no hace nada. |
+| `ALLOWED_HOSTS` | recomendada | Dominios donde se usa la clave, separados por comas. Admite `*.midominio.com`. Fuera de ellos la app se comporta como el repo abierto. |
+| `HIDE_SPICY_KEY_FIELD` | no | `true` oculta el campo de la clave en Configuración (solo cuando hay clave por defecto y el dominio está permitido). |
+
+**Dónde ponerlo**
+- **Vercel / Render / Netlify**: define las variables en el panel del proyecto y usa como *Build Command*
+  `node scripts/make-config.mjs` (Publish/Output Directory: `.`).
+- **GitHub Pages**: usa el workflow de ejemplo `deploy/github-pages.example.yml` (la clave va en un *secret*, nunca en el repo).
+- **Servidor propio**: crea `config.js` en el servidor (o ejecuta el script allí con las variables). Que no pase por git.
+
+**Ojo con esto**
+- Es una clave **pública**: cualquiera que abra tu sitio puede verla en el navegador (pestaña Red / `config.js`).
+  Es normal en una app 100 % estática. Lo que la protege es que **Spicy la limite a tus dominios** (como te dijeron)
+  y la lista `ALLOWED_HOSTS`, que evita que la app la use en otros sitios.
+- **Nunca** pongas la clave secreta (`sl_sk_...`) en el navegador.
+- No ejecutes el script en tu computadora con la clave real y luego hagas commit de `config.js`. Si lo haces para
+  probar, protégelo antes: `git update-index --assume-unchanged config.js`.
+- `config.js` conviene servirlo sin caché larga (igual que `index.html`), para que un cambio de clave se note al instante.
+
 ## Checklist por dominio (recordatorio — no se ejecuta solo)
 
 - [ ] **Redirect URI de Spotify (PKCE)**: registrar la URI exacta de cada dominio en el Dashboard de Spotify.
@@ -44,7 +80,7 @@ podrían seguir con el bundle viejo en caché.
       **`localhost` no está permitido**. La app usa `origin + pathname` como Redirect URI, así que bajo GitHub Pages
       la URI incluye `/nombre-del-repo/`. En desarrollo con Five Server, abre `http://127.0.0.1:PUERTO/`.
 - [ ] `localStorage` es **por origen**: en cada dominio nuevo hay que volver a escribir Client ID y Client Key
-      en Configuración (y el renderizador elegido se vuelve a `spicy` por defecto).
+      en Configuración (la Client Key de Spicy no hace falta en tu versión publicada si usas `config.js`, ver arriba) (y el renderizador elegido se vuelve a `spicy` por defecto).
 - [ ] Confirmar con Spicy Lyrics que tu permiso/Client Key funciona desde **cada dominio** y desde Five Server en desarrollo.
 - [ ] **Créditos y aviso AGPL visibles en todos los despliegues**: no quites el crédito a Spicy Lyrics que ya tienes.
 
