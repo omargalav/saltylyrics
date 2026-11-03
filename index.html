@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SaltyLyrics</title>
-<link rel="icon" id="favicon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231d1c18'/%3E%3Cpath d='M27 43V19l18-4v22' fill='none' stroke='%23e3c34a' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='22' cy='43' r='6' fill='%23e3c34a'/%3E%3Ccircle cx='40' cy='37' r='6' fill='%23e3c34a'/%3E%3C/svg%3E">
+<link rel="icon" href="icono.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wdth,wght@75..100,400..700&display=swap" rel="stylesheet">
@@ -1031,10 +1031,40 @@
   .home-note[hidden]{ display:none; }
   .page .home-note p{ font-size:.92rem; color:var(--text-mid); }
   @media (prefers-reduced-motion: reduce){ .home-title{ animation:none; background-position:0 0; } }
+  /* Configuración: tarjetas en columnas que se reparten solas según el ancho (ver settingsLayout) */
+  .settings-grid .panel{ max-width:none; margin:0 0 22px; }
+  .settings-grid.is-cols{ display:flex; gap:18px; align-items:flex-start; }
+  .settings-grid.is-cols .panel{ margin:0; }
+  .settings-col{ flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:18px; }
+  /* YouTube Music es una función de Developer options: si no está activada, no aparece en Configuración */
+  html:not([data-dev-ytm="on"]) #svc-panel, html:not([data-dev-ytm="on"]) [data-dev="ytm"]{ display:none !important; }
+  #dev-panel .field-row.actions{ flex-wrap:wrap; margin-top:10px; }
+  #dev-overlay{ position:fixed; left:8px; bottom:8px; z-index:9999; margin:0; padding:8px 10px; max-width:min(94vw, 560px);
+    font:11px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:#d6ffd6; background:rgba(0,0,0,.74);
+    border-radius:8px; pointer-events:none; white-space:pre-wrap; word-break:break-word; }
+  /* Pantalla completa: tarjeta "Up next" en la esquina superior derecha (con margen). Aparece solo en los últimos 5 s de la canción. */
+  .upnext{ display:flex; position:fixed; top:calc(var(--gap) + 6px); right:calc(var(--gap) + 6px); z-index:52;
+    width:clamp(15rem, 22vw, 22rem); align-items:center; gap:.8rem; padding:.6rem 1rem .6rem .6rem;
+    background:color-mix(in srgb, var(--panel-bg) 94%, transparent);
+    border-radius:1.4rem; box-shadow:0 10px 30px -12px rgba(0,0,0,.65); color:var(--fg);
+    pointer-events:none; opacity:0; visibility:hidden; transform:translateY(-10px) scale(.97);
+    transition:opacity .35s ease, transform .45s cubic-bezier(.22,1.2,.36,1), visibility 0s linear .45s; }
+  body.fs-mode .upnext.is-on.is-time{ opacity:1; visibility:visible; transform:none; transition-delay:0s; }
+  html[data-upnext="off"] .upnext{ display:none !important; }
+  body.fs-clean:not(.fs-awake) .upnext.is-on.is-time{ opacity:0; }
+  body.fs-mode.has-upnext .loader{ top:calc(var(--gap) + 5rem); }   /* el indicador de carga se baja si coincide con la tarjeta */
+  #yt-wrap.docked{ transition:top .35s ease; }
+  .upnext-cover{ flex:none; width:3.25rem; height:3.25rem; border-radius:.9rem; object-fit:cover; background:color-mix(in srgb, var(--fg) 14%, transparent); }
+  .upnext-text{ min-width:0; display:flex; flex-direction:column; gap:.05rem; }
+  .upnext-label{ font-size:.68rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--accent2); }
+  .upnext-title{ font-size:.98rem; font-weight:700; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .upnext-artist{ font-size:.82rem; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-mid); }
+  @media (prefers-reduced-motion: reduce){ .upnext{ transition:opacity .2s ease, visibility 0s linear .2s; transform:none; } }
+  @media (max-width: 700px){ .upnext{ width:clamp(13rem, 62vw, 20rem); } }
 </style>
 <style id="theme-style"></style>
 <script src="config.js"></script>
-<script>try{document.documentElement.dataset.service=localStorage.getItem("spicy_service")==="ytm"?"ytm":"spotify";}catch(e){document.documentElement.dataset.service="spotify";}</script>
+<script>try{var d=localStorage.getItem("spicy_dev_ytm")==="1";document.documentElement.dataset.devYtm=d?"on":"";document.documentElement.dataset.service=d&&localStorage.getItem("spicy_service")==="ytm"?"ytm":"spotify";}catch(e){document.documentElement.dataset.service="spotify";}</script>
 <style id="font-css"></style>
 <style id="custom-css"></style>
 </head>
@@ -1148,6 +1178,7 @@
         </div>
       </div>
 
+      <div class="settings-grid" id="settings-grid">
       <div class="panel">
         <h3 data-i18n="lang.title">Language</h3>
         <div class="m3-card">
@@ -1160,7 +1191,7 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="svc-panel">
         <h3 data-i18n="svc.title">Music service</h3>
         <div class="m3-card">
         <div class="field-label" id="svc-label" data-i18n="svc.label">Connect to</div>
@@ -1248,6 +1279,7 @@
         <div class="m3-card">
         <label class="switch-row"><input type="checkbox" id="fx-toggle" checked><span class="switch"></span><span data-i18n="appearance.fx">Animated background (blurred cover and moving blobs)</span></label>
         <label class="switch-row"><input type="checkbox" id="auto-accent-toggle" checked><span class="switch"></span><span data-i18n="appearance.auto">Automatic highlight colors (based on the cover)</span></label>
+        <label class="switch-row"><input type="checkbox" id="upnext-toggle" checked><span class="switch"></span><span data-i18n="appearance.upnext">Show “Up next” in full screen</span></label>
         <div class="color-grid" id="color-grid"></div>
         <div class="field-row actions">
           <button class="pill-btn" id="reset-colors-btn" type="button" data-i18n="appearance.reset">Reset colors</button>
@@ -1303,6 +1335,23 @@
         </div>
         </div>
       </div>
+
+      <div class="panel" id="dev-panel">
+        <h3 data-i18n="dev.title">Developer options</h3>
+        <div class="m3-card">
+        <p class="hint" style="margin-top:0" data-i18n="dev.hint">For developers and testers. Experimental features can change or stop working.</p>
+        <label class="switch-row"><input type="checkbox" id="dev-ytm-toggle"><span class="switch"></span><span data-i18n="dev.ytm">YouTube Music (experimental)</span></label>
+        <p class="hint" style="margin-top:0" data-i18n="dev.ytm.hint">Adds YouTube Music as a music service, with search and playback using your own API key. Turn it off to remove it from Settings.</p>
+        <label class="switch-row"><input type="checkbox" id="dev-debug-toggle"><span class="switch"></span><span data-i18n="dev.debug">Show debug overlay</span></label>
+        <div class="field-row actions">
+          <button class="pill-btn" id="dev-reload-lyrics-btn" type="button" data-i18n="dev.reloadLyrics">Reload lyrics</button>
+          <button class="pill-btn" id="dev-copy-btn" type="button" data-i18n="dev.copy">Copy diagnostics</button>
+          <button class="pill-btn" id="dev-reset-btn" type="button" data-i18n="dev.reset">Reset app data</button>
+        </div>
+        <p class="hint" id="dev-info">Version 1.0.0 · build 1 · stable</p>
+        </div>
+      </div>
+      </div>
     </section>
 
     <!-- PLAYLISTS -->
@@ -1355,8 +1404,8 @@
         <ul class="credits-list">
           <li data-i18n-html="credits.spotify"><strong>Spotify</strong> — the music, covers and playback come from Spotify’s Web API and Web Playback SDK. <a href="https://www.spotify.com" target="_blank" rel="noopener">spotify.com</a></li>
           <li data-i18n-html="credits.spicy"><strong>Spicy Lyrics</strong> — the synced lyrics are uploaded and synced by people in its community. The credit for each song appears at the bottom of the lyrics. <a href="https://github.com/Spikerko/spicy-lyrics" target="_blank" rel="noopener">github.com/Spikerko/spicy-lyrics</a></li>
-          <li data-i18n-html="credits.youtube"><strong>YouTube</strong> — playback comes from YouTube’s embedded player and search from the YouTube Data API v3. <a href="https://developers.google.com/youtube" target="_blank" rel="noopener">developers.google.com/youtube</a></li>
-        <li data-i18n-html="credits.lrclib"><strong>LRCLIB</strong> — the synced lyrics for YouTube Music songs. <a href="https://lrclib.net" target="_blank" rel="noopener">lrclib.net</a></li>
+          <li data-dev="ytm" data-i18n-html="credits.youtube"><strong>YouTube</strong> — playback comes from YouTube’s embedded player and search from the YouTube Data API v3. <a href="https://developers.google.com/youtube" target="_blank" rel="noopener">developers.google.com/youtube</a></li>
+        <li data-dev="ytm" data-i18n-html="credits.lrclib"><strong>LRCLIB</strong> — the synced lyrics for YouTube Music songs. <a href="https://lrclib.net" target="_blank" rel="noopener">lrclib.net</a></li>
         <li data-i18n-html="credits.dynapuff"><strong>DynaPuff</strong> — the default font of the whole app, via Google Fonts. <a href="https://fonts.google.com/specimen/DynaPuff" target="_blank" rel="noopener">fonts.google.com</a></li>
           <li data-i18n-html="credits.lucide"><strong>Lucide</strong> — the Settings icon (ISC license). <a href="https://lucide.dev" target="_blank" rel="noopener">lucide.dev</a></li>
         </ul>
@@ -1497,6 +1546,16 @@
         </div>
       </div>
 
+      <!-- Pantalla completa: "Up next" (solo si hay una canción siguiente en la playlist o la cola) -->
+      <div class="upnext" id="upnext" aria-live="polite">
+        <img class="upnext-cover" id="upnext-cover" alt="" width="52" height="52">
+        <div class="upnext-text">
+          <div class="upnext-label" data-i18n="upnext.label">Up next</div>
+          <div class="upnext-title" id="upnext-title"></div>
+          <div class="upnext-artist" id="upnext-artist"></div>
+        </div>
+      </div>
+
       <!-- Pantalla completa: barra de herramientas (solo visible con body.fs-mode) -->
       <div class="fs-toolbar" id="fs-toolbar">
         <button class="circle-btn" id="fs-playlists-btn" data-svc="spotify" type="button" title="Playlists" aria-label="Go to Playlists" data-i18n-aria="fs.gotoPlaylists">
@@ -1552,7 +1611,10 @@ const LS = {
   lang:     "spicy_lang",             // "en" (por defecto) | "es"
   font:     "spicy_font",             // enlace de Google Fonts (vacío = DynaPuff)
   service:  "spicy_service",          // "spotify" (por defecto) | "ytm" (YouTube Music)
-  ytKey:    "spicy_yt_key"            // API key de YouTube Data v3
+  ytKey:    "spicy_yt_key",           // API key de YouTube Data v3
+  devYtm:   "spicy_dev_ytm",          // "1" = YouTube Music activado en Developer options
+  devDebug: "spicy_dev_debug",        // "1" = panel de depuración visible
+  upNext:   "spicy_upnext"            // "0" = sin tarjeta "Up next" en pantalla completa
 };
 const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
@@ -1830,7 +1892,21 @@ const I18N = {
     "home.channel.stable": "stable",
     "home.channel.beta": "beta",
     "toast.manualSoon": "The manual isn’t available yet.",
-    "spicy.builtin": "This site already includes a Spicy Lyrics key. Paste your own only if you want to use yours instead."
+    "spicy.builtin": "This site already includes a Spicy Lyrics key. Paste your own only if you want to use yours instead.",
+    "dev.title": "Developer options",
+    "dev.hint": "For developers and testers. Experimental features can change or stop working.",
+    "dev.ytm": "YouTube Music (experimental)",
+    "dev.ytm.hint": "Adds YouTube Music as a music service, with search and playback using your own API key. Turn it off to remove it from Settings.",
+    "dev.debug": "Show debug overlay",
+    "dev.reloadLyrics": "Reload lyrics",
+    "dev.copy": "Copy diagnostics",
+    "dev.reset": "Reset app data",
+    "dev.resetConfirm": "This deletes your keys, your session, favorites and settings from this browser and restarts the app. Continue?",
+    "toast.diagCopied": "Diagnostics copied.",
+    "toast.diagFail": "Could not copy to the clipboard.",
+    "toast.lyricsReload": "Reloading the lyrics…",
+    "upnext.label": "Up next",
+    "appearance.upnext": "Show “Up next” in full screen"
   },
   es: {
     "access.hint": "Guarda tu Client ID, tu Client Key y tu sesión de Spotify en un archivo para iniciar rápido en otro navegador o dominio (el navegador guarda estos datos por separado en cada uno). <b>El archivo equivale a una contraseña</b>: no lo compartas ni lo subas a ningún repositorio.",
@@ -2101,11 +2177,25 @@ const I18N = {
     "home.channel.stable": "estable",
     "home.channel.beta": "beta",
     "toast.manualSoon": "El manual todavía no está disponible.",
-    "spicy.builtin": "Este sitio ya incluye una clave de Spicy Lyrics. Pega la tuya solo si quieres usar la tuya en su lugar."
+    "spicy.builtin": "Este sitio ya incluye una clave de Spicy Lyrics. Pega la tuya solo si quieres usar la tuya en su lugar.",
+    "dev.title": "Opciones de desarrollador",
+    "dev.hint": "Para desarrolladores y probadores. Las funciones experimentales pueden cambiar o dejar de funcionar.",
+    "dev.ytm": "YouTube Music (experimental)",
+    "dev.ytm.hint": "Agrega YouTube Music como servicio de música, con búsqueda y reproducción usando tu propia API key. Desactívala para quitarla de Configuración.",
+    "dev.debug": "Mostrar panel de depuración",
+    "dev.reloadLyrics": "Recargar letra",
+    "dev.copy": "Copiar diagnóstico",
+    "dev.reset": "Borrar datos de la app",
+    "dev.resetConfirm": "Esto borra tus claves, tu sesión, tus favoritos y tus ajustes de este navegador y reinicia la app. ¿Continuar?",
+    "toast.diagCopied": "Diagnóstico copiado.",
+    "toast.diagFail": "No se pudo copiar al portapapeles.",
+    "toast.lyricsReload": "Recargando la letra…",
+    "upnext.label": "A continuación",
+    "appearance.upnext": "Mostrar «A continuación» en pantalla completa"
   }
 };
 const I18N_HOOKS = [];
-const SERVICE = lsGet(LS.service) === "ytm" ? "ytm" : "spotify";
+const SERVICE = lsGet(LS.devYtm) === "1" && lsGet(LS.service) === "ytm" ? "ytm" : "spotify";
 /* ---- Configuración del despliegue (config.js) ----
    En el repositorio abierto config.js va VACÍO: cada persona pone su propia Client Key en Configuración.
    La versión publicada por el autor puede traer una clave por defecto (se genera al desplegar, ver DEPLOY.md).
@@ -2336,6 +2426,7 @@ function showView(view) {
   if (view === "playlists") onOpenPlaylists();
   if (view === "queue") loadQueue();
   if (view === "home") refreshHomeNote();
+  if (view === "settings") scheduleSettingsLayout();
   refreshLoader();
 }
 // Solo los botones con data-view navegan (Configuración no hace nada por ahora)
@@ -2560,6 +2651,8 @@ function applyPlayerState(state, at = performance.now()) {
   anchorClock(state.position, !state.paused, at);
   syncLyrics(nowMs() + lyricsOffsetMs);
   updateBrowserPlayback(state);
+  updateUpNext(state);
+  updateUpNextTiming();
 
   togglePlayIcon.innerHTML = state.paused ? ICON_PLAY : ICON_PAUSE;
   if (typeof state.shuffle === "boolean") setShuffleUI(state.shuffle);
@@ -2878,7 +2971,7 @@ async function addToQueue(uri, name) {
   if (!uri) return;
   if (SERVICE === "ytm") { ytAddToQueue(uri, name); return; }
   const res = await playerApi("POST", "/queue?uri=" + encodeURIComponent(uri));
-  if (res) showToast(name ? "toast.queued" : "toast.queuedGeneric", { name });
+  if (res) { showToast(name ? "toast.queued" : "toast.queuedGeneric", { name }); setTimeout(refreshUpNext, 900); }
 }
 function queueButton(uri, name) {
   const b = document.createElement("button");
@@ -4270,11 +4363,17 @@ function setRepeatUI(mode) {
 }
 shuffleBtn.addEventListener("click", async () => {
   const next = !shuffleOn;
-  if (SERVICE === "ytm" || await playerApi("PUT", "/shuffle?state=" + next)) setShuffleUI(next);
+  if (SERVICE === "ytm" || await playerApi("PUT", "/shuffle?state=" + next)) {
+    setShuffleUI(next);
+    if (SERVICE === "ytm") { ytNextPlan = -2; refreshUpNext(); }
+  }
 });
 repeatBtn.addEventListener("click", async () => {
   const next = (repeatMode + 1) % 3;
-  if (SERVICE === "ytm" || await playerApi("PUT", "/repeat?state=" + REPEAT_STATES[next])) setRepeatUI(next);
+  if (SERVICE === "ytm" || await playerApi("PUT", "/repeat?state=" + REPEAT_STATES[next])) {
+    setRepeatUI(next);
+    if (SERVICE === "ytm") { ytNextPlan = -2; refreshUpNext(); }
+  }
 });
 
 // Volumen (0..1): el SDK lo cambia directo; en modo remoto, por la API
@@ -4533,6 +4632,7 @@ const ytKeyInput = $("yt-key-input"), ytStatus = $("yt-status"), ytWrap = (() =>
 })();
 const ytCatalog = new Map();    // id -> canción (de las búsquedas)
 let ytQueue = [], ytIndex = -1;
+let ytQueuedAhead = 0, ytNextPlan = -2;   // agregadas a la cola que aún no suenan · siguiente planeado (-2 = sin calcular)
 let ytApi = null, ytReady = false, ytPlaying = false, ytPending = false, ytFailStreak = 0, ytApiRequested = false;
 
 /* ---- Panel de Configuración ---- */
@@ -4732,11 +4832,14 @@ function ytState(pos) {
 function ytPlayList(items, index) {
   items.forEach(it => ytCatalog.set(it.id, it));
   ytQueue = items.slice();
+  ytQueuedAhead = 0; ytNextPlan = -2;
   ytFailStreak = 0;
   ytLoadIndex(index);
 }
 function ytLoadIndex(i) {
   if (i < 0 || i >= ytQueue.length) return;
+  ytQueuedAhead = (i === ytIndex + 1 && ytQueuedAhead > 0) ? ytQueuedAhead - 1 : 0;
+  ytNextPlan = -2;
   ytIndex = i;
   const it = ytQueue[i];
   ytPlaying = true;
@@ -4770,17 +4873,32 @@ function ytOnError() {
   const more = ytFailStreak < ytQueue.length && ytAdvance(true);
   showToast(more ? "toast.ytUnavailable" : "toast.ytUnavailableLast");
 }
-// Siguiente canción de la lista local (aleatorio / repetir lista respetados). Devuelve si hubo siguiente.
-function ytAdvance(auto) {
-  if (!ytQueue.length) return false;
-  let n;
+// Siguiente canción de la lista local. Se decide ANTES (para poder mostrarla en "Up next") y es la misma que luego suena.
+// Lo agregado a la cola va primero, en orden; después, aleatorio o en orden de la lista, y "repetir lista" da la vuelta.
+function ytComputeNext() {
+  if (!ytQueue.length) return -1;
+  if (ytQueuedAhead > 0) return ytIndex + 1;
   if (shuffleOn && ytQueue.length > 1) {
+    let n;
     do { n = Math.floor(Math.random() * ytQueue.length); } while (n === ytIndex);
-  } else n = ytIndex + 1;
-  if (n >= ytQueue.length) {
-    if (repeatMode === 1) n = 0;
-    else return false;
+    return n;
   }
+  const n = ytIndex + 1;
+  if (n >= ytQueue.length) return repeatMode === 1 ? 0 : -1;
+  return n;
+}
+function ytNextIndex() {
+  if (ytNextPlan === -2 || ytNextPlan >= ytQueue.length) ytNextPlan = ytComputeNext();
+  return ytNextPlan;
+}
+function ytNextItem() {
+  if (ytIndex < 0 || !ytQueue.length || repeatMode === 2) return null;      // "repetir canción": no hay siguiente
+  const n = ytNextIndex();
+  return n >= 0 && n !== ytIndex && ytQueue[n] ? ytQueue[n] : null;
+}
+function ytAdvance(auto) {
+  const n = ytNextIndex();
+  if (n < 0) return false;
   ytLoadIndex(n);
   return true;
 }
@@ -4792,7 +4910,10 @@ function ytPrev() {
 function ytAddToQueue(id, name) {
   const it = ytCatalog.get(id);
   if (!it) return;
-  ytQueue.splice(ytIndex + 1, 0, it);
+  if (ytIndex < 0) ytQueue.push(it);
+  else { ytQueue.splice(ytIndex + 1 + ytQueuedAhead, 0, it); ytQueuedAhead++; }   // en orden: lo primero que agregas suena primero
+  ytNextPlan = -2;
+  refreshUpNext();
   showToast(name ? "toast.queued" : "toast.queuedGeneric", { name });
 }
 
@@ -4802,11 +4923,14 @@ function ytPlaceHost() {
   const b = coverBox.getBoundingClientRect();
   const onCover = coverBox.offsetParent !== null && b.width > 60 && b.height > 60;
   let x, y, w, h;
+  ytWrap.classList.toggle("docked", !onCover);
   if (onCover) { x = b.left; y = b.top; w = b.width; h = b.height; }
   else {
     w = h = 200;                                         // arriba a la derecha: no tapa la barra de abajo ni el control de sincronía
     x = Math.max(8, window.innerWidth - w - 16);
-    y = Math.max(8, Math.min(90, window.innerHeight - h - 8));
+    const cardShown = upNextEl.classList.contains("is-on") && upNextEl.classList.contains("is-time") && document.body.classList.contains("fs-mode");
+    const below = cardShown ? upNextEl.offsetTop + upNextEl.offsetHeight + 12 : 90;   // debajo de la tarjeta mientras ésta se ve
+    y = Math.max(8, Math.min(below, window.innerHeight - h - 8));
   }
   const key = [x, y, w, h].map(Math.round).join(",");
   if (key === ytPlaceKey) return;
@@ -4928,12 +5052,9 @@ function refreshHomeNote() {
 I18N_HOOKS.push(renderHome);
 
 /* ======================================================================
-   NAVEGADOR: título de la pestaña, ícono con la portada y controles multimedia del sistema
+   NAVEGADOR: controles multimedia del sistema (la pestaña conserva el título «SaltyLyrics» y el ícono icono.ico)
    (Media Session: el widget de Chrome/Edge, la pantalla de bloqueo, los audífonos, el reloj...).
    ====================================================================== */
-const BASE_TITLE = document.title;
-const faviconEl = document.getElementById("favicon");
-const DEFAULT_FAVICON = faviconEl ? faviconEl.getAttribute("href") : "";
 const HAS_MEDIA_SESSION = "mediaSession" in navigator;
 let browserTrackKey = "";
 
@@ -4962,11 +5083,6 @@ function coverVariants(url, sizes) {
     img.src = url;
   });
 }
-function setFavicon(href, isSvg) {
-  if (!faviconEl) return;
-  if (isSvg || !href) faviconEl.setAttribute("type", "image/svg+xml"); else faviconEl.removeAttribute("type");
-  faviconEl.setAttribute("href", href || DEFAULT_FAVICON);
-}
 let lastMeta = null;
 function setMediaMetadata(title, artist, album, artwork) {
   lastMeta = { title, artist, album, artwork };
@@ -4983,7 +5099,6 @@ function ensureMediaMetadata() {
 }
 function updateBrowserTrack(track, artists) {
   const name = track.name || "";
-  document.title = name ? name + (artists ? " — " + artists : "") + " · " + BASE_TITLE : BASE_TITLE;
 
   const images = ((track.album && track.album.images) || []).filter(i => i && i.url);
   const url = images[0] ? images[0].url : "";
@@ -4996,14 +5111,12 @@ function updateBrowserTrack(track, artists) {
   const remote = images.filter(i => !seen.has(i.url) && seen.add(i.url))
     .map(i => ({ src: i.url, sizes: i.width && i.height ? i.width + "x" + i.height : "512x512", type: "image/jpeg" }));
   setMediaMetadata(name, artists, album, remote);   // primero con las URLs (rápido)...
-  if (!url) { setFavicon("", true); return; }
-  setFavicon(url, false);
+  if (!url) return;
 
   // ...y en cuanto se descarga la portada, se reemplaza por copias cuadradas incrustadas (512, 256 y 128 px)
-  coverVariants(url, [512, 256, 128, 64]).then(v => {
+  coverVariants(url, [512, 256, 128]).then(v => {
     if (browserTrackKey !== key || !v) return;      // cambió de canción, o la imagen no se puede leer: quedan las URLs
     setMediaMetadata(name, artists, album, [512, 256, 128].map(z => ({ src: v[z], sizes: z + "x" + z, type: "image/jpeg" })));
-    if (SERVICE === "ytm") setFavicon(v[64], false);   // miniaturas 16:9 → ícono cuadrado
   });
 }
 function updateMediaPosition() {
@@ -5068,6 +5181,243 @@ if (HAS_MEDIA_SESSION) {
   on("seekforward", () => handleMedia("forward"));
   on("seekto", d => { if (d && typeof d.seekTime === "number") seekTo(d.seekTime * 1000); });
 }
+
+/* ---- Configuración: tarjetas en columnas que se adaptan al ancho de la pantalla ----
+   Cada tarjeta, en el orden del HTML, va a la columna que tenga más espacio libre (como un tablero de corcho):
+   así la segunda tarjeta queda a la derecha de la primera, la tercera donde sobre lugar, etc. Con poco ancho es una sola columna. */
+var settingsLayoutQueued = false;
+const settingsGrid = $("settings-grid");
+const SETTINGS_PANELS = Array.from(settingsGrid.children);        // el orden del HTML es el orden de prioridad
+function settingsLayout() {
+  settingsLayoutQueued = false;
+  const W = settingsGrid.clientWidth;
+  if (!W) return;                                                 // la vista está oculta: se acomoda al mostrarse
+  const gap = 18;
+  const minW = document.documentElement.classList.contains("tv-mode") ? 560 : 400;
+  const n = Math.max(1, Math.min(3, Math.floor((W + gap) / (minW + gap))));
+  let cols = Array.from(settingsGrid.querySelectorAll(":scope > .settings-col"));
+  if (cols.length !== n) {
+    // cambió el ancho de las columnas: se reparten en orden para poder medir las tarjetas con el ancho final
+    settingsGrid.classList.add("is-cols");
+    cols.forEach(c => c.remove());
+    cols = [];
+    for (let i = 0; i < n; i++) { const c = document.createElement("div"); c.className = "settings-col"; settingsGrid.appendChild(c); cols.push(c); }
+    SETTINGS_PANELS.forEach((p, i) => cols[i % n].appendChild(p));
+  }
+  const load = Array(n).fill(0), plan = Array.from({ length: n }, () => []);
+  let last = 0;
+  SETTINGS_PANELS.forEach(p => {
+    const h = p.offsetHeight;                                     // 0 = tarjeta oculta (otro servicio, función desactivada)
+    let c = last;
+    if (h > 0) { c = 0; for (let k = 1; k < n; k++) if (load[k] < load[c]) c = k; load[c] += h + gap; last = c; }
+    plan[c].push(p);
+  });
+  const ae = document.activeElement;
+  const sel = ae && typeof ae.selectionStart === "number" ? [ae.selectionStart, ae.selectionEnd] : null;
+  let moved = false;
+  plan.forEach((arr, i) => {
+    const cur = Array.from(cols[i].children);
+    if (cur.length === arr.length && cur.every((el, j) => el === arr[j])) return;
+    arr.forEach(el => cols[i].appendChild(el));
+    moved = true;
+  });
+  // mover una tarjeta le quita el foco al campo que se estaba escribiendo: se devuelve
+  if (moved && ae && ae !== document.body && document.activeElement !== ae && settingsGrid.contains(ae)) {
+    try { ae.focus({ preventScroll: true }); if (sel) ae.setSelectionRange(sel[0], sel[1]); } catch {}
+  }
+}
+function scheduleSettingsLayout() {
+  if (settingsLayoutQueued) return;
+  settingsLayoutQueued = true;
+  requestAnimationFrame(settingsLayout);
+}
+if ("ResizeObserver" in window) {
+  const ro = new ResizeObserver(scheduleSettingsLayout);
+  ro.observe(settingsGrid);
+  SETTINGS_PANELS.forEach(p => ro.observe(p));                    // una tarjeta cambia de alto / aparece / se oculta
+}
+window.addEventListener("resize", scheduleSettingsLayout);
+I18N_HOOKS.push(scheduleSettingsLayout);                          // otro idioma = otros largos de texto
+
+/* ---- Developer options ---- */
+const devYtmToggle = $("dev-ytm-toggle"), devDebugToggle = $("dev-debug-toggle");
+devYtmToggle.checked = lsGet(LS.devYtm) === "1";
+devYtmToggle.addEventListener("change", () => {
+  if (devYtmToggle.checked) {
+    lsSet(LS.devYtm, "1");
+    document.documentElement.dataset.devYtm = "on";             // aparece la tarjeta "Music service"
+  } else {
+    lsDel(LS.devYtm);
+    document.documentElement.dataset.devYtm = "";
+    if (SERVICE === "ytm") {                                     // se estaba usando: se vuelve a Spotify
+      lsSet(LS.service, "spotify");
+      try { sessionStorage.setItem("spicy_reopen", "settings"); } catch {}
+      location.reload();
+    }
+  }
+  scheduleSettingsLayout();
+});
+
+// Panel de depuración: estado interno de la app, encima de todo
+const devOverlay = document.createElement("pre");
+devOverlay.id = "dev-overlay"; devOverlay.hidden = true;
+document.body.appendChild(devOverlay);
+let devOverlayOn = false, devFrames = 0, devFps = 0, devFpsAt = 0, devTextAt = 0;
+const devClock = ms => { const s = Math.max(0, Math.round((ms || 0) / 1000)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+function devOverlayText() {
+  const view = (document.querySelector(".view.is-visible") || {}).id || "-";
+  const wrap = document.getElementById("lyricsWrap");
+  const lines = wrap ? wrap.querySelectorAll(".line, .lyric-line, .row").length : 0;
+  return [
+    "SaltyLyrics " + APP_INFO.version + " · build " + APP_INFO.build + " · " + APP_INFO.channel,
+    "service " + SERVICE + " · lang " + LANG + " · renderer " + (wrap && wrap.dataset.renderer || "-") + " · " + innerWidth + "×" + innerHeight + " @" + devicePixelRatio + "x",
+    "view " + view + " · fps " + devFps,
+    "track " + (currentTrack ? currentTrack.id + " — " + currentTrack.name : "-"),
+    "time " + devClock(nowMs()) + " / " + devClock(currentDurationMs) + " · " + (clock.playing ? "playing" : "paused") + " · offset " + fmtOffset(lyricsOffsetMs),
+    "lyrics " + (lyricsSyncType || "-") + " · " + lines + " lines · id " + (currentLyricsTrackId || "-"),
+    "anchor " + (MEDIA_ANCHOR.paused ? "paused" : "playing") + " · mediaSession " + (HAS_MEDIA_SESSION ? "yes" : "no")
+  ].join("\n");
+}
+function devOverlayTick(t) {
+  if (!devOverlayOn) return;
+  devFrames++;
+  if (t - devFpsAt >= 1000) { devFps = Math.round(devFrames * 1000 / (t - devFpsAt)); devFrames = 0; devFpsAt = t; }
+  if (t - devTextAt >= 250) { devTextAt = t; try { devOverlay.textContent = devOverlayText(); } catch (e) { devOverlay.textContent = "overlay error: " + e.message; } }
+  requestAnimationFrame(devOverlayTick);
+}
+function setDevOverlay(on) {
+  devOverlayOn = on;
+  devOverlay.hidden = !on;
+  if (on) { devFrames = 0; devFpsAt = performance.now(); devTextAt = 0; requestAnimationFrame(devOverlayTick); }
+}
+devDebugToggle.checked = lsGet(LS.devDebug) === "1";
+setDevOverlay(devDebugToggle.checked);
+devDebugToggle.addEventListener("change", () => {
+  if (devDebugToggle.checked) lsSet(LS.devDebug, "1"); else lsDel(LS.devDebug);
+  setDevOverlay(devDebugToggle.checked);
+});
+
+$("dev-reload-lyrics-btn").addEventListener("click", () => {
+  if (!currentTrack || !currentTrack.id) { showToast("toast.noSong"); return; }
+  lrcCache.clear();
+  const id = currentTrack.id;
+  currentLyricsTrackId = null;
+  fetchAndRenderLyrics(id);
+  showToast("toast.lyricsReload");
+});
+// Datos útiles para reportar un problema. No incluye claves, tokens ni el contenido guardado: solo si existen.
+function devDiagnostics() {
+  const wrap = document.getElementById("lyricsWrap");
+  return {
+    app: APP_INFO, service: SERVICE, language: LANG,
+    renderer: wrap && wrap.dataset.renderer || null,
+    origin: location.origin, secureContext: window.isSecureContext,
+    viewport: innerWidth + "x" + innerHeight, devicePixelRatio, userAgent: navigator.userAgent,
+    storedKeys: Object.keys(localStorage).filter(k => k.startsWith("spicy_")),
+    spotifyConnected: !!accessToken,
+    spicyKey: SPICY_KEY ? (DEFAULT_SPICY_KEY && SPICY_KEY === DEFAULT_SPICY_KEY ? "deployment default" : "own") : "none",
+    youtubeKey: YT_KEY ? "set" : "none",
+    track: currentTrack, lyrics: { type: lyricsSyncType || null, id: currentLyricsTrackId || null },
+    mediaSession: HAS_MEDIA_SESSION, anchorPlaying: !MEDIA_ANCHOR.paused
+  };
+}
+$("dev-copy-btn").addEventListener("click", async () => {
+  const text = JSON.stringify(devDiagnostics(), null, 2);
+  let copied = false;
+  try { await navigator.clipboard.writeText(text); copied = true; } catch {}
+  if (!copied) {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(ta); ta.select();
+    try { copied = document.execCommand("copy"); } catch {}
+    ta.remove();
+  }
+  showToast(copied ? "toast.diagCopied" : "toast.diagFail");
+});
+$("dev-reset-btn").addEventListener("click", () => {
+  if (!confirm(tx("dev.resetConfirm"))) return;
+  const keys = new Set(Object.values(LS));
+  Object.keys(localStorage).forEach(k => { if (k.startsWith("spicy_")) keys.add(k); });
+  keys.forEach(k => lsDel(k));
+  try { sessionStorage.clear(); } catch {}
+  location.reload();
+});
+I18N_HOOKS.push(() => {
+  const ch = I18N.en["home.channel." + APP_INFO.channel] !== undefined ? tx("home.channel." + APP_INFO.channel) : APP_INFO.channel;
+  $("dev-info").textContent = tx("home.version", { v: APP_INFO.version }) + " · " + tx("home.build", { b: APP_INFO.build }) + " · " + ch;
+});
+
+/* ======================================================================
+   "UP NEXT" en pantalla completa: la canción que sigue, solo si hay una (en la playlist o en la cola)
+   · Spotify (este navegador): el SDK ya la trae en track_window.next_tracks
+   · Spotify (control remoto): se pregunta a la cola de Spotify una vez por canción
+   · YouTube Music: la lista local (aleatorio, repetir y "agregar a la cola" incluidos)
+   ====================================================================== */
+const upNextEl = $("upnext"), upNextCover = $("upnext-cover"), upNextTitle = $("upnext-title"), upNextArtist = $("upnext-artist");
+let upNextKey = "", remoteNextFor = null, remoteNextSeq = 0;
+function setUpNext(it) {
+  const key = it ? (it.id || "") + "|" + it.name + "|" + (it.cover || "") : "";
+  if (key === upNextKey) return;
+  upNextKey = key;
+  if (!it) { upNextEl.classList.remove("is-on"); updateUpNextTiming(); return; }
+  upNextTitle.textContent = it.name;
+  upNextArtist.textContent = it.artist || "";
+  upNextCover.hidden = !it.cover;
+  if (it.cover) upNextCover.src = it.cover;
+  upNextEl.classList.add("is-on");                  // hay una canción siguiente (se ve solo cuando toca, ver abajo)
+  updateUpNextTiming();
+}
+// La tarjeta aparece solo en los últimos 5 segundos de la canción y se va cuando empieza la siguiente
+const UPNEXT_WINDOW_MS = 5000;
+function updateUpNextTiming() {
+  const dur = currentDurationMs || 0;
+  const due = upNextEl.classList.contains("is-on") && dur > 0 && dur - nowMs() <= UPNEXT_WINDOW_MS;
+  upNextEl.classList.toggle("is-time", due);
+  document.body.classList.toggle("has-upnext", due && document.documentElement.dataset.upnext !== "off");
+}
+setInterval(updateUpNextTiming, 250);
+// Convierte una canción de Spotify (SDK o API) al formato de la tarjeta; toma una portada pequeña (~128 px)
+function spotifyToUpNext(t) {
+  if (!t || !t.name) return null;
+  const imgs = ((t.album && t.album.images) || []).filter(i => i && i.url);
+  const pick = imgs.filter(i => i.width).sort((a, b) => Math.abs(a.width - 128) - Math.abs(b.width - 128))[0] || imgs[imgs.length - 1];
+  return { id: t.id || t.uri, name: t.name, artist: (t.artists || []).map(a => a.name).filter(Boolean).join(", "), cover: pick ? pick.url : "" };
+}
+async function remoteUpNextFor(id) {
+  if (!id || id === remoteNextFor) return;
+  remoteNextFor = id;                                // aunque falle, no se insiste hasta que cambie la canción
+  const seq = ++remoteNextSeq;
+  try {
+    const res = await fetch("https://api.spotify.com/v1/me/player/queue", { headers: await authHeaders() });
+    if (seq !== remoteNextSeq) return;
+    if (!res.ok) { setUpNext(null); return; }
+    const data = await res.json();
+    if (seq !== remoteNextSeq) return;
+    setUpNext(spotifyToUpNext((data.queue || [])[0]));
+  } catch { if (seq === remoteNextSeq) setUpNext(null); }
+}
+function updateUpNext(state) {
+  if (SERVICE === "ytm") { setUpNext(ytNextItem()); return; }
+  const tw = state && state.track_window;
+  if (!tw) return;
+  if (state.repeat_mode === 2) { setUpNext(null); return; }              // repetir canción: nada "sigue"
+  if (Array.isArray(tw.next_tracks)) { setUpNext(spotifyToUpNext(tw.next_tracks[0])); return; }
+  if (tw.current_track) remoteUpNextFor(tw.current_track.id);            // control remoto: el estado no trae la cola
+}
+// Vuelve a calcularla (p. ej. después de agregar algo a la cola o cambiar aleatorio/repetir)
+async function refreshUpNext() {
+  if (SERVICE === "ytm") { setUpNext(ytNextItem()); return; }
+  if (!player) return;
+  if (player === remotePlayer) { remoteNextFor = null; if (currentTrack && currentTrack.id) remoteUpNextFor(currentTrack.id); return; }
+  try { const st = await player.getCurrentState(); if (st) updateUpNext(st); } catch {}
+}
+// Interruptor en Apariencia (se recuerda)
+const upNextToggle = $("upnext-toggle");
+upNextToggle.checked = lsGet(LS.upNext) !== "0";
+document.documentElement.dataset.upnext = upNextToggle.checked ? "" : "off";
+upNextToggle.addEventListener("change", () => {
+  if (upNextToggle.checked) lsDel(LS.upNext); else lsSet(LS.upNext, "0");
+  document.documentElement.dataset.upnext = upNextToggle.checked ? "" : "off";
+});
 
 /* ---- Fuente personalizada (enlace de Google Fonts) ---- */
 const fontInput = $("font-input"), fontStatus = $("font-status"), fontApplyBtn = $("font-apply-btn");
